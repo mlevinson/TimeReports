@@ -13,7 +13,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+#      
+
 from hashlib import md5  
 from urllib import urlencode, urlopen     
 
@@ -24,7 +25,7 @@ from google.appengine.ext.webapp import util
 api_key = 'b73e4cbd875dedf3df8f0a76d94c6077'
 secret = '1e3b5dab09e5e483'   
 
-def get_url(month, year, company, team=None, provider=None):  
+def get_url(month, year, company, team=None, provider=None, no_api=False):  
     
       #tq = "SELECT worked_on, provider_id, provider_name, sum(hours) WHERE month_worked_on=%(month)d AND year_worked_on=%(year)d"
       tq = "SELECT worked_on, provider_id, provider_name, sum(hours) WHERE worked_on > '2010-01-01'"
@@ -33,17 +34,20 @@ def get_url(month, year, company, team=None, provider=None):
           tq += " AND provider_id='%(provider)s'"
       
       tq = tq % locals()  
-      sig = md5(secret + 'api_key' + api_key + 'tq' + tq).hexdigest()
-      params = dict(
-        tq = tq,
-        api_key = api_key,
-        api_sig = sig
-      )
+      sig = md5(secret + 'api_key' + api_key + 'tq' + tq).hexdigest()   
+      if no_api:
+          params = dict(tq=tq)
+      else:    
+          params = dict(
+            tq = tq,
+            api_key = api_key,
+            api_sig = sig
+            )
       
       if team:
-          url = "http://odesk.com/gds/timereports/v1/companies/%(company)d/teams/%(team)d/hours.json"          
+          url = "http://odesk.com/gds/timereports/v1/companies/%(company)s/teams/%(team)s/hours"          
       else:                                                                                        
-          url = "http://odesk.com/gds/timereports/v1/companies/%(company)d/hours.json"
+          url = "http://odesk.com/gds/timereports/v1/companies/%(company)s/hours"
       url = url % locals()
       url += "?"
       url += urlencode(params) 
@@ -68,12 +72,14 @@ class MainHandler(webapp.RequestHandler):
          
         month = self.request.get('month', 1) 
         year = self.request.get('year', 2010)
-        company = self.request.get('company', 118)
-        team = self.request.get('team', 2837)
+        company = self.request.get('company', 'teammichael:teammichael')
+        team = self.request.get('team', 'teammichael:development')
         provider = self.request.get('provider', None)                                
         
         url = get_url(month, year, company, team, provider)
-        self.response.out.write('<a href="%(url)s">%(url)s</a>' % dict(url=url))
+        self.response.out.write('<a href="%(url)s">%(url)s</a>' % dict(url=url))   
+        url = get_url(month, year, company, team, provider, no_api=True) 
+        self.response.out.write('<br/><br/><a href="%(url)s">%(url)s</a>' % dict(url=url))   
 
 
 def main():

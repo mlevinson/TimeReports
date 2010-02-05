@@ -231,29 +231,34 @@
                 </form>
                 <div id="lev2" style="height:1.2em;"></div>
             </div>
-            <h3 class="table-caption">Hours for Percy Provider: February 2010</h3>
+            <h3 class="table-caption">Hours for Percy Provider: <span id="time-month"></span> <span id="time-year"></h3>
             <div>
-            <table id="time-reports-grid"></table>                                    
+            <table id="time-reports-grid"></table>  
             </div>
         </div>
         <script type="text/javascript">
-        function getHours(month, year, company, team, provider){
-              refreshGrid(transformGDS({}, month, year));              
+        function getHours(month, year, company, team, provider){   
+            $.getJSON("js/j.json", function(data){
+              refreshGrid(transformGDS(data, month, year));                
+            });
         }  
 
         function refreshGrid(data){
             $("#time-reports-grid").dataTable(data);    
         } 
 
-        function transformGDS(data, month, year){
-           var firstDayOfMonth = Date.parseExact("1/" + month + "/" + year, "d/m/yyyy");
-           var daysInMonth = Date.getDaysInMonth(year, month);
+        function transformGDS(data, month, year){  
+           var firstDayOfMonth = Date.parseExact("1/" + month + "/" + year, "d/M/yyyy");
+           var daysInMonth = Date.getDaysInMonth(parseInt(year), parseInt(month));
            var firstDayDayNumber = firstDayOfMonth.getDay();
            var monthName = firstDayOfMonth.toString("MMM");    
+           $("#time-month").text(monthName);           
+           $("#time-year").text(year);           
            var weekStartDateNumber = 1;
            var rows = [];                    
-           var weeks = [];          
-           var weekDays = 6 - firstDayDayNumber;
+           var weeks = [];
+           var daysInFirstWeek = 6 - firstDayDayNumber;
+           var weekDays = daysInFirstWeek;
            var done = false;
            while(!done){               
               var start = monthName + " " + weekStartDateNumber;           
@@ -264,10 +269,34 @@
                   done = true;
               }
               var end = monthName + " "   + weekEndDay;
-              weeks.push(year + month + weekStartDateNumber);
+              weeks.push(year + '' + month + '' + weekStartDateNumber);
               rows.push([start + " - " + end, "", "", "", "", "", "", "", ""]);
               weekStartDateNumber = weekEndDay + 1;
-           }
+           }      
+           
+           $.each(data.table.rows, function(i, record){
+              var recordDate = Date.parseExact(record.c[0].v, "yyyyMMdd");   
+              var whichWeek = 0;
+              $.each(weeks, function(weekIndex, weekFirstDay){
+                  var weekDate = Date.parseExact(weekFirstDay, "yyyyMMdd"); 
+                  if (recordDate< weekDate){
+                      whichWeek = weekIndex - 1;
+                      return false;
+                  }
+              });                  
+              var recordWeekDay = recordDate.getDay();
+              rows[whichWeek][recordWeekDay + 1] = parseFloat(record.c[3].v);
+           });                                                   
+           
+           $.each(rows, function(i, row){
+               row[8] = 0;
+               var col = 1;
+               for(col=1; col<8; col+=1){  
+                  if(row[col] != ''){
+                      row[8] += parseFloat(row[col]);                      
+                  }   
+               }
+           });
 
            return {
                "aaData" :  rows,
@@ -313,7 +342,7 @@
             ];
         }
            $(function(){
-                getHours(01, 2010, 118, 2378, "urana");
+                getHours("08", "2009", "118", "2378", "urana");
             });            
         </script>
     </body>
