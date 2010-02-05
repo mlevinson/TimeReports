@@ -234,6 +234,8 @@
             <h3 class="table-caption">Hours for Percy Provider: <span id="time-month"></span> <span id="time-year"></h3>
             <div>
             <table id="time-reports-grid"></table>  
+            <div id="table-footer">Total hours for Provider <span id="provider-name"></span> : <span id="grand-total"></span></tfoot>
+            
             </div>
         </div>
         <script type="text/javascript">
@@ -287,7 +289,7 @@
               var recordWeekDay = recordDate.getDay();
               rows[whichWeek][recordWeekDay + 1] = parseFloat(record.c[3].v);
            });                                                   
-           
+           var grandTotal = 0;
            $.each(rows, function(i, row){
                row[8] = 0;
                var col = 1;
@@ -295,7 +297,8 @@
                   if(row[col] != ''){
                       row[8] += parseFloat(row[col]);                      
                   }   
-               }
+               }              
+               grandTotal += row[8];
            });
 
            return {
@@ -305,7 +308,10 @@
                "bLengthChange": false,
                "bFilter": false,
                "bSort": false,
-               "bInfo": false,
+               "bInfo": false, 
+               "fnFooterCallback": function( nFoot, aasData, iStart, iEnd, aiDisplay ) {
+                   $("#grand-total").text(grandTotal);
+               }
            };
         } 
 
