@@ -1,0 +1,41 @@
+#time-reports-grid{
+    width: 100%;
+}   
+
+.table-caption{
+    margin:0;
+    padding-left: 4px;  
+    padding-bottom: 4px;
+    border: 1px solid black;
+    margin-left: -1px;
+}
+
+.table-caption,
+#time-reports-grid thead{  
+
+    font-weight:bold;
+    background-color: #345B9E; 
+    color:white;
+}
+
+#time-reports-grid th,
+#time-reports-grid td{  
+    padding-left: 4px;
+}
+
+#time-reports-grid tr.odd{
+    background-color: lightgrey; 
+
+}   
+
+#time-reports-grid 
+{
+border-collapse:collapse;
+}
+
+#time-reports-grid,
+#time-reports-grid  th, 
+#time-reports-grid td
+{
+border: 1px solid black;
+}
