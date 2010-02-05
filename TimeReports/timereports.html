@@ -5,7 +5,8 @@
         <title>
             Outsource to Freelancers, IT Companies, Programmers, Web Designers from India, Russia, USA, and more - oDesk
         </title>
-        <link rel="stylesheet" href="http://www.odesk.com/css/static/REL201002040104/nav.css" type="text/css" />
+        <link rel="stylesheet" href="http://www.odesk.com/css/static/REL201002040104/nav.css" type="text/css" /> 
+        <link rel="stylesheet" href="css/timereports.css" type="text/css" />         
         <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/css_browser_selector.js">
 </script>                               
         <link rel="stylesheet" href="http://www.odesk.com/css/static/REL201002040104/odesk_console.css" type="text/css" />
@@ -230,7 +231,10 @@
                 </form>
                 <div id="lev2" style="height:1.2em;"></div>
             </div>
-            <div id="time-reports-grid"></div>
+            <h3 class="table-caption">Hours for Percy Provider: February 2010</h3>
+            <div>
+            <table id="time-reports-grid"></table>                                    
+            </div>
         </div>
         <script type="text/javascript">
         function getHours(month, year, company, team, provider){
@@ -245,8 +249,7 @@
            var firstDayOfMonth = Date.parseExact("1/" + month + "/" + year, "d/m/yyyy");
            var daysInMonth = Date.getDaysInMonth(year, month);
            var firstDayDayNumber = firstDayOfMonth.getDay();
-           var monthName = firstDayOfMonth.toString("M");    
-           alert(firstDayDayNumber);
+           var monthName = firstDayOfMonth.toString("MMM");    
            var weekStartDateNumber = 1;
            var rows = [];                    
            var weeks = [];          
