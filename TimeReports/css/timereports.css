@@ -1,54 +1,5 @@
-#time-reports-grid{
-    width: 100%;
-}   
-
-.table-caption{
-    margin:0;
-    padding-left: 4px;  
-    padding-bottom: 4px;
-    border: 1px solid black;
-    border-bottom:0;
-}
-
-.table-caption,
-#time-reports-grid thead{  
-
-    font-weight:bold;
-    background-color: #345B9E; 
-    color:white;
-}
-
-#time-reports-grid th{
-    font-weight:bold;
-}
-
-#time-reports-grid th,
-#time-reports-grid td{  
-    padding-left: 4px;
-}
-
-#time-reports-grid tr.odd{
-    background-color: lightgrey; 
-
-}    
-
-#grand-total{
-    padding-left: 60px;
-    font-weight:bold;
-}
-
-#time-reports-grid 
-{
-border-collapse:collapse;
-}
-
-#time-reports-grid,
-#time-reports-grid  th, 
-#time-reports-grid td
-{
-border: 1px solid black;
-}
-
-#table-footer{
-    text-align: right;
-}
+.table-caption{border-bottom: 1px solid black;}
+#time-reports-grid td.total{background-color:#ffffcc;font-weight:bold;}
+#time-reports-grid td.grand-total {background-color:#ffff66;font-weight:bold;}  
+#grand-total{padding-left: 60px;font-weight:bold;}
+    
