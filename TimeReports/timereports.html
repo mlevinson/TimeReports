@@ -230,15 +230,52 @@
                     </ul>
                 </form>
                 <div id="lev2" style="height:1.2em;"></div>
-            </div>
-            <h3 class="table-caption">Hours for <span class="provider-name">Provider</span>: <span id="time-month"></span> <span id="time-year"></h3>
-            <div>
-            <table id="time-reports-grid" class="tabular">
-                <tfoot>
-                    <td colspan="8">Total hours for <span class="provider-name">Provider</span></td>
-                    <td class="numeric grand-total"><span id="grand-total"></span></td>
-                </tfoot>   
-            </table>  
+            </div>                     
+            <h1>Monthly Timesheet</h1>
+            <div id="reports_main_content" class="content_main">
+                <div class="control_bar">
+                    <div class="control" id="timereports_team_selector">
+                        Team:&nbsp;<select class="dispatchable ie-onchange-fix">
+                        </select>
+                    </div>
+                    <div class="control" id="timereports_provider_selector">
+                        Provider:&nbsp;<select class="dispatchable ie-onchange-fix">
+                        </select>
+                    </div>                                                  
+                    <div class="control" id="timereports_month_selector">
+                        <button clas="dispatchable">&lt;&lt;</button>
+                        <button clas="dispatchable">&lt;</button>    
+                        February 2010
+                        <button clas="dispatchable">&gt;</button>                        
+                        <button clas="dispatchable">&gt;&gt;</button>                        
+                    </div>                    
+                </div>    
+                <div class="control_bar white">
+                    <div class="upper-right">
+                            <div class="control radio-switch dispatchable" id="display_type">
+                                <span class="label">Display:</span>
+                                <span class="toggle radio selected" id="hours">Hours</span>
+                                <span class="space">|</span>
+                                <span class="toggle radio" id="charges">
+                                    Estimated Charges&nbsp;
+                                    <span class="helpTip" title="" 
+                                    bt-xtitle="The charges shown in this report&lt;br &gt;&lt;/span&gt;
+                                    are estimated because they do not include&lt;br /&gt;discretionary
+                                    payments such as bonuses.&lt;br /&gt;Actual charges can be
+                                    viewed&lt;br /&gt;in Payments &gt; Financial
+                                    Activity.">&nbsp;</span>
+                                </span>
+                            </div>    
+                        </div>
+                </div>    
+            <h2 class="table-caption">Hours for <span class="provider-name">Provider</span>: <span id="time-month"></span> <span id="time-year"></span></h2>                
+                <table id="time-reports-grid" class="tabular">
+                    <tfoot>
+                        <td colspan="8">Total hours for <span class="provider-name">Provider</span></td>
+                        <td class="numeric grand-total"><span id="grand-total"></span></td>
+                    </tfoot>   
+                </table>                                            
+           </div> 
         </div>
         <script type="text/javascript">    
 
@@ -247,6 +284,40 @@
             number--;
             if(number < 0) number = 6;
             return number;
+        }  
+        
+        function getTeams(company_reference){                       
+            var url = "http://www.odesk.com/api/hr/v2/companies/" + 
+                        company_reference +
+                        "/teams.json?callback=?";
+            $.getJSON(url, function(data){ 
+                  var options = "<option value='0'>All</option>";  
+                  $.each(data.teams, function(i, team){
+                       if(team.status == "active" && team.is_hidden == "0"){
+                           options += "<option value='" + team.reference +"'>";
+                           options += team.id;         
+                           options += "</option>"
+                       }
+                  });                            
+                  $("#timereports_team_selector SELECT").html(options);
+            });
+        } 
+        
+        function getProviders(team_reference){
+             var url = "http://www.odesk.com/api/hr/v2/teams/" + 
+                        team_reference +
+                        "/users.json?callback=?";
+            $.getJSON(url, function(data){ 
+                  var options = "<option value='0'>All</option>";  
+                  $.each(data.users, function(i, user){
+                       if(user.status == "active" && user.is_provider == "1"){
+                           options += "<option value='" + user.id +"'>";
+                           options += user.first_name + " " + user.last_name + "(" + user.id + ")";         
+                           options += "</option>";
+                       }
+                  });                            
+                  $("#timereports_provider_selector SELECT").html(options);
+            });
         }
               
         function getHours(month, year, company, team, provider){ 
@@ -431,6 +502,8 @@
             ];
         }
            $(function(){
+                getTeams("49041");  
+                getProviders("49041");                  
                 getHours("02", "2010", "teammichael:teammichael", "teammichael:development", "mikelevinson");
             });            
         </script>
