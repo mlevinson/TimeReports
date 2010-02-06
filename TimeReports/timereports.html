@@ -231,11 +231,11 @@
                 </form>
                 <div id="lev2" style="height:1.2em;"></div>
             </div>
-            <h3 class="table-caption">Hours for Percy Provider: <span id="time-month"></span> <span id="time-year"></h3>
+            <h3 class="table-caption">Hours for <span class="provider-name">Provider</span>: <span id="time-month"></span> <span id="time-year"></h3>
             <div>
             <table id="time-reports-grid" class="tabular">
                 <tfoot>
-                    <td colspan="8">Total hours for Provider <span id="provider-name"></span></td>
+                    <td colspan="8">Total hours for <span class="provider-name">Provider</span></td>
                     <td class="numeric grand-total"><span id="grand-total"></span></td>
                 </tfoot>   
             </table>  
@@ -274,7 +274,7 @@
            var daysInMonth = Date.getDaysInMonth(parseInt(year), parseInt(month));
            var firstDayDayNumber = getDayNumber(firstDayOfMonth);
            var monthName = firstDayOfMonth.toString("MMM");    
-           $("#time-month").text(monthName);           
+           $("#time-month").text(firstDayOfMonth.toString("MMMM"));           
            $("#time-year").text(year);           
            var weekStartDateNumber = 1;
            var rows = [];                    
