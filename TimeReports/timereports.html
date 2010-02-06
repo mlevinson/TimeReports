@@ -248,12 +248,38 @@
             if(number < 0) number = 6;
             return number;
         }
-
-        function getHours(month, year, company, team, provider){   
-            $.getJSON("js/j.json", function(data){
-              refreshGrid(transformGDS(data, month, year));                
-            });
-        }  
+              
+        function getHours(month, year, company, team, provider){ 
+              var start = year + "-" + month + "-" + "01";
+              var dt = Date.parseExact(start, "yyyy-M-dd");
+              var end = dt.moveToLastDayOfMonth().toString("yyyy-M-dd");
+              var tq = "SELECT worked_on,provider_id, provider_name, sum(hours) WHERE worked_on >= '";
+                 tq += start;
+                 tq += "' AND worked_on <= '";
+                 tq += end;                
+                 tq += "'";
+                 if(provider){
+                     tq += " AND provider_id='";
+                     tq += provider;        
+                     tq += "'";          
+                 }           
+                 tq += " ORDER BY provider_id, worked_on";
+                 
+                 var url = "http://odesk.com/gds/timereports/v1/companies/";
+                 url += company;  
+                 if(team){
+                     url += "/teams/";
+                     url += team;          
+                 }
+                 url += "/hours";      
+                 url += "?tq=";
+                 url += escape(tq); 
+                 url += "&callback=?"
+             
+              $.getJSON(url, function(data){
+                   refreshGrid(transformGDS(data, month, year));
+              });
+        }        
 
         function refreshGrid(data){
             $("#time-reports-grid").dataTable(data);    
@@ -291,7 +317,7 @@
                   done = true;
               }
               var end = monthName + " "   + ("00" + weekEndDay).slice(-2);
-              weeks.push(year + '' + month + '' + weekStartDateNumber);  
+              weeks.push(year + '' + month + '' + ("00" + weekStartDateNumber).slice(-2));  
               var weekLabel = start;
               if(end != start){
                   weekLabel += " - "  + end;
@@ -305,8 +331,8 @@
               var whichWeek = 0;
               $.each(weeks, function(weekIndex, weekFirstDay){
                   var weekDate = Date.parseExact(weekFirstDay, "yyyyMMdd"); 
-                  if (recordDate< weekDate){
-                      whichWeek = weekIndex - 1;
+                  if (recordDate < weekDate){
+                      whichWeek = weekIndex - 1; 
                       return false;
                   }
               });                  
@@ -405,7 +431,7 @@
             ];
         }
            $(function(){
-                getHours("08", "2009", "118", "2378", "urana");
+                getHours("02", "2010", "teammichael:teammichael", "teammichael:development", "mikelevinson");
             });            
         </script>
     </body>
