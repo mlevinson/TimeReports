@@ -411,7 +411,7 @@
               if(end != start){
                   weekLabel += " - "  + end;
               } 
-              rows.push([weekLabel, "", "", "", "", "", "", "", ""]);
+              rows.push([weekLabel, 0, 0, 0, 0, 0, 0, 0, 0]);
               weekStartDateNumber = weekEndDay + 1;
            }      
            if(data.table){
@@ -427,7 +427,9 @@
                          }
                      });                  
                      var recordWeekDay = getDayNumber(recordDate);
-                     rows[whichWeek][recordWeekDay + 1] = parseFloat(record.c[3].v);
+                      
+                     var currentVal = parseFloat(rows[whichWeek][recordWeekDay + 1]);    
+                     rows[whichWeek][recordWeekDay + 1] = currentVal + parseFloat(record.c[3].v);
                   });
            }
                                 
