@@ -1,5 +1,23 @@
 .table-caption{border-bottom: 1px solid black;}
 #time-reports-grid td.total{background-color:#ffffcc;font-weight:bold;}
 #time-reports-grid td.grand-total {background-color:#ffff66;font-weight:bold;}  
-#grand-total{padding-left: 60px;font-weight:bold;}
-    
+#grand-total{padding-left: 60px;font-weight:bold;}  
+#reports_header h1{
+    margin: 16px 0;
+}
+#company_bar{
+    padding: 6px 8px !important;
+    background-color: #D6DEEC;
+    border: 1px solid #345B9E;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    font-family: Tahoma, sans-serif;
+    font-size: 14px;
+    height: 24px;
+    margin-top: 10px;
+    padding: 6px 12px;
+    position: relative;
+    white-space: nowrap;
+    z-index: 10;
+|    
