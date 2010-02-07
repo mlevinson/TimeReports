@@ -79,7 +79,7 @@ $.widget("ui.ringceMonthSelector",{
         $("#month_selector_list li span").unbind("click").bind("click", function(){
             var index = $("#month_selector_list li span").index(this);
             date.set({month:index});
-            widget.selectDate(date);
+            widget.selectDate(date);  
         });
     },
     selectDate: function(d){
@@ -87,14 +87,18 @@ $.widget("ui.ringceMonthSelector",{
           $("#year_display").text(d.toString("yyyy"));                    
           $("#month_selector_list li span").removeClass("selected");
           var index = d.getMonth();
-          $("#month_selector_list li span").eq(index).addClass('selected');
+          $("#month_selector_list li span").eq(index).addClass('selected');  
+          if(this.options.onSelectionChange) {
+              this.options.onSelectionChange(d);
+          }
     }                    
                                                                 
 });      
     
 $.extend($.ui.ringceMenu, {
    defaults: {
-       selectedItemClass: 'selected'
+       selectedItemClass: 'selected',
+       onSelectionChange: null
    }
  });          
 })(jQuery);

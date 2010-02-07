@@ -20,7 +20,9 @@
     position: relative;
     white-space: nowrap;
     z-index: 10;
-}
+}                 
+
+#timereports_month_selector{display:block;float:right;}
 
    #month_selector_wrapper{width:240px;}
    #month_year_display{line-height: 24px;width:240px;}

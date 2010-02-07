@@ -250,11 +250,9 @@
                         Provider:&nbsp;<select class="dispatchable ie-onchange-fix">
                         </select>
                     </div>                                                  
-                    <div class="upper-right">
-                        <div class="control" id="timereports_month_selector">
-                            <div id="month_year_display"></div>
-                        </div>                    
-                    </div>
+                    <div class="control" id="timereports_month_selector">
+                        <div id="month_year_display"></div>
+                    </div>                    
                 </div>    
                 <div class="control_bar white">
                     <div class="upper-right">
@@ -277,14 +275,22 @@
             <h2 class="table-caption">Hours for <span class="provider-name">Provider</span>: <span id="time-month"></span> <span id="time-year"></span></h2>                
                 <table id="time-reports-grid" class="tabular">
                     <tfoot>
+                        <tr>
                         <td colspan="8">Total hours for <span class="provider-name">Provider</span></td>
                         <td class="numeric grand-total"><span id="grand-total"></span></td>
+                        </tr>
                     </tfoot>   
                 </table>                                            
            </div> 
         </div>
-        <script type="text/javascript">    
-
+        <script type="text/javascript">           
+        var selectedMonthName, selectedYear, selectedMonthNumber, selectedDate;
+        var selectedCompanyRef, selectedCompanyName, selectedCompanyId;
+        var selectedTeamRef, selectedTeamName, selectedTeamId;        
+        var selectedProviderRef, selectedProviderName, selectedProviderId;        
+        var grandTotal = 0; 
+        var dataTable;
+        
         function getDayNumber(date){
             var number = date.getDay();
             number--;
@@ -297,11 +303,11 @@
                         company_reference +
                         "/teams.json?callback=?";
             $.getJSON(url, function(data){ 
-                  var options = "<option value='0'>All</option>";  
+                  var options = "<option id='all_teams' value='0'>All</option>";  
                   $.each(data.teams, function(i, team){
                        if(team.status == "active" && team.is_hidden == "0"){
-                           options += "<option value='" + team.reference +"'>";
-                           options += team.id;         
+                           options += "<option id='" + team.id + "' value='" + team.reference +"'>";
+                           options += team.name;         
                            options += "</option>"
                        }
                   });                            
@@ -314,19 +320,22 @@
                         team_reference +
                         "/users.json?callback=?";
             $.getJSON(url, function(data){ 
-                  var options = "<option value='0'>All</option>";  
+                  var options = "<option id='all_providers' value='0'>All</option>";  
                   $.each(data.users, function(i, user){
                        if(user.status == "active" && user.is_provider == "1"){
-                           options += "<option value='" + user.id +"'>";
-                           options += user.first_name + " " + user.last_name + "(" + user.id + ")";         
+                           options += "<option id='" + user.id + "' value='" + user.reference +"'>";
+                           options += user.first_name + " " + user.last_name + " (" + user.id + ")";         
                            options += "</option>";
                        }
                   });                            
-                  $("#timereports_provider_selector SELECT").html(options);
+                  $("#timereports_provider_selector SELECT").html(options);   
+                  setProviderDefaults();       
+                  refreshReport();
             });
         }
               
-        function getHours(month, year, company, team, provider){ 
+        function getHours(month, year, company, team, provider){
+              grandTotal = 0;  
               var start = year + "-" + month + "-" + "01";
               var dt = Date.parseExact(start, "yyyy-M-dd");
               var end = dt.moveToLastDayOfMonth().toString("yyyy-M-dd");
@@ -353,13 +362,15 @@
                  url += escape(tq); 
                  url += "&callback=?"
              
-              $.getJSON(url, function(data){
+              $.getJSON(url, function(data){ 
                    refreshGrid(transformGDS(data, month, year));
               });
         }        
 
         function refreshGrid(data){
-            $("#time-reports-grid").dataTable(data);    
+            dataTable.fnClearTable(0);
+            dataTable.fnAddData(data);
+            
         }   
         
         function floatToTime(val){
@@ -373,6 +384,7 @@
         }
 
         function transformGDS(data, month, year){  
+           grandTotal = 0; 
            var firstDayOfMonth = Date.parseExact("1/" + month + "/" + year, "d/M/yyyy");
            var daysInMonth = Date.getDaysInMonth(parseInt(year), parseInt(month) - 1); 
            var firstDayDayNumber = getDayNumber(firstDayOfMonth);
@@ -402,21 +414,24 @@
               rows.push([weekLabel, "", "", "", "", "", "", "", ""]);
               weekStartDateNumber = weekEndDay + 1;
            }      
+           if(data.table){
+                 $.each(data.table.rows, function(i, record){
+                     if(record=="") return false;
+                     var recordDate = Date.parseExact(record.c[0].v, "yyyyMMdd");   
+                     var whichWeek = 0;
+                     $.each(weeks, function(weekIndex, weekFirstDay){
+                         var weekDate = Date.parseExact(weekFirstDay, "yyyyMMdd"); 
+                         if (recordDate < weekDate){
+                             whichWeek = weekIndex - 1; 
+                             return false;
+                         }
+                     });                  
+                     var recordWeekDay = getDayNumber(recordDate);
+                     rows[whichWeek][recordWeekDay + 1] = parseFloat(record.c[3].v);
+                  });
+           }
+                                
            
-           $.each(data.table.rows, function(i, record){
-              var recordDate = Date.parseExact(record.c[0].v, "yyyyMMdd");   
-              var whichWeek = 0;
-              $.each(weeks, function(weekIndex, weekFirstDay){
-                  var weekDate = Date.parseExact(weekFirstDay, "yyyyMMdd"); 
-                  if (recordDate < weekDate){
-                      whichWeek = weekIndex - 1; 
-                      return false;
-                  }
-              });                  
-              var recordWeekDay = getDayNumber(recordDate);
-              rows[whichWeek][recordWeekDay + 1] = parseFloat(record.c[3].v);
-           });                                                   
-           var grandTotal = 0;
            $.each(rows, function(i, row){
                row[8] = 0;
                var col = 1;
@@ -427,20 +442,8 @@
                }              
                grandTotal += row[8];
            });
-
-           return {
-               "aaData" :  rows,
-               "aoColumns" : getColumns(),
-               "bPaginate": false,
-               "bLengthChange": false,
-               "bFilter": false,
-               "bSort": false,
-               "bInfo": false,
-               "bAutoWidth":false,  
-               "fnFooterCallback": function( nFoot, aasData, iStart, iEnd, aiDisplay ) {
-                   $("#grand-total").text(floatToTime(grandTotal));
-               }
-           };
+           $("#grand-total").text(floatToTime(grandTotal));       
+           return rows;
         } 
 
         function getColumns(){ 
@@ -506,12 +509,101 @@
                       "sWidth": "48px" 
                  }
             ];
-        }
-           $(function(){ 
-               $("#month_year_display").ringceMonthSelector();
-                getTeams("49041");  
-                getProviders("49041");                  
-                getHours("02", "2010", "teammichael:teammichael", "teammichael:development", "mikelevinson");
+        }   
+        
+        function refreshReport(){
+            $(".provider-name").text(selectedProviderName);
+            getHours(selectedMonthNumber, selectedYear, selectedCompanyId, selectedTeamId, selectedProviderId);                                                               
+        }                          
+        
+        
+        function setSelectedDate(d){
+            selectedDate = d;
+            selectedMonthNumber = d.toString("MM");
+            selectedMonthName = d.toString("MMMM");            
+            selectedYear = d.toString("yyyy"); 
+            $("#time-month").text(selectedMonthName);
+            $("#time-year").text(selectedYear);
+            refreshReport();
+            
+        }     
+           
+           function setProviderDefaults(){  
+               if(!selectedProviderId || !$("#timereports_provider_selector SELECT #" + selectedProviderId).length){
+                   selectedProviderRef = selectedProviderId = null;
+                   selectedProviderName = "All Providers";
+               } else {
+                   $("#timereports_provider_selector SELECT #" + selectedProviderId).each(function(){
+                       this.selected = true;
+                   });
+               } 
+           }    
+           
+           function setTeamDefaults(){
+               selectedTeamRef = selectedTeamId = null; 
+               selectedTeamName = "All Teams";
+           }               
+           
+           function setCompanyDefaults(){
+                selectedCompanyRef = "49041";  
+                selectedCompanyName = "Michael";
+                selectedCompanyId = "teammichael:teammichael";
+           }
+        
+           $(function(){
+               var initComplete = false;
+               setSelectedDate(Date.today());
+               setCompanyDefaults(); 
+               setTeamDefaults();
+               setProviderDefaults();
+              
+                $("#timereports_team_selector SELECT").unbind("change").bind("change", function(){
+                    $("#timereports_team_selector SELECT option:selected").each(function(){
+                        selectedTeamRef = $(this).val();  
+                        if(selectedTeamRef == "0"){   
+                           setTeamDefaults();
+                           getProviders(selectedCompanyRef);                     
+                        } else {
+                           selectedTeamId = $(this).attr("id");
+                           selectedTeamName = $(this).text(); 
+                           getProviders(selectedTeamRef);
+                        }  
+                        refreshReport();
+                    }); 
+                }); 
+                
+                 $("#timereports_provider_selector SELECT").unbind("change").bind("change", function(){
+                        $("#timereports_provider_selector SELECT option:selected").each(function(){
+                            selectedProviderRef = $(this).val();    
+                            if(selectedProviderRef == "0"){ 
+                                selectedProviderId = null;   
+                                setProviderDefaults(true);
+                            } else {
+                                selectedProviderId = $(this).attr("id");  
+                                selectedProviderName = $(this).text();                                
+                            }
+                            refreshReport();
+                        }); 
+                    });
+                
+               getTeams(selectedCompanyRef);                  
+               getProviders(selectedCompanyRef);
+               $("#month_year_display").ringceMonthSelector({
+                   onSelectionChange: setSelectedDate
+               });   
+               dataTable = 
+               $("#time-reports-grid").dataTable({
+                    "aoColumns" : getColumns(),
+                      "bPaginate": false,
+                      "bLengthChange": false,
+                      "bFilter": false,
+                      "bSort": false,
+                      "bInfo": false,
+                      "bAutoWidth":false                   
+               });    
+                              
+               refreshReport();               
+               initComplete = true;
             });            
         </script>
     </body>
