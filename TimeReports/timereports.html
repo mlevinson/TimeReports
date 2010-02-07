@@ -368,7 +368,7 @@
 
         function transformGDS(data, month, year){  
            var firstDayOfMonth = Date.parseExact("1/" + month + "/" + year, "d/M/yyyy");
-           var daysInMonth = Date.getDaysInMonth(parseInt(year), parseInt(month));
+           var daysInMonth = Date.getDaysInMonth(parseInt(year), parseInt(month) - 1); 
            var firstDayDayNumber = getDayNumber(firstDayOfMonth);
            var monthName = firstDayOfMonth.toString("MMM");    
            $("#time-month").text(firstDayOfMonth.toString("MMMM"));           
@@ -383,7 +383,7 @@
               var start = monthName + " " + ("00" + weekStartDateNumber).slice(-2);           
               var weekEndDay =  weekStartDateNumber + weekDays;
               weekDays = 6;
-              if (weekEndDay > daysInMonth){
+              if (weekEndDay >= daysInMonth){
                   weekEndDay = daysInMonth;   
                   done = true;
               }
