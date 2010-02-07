@@ -45,6 +45,7 @@
         <script src="js/date.js" type="text/javascript" charset="utf-8"></script> 
         <script src="js/jquery.ui.ringceMonthSelector.js" type="text/javascript" charset="utf-8"></script>         
         <script src="js/jquery.dataTables.min.js" type="text/javascript" charset="utf-8"></script> 
+        <script src="js/jquery.formatCurrency.js" type="text/javascript" charset="utf-8"></script>         
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     </head>
     <body bgcolor="#FFFFFF">
@@ -289,7 +290,11 @@
         var selectedTeamRef, selectedTeamName, selectedTeamId;        
         var selectedProviderRef, selectedProviderName, selectedProviderId;        
         var grandTotal = 0; 
-        var dataTable;
+        var dataTable; 
+        
+        function mustGetHours(){
+            return $("#display_type #hours").hasClass("selected");
+        }
         
         function getDayNumber(date){
             var number = date.getDay();
@@ -339,7 +344,7 @@
               var start = year + "-" + month + "-" + "01";
               var dt = Date.parseExact(start, "yyyy-M-dd");
               var end = dt.moveToLastDayOfMonth().toString("yyyy-M-dd");
-              var tq = "SELECT worked_on,provider_id, provider_name, sum(hours) WHERE worked_on >= '";
+              var tq = "SELECT worked_on,provider_id, provider_name, sum(hours), sum(charges) WHERE worked_on >= '";
                  tq += start;
                  tq += "' AND worked_on <= '";
                  tq += end;                
@@ -357,14 +362,15 @@
                      url += "/teams/";
                      url += team;          
                  }
-                 url += "/hours";      
                  url += "?tq=";
                  url += escape(tq); 
                  url += "&callback=?"
              
               $.getJSON(url, function(data){ 
-                   refreshGrid(transformGDS(data, month, year));
-              });
+                   refreshGrid(transformGDS(data, month, year)); 
+              }); 
+              
+
         }        
 
         function refreshGrid(data){
@@ -427,9 +433,9 @@
                          }
                      });                  
                      var recordWeekDay = getDayNumber(recordDate);
-                      
                      var currentVal = parseFloat(rows[whichWeek][recordWeekDay + 1]);    
-                     rows[whichWeek][recordWeekDay + 1] = currentVal + parseFloat(record.c[3].v);
+                     var value = mustGetHours()?  record.c[3].v : record.c[4].v;
+                     rows[whichWeek][recordWeekDay + 1] = currentVal + parseFloat(value);
                   });
            }
                                 
@@ -443,8 +449,13 @@
                   }   
                }              
                grandTotal += row[8];
-           });
-           $("#grand-total").text(floatToTime(grandTotal));       
+           });        
+           if(mustGetHours()){
+               $("#grand-total").text(floatToTime(grandTotal));                      
+           } else {
+               $("#grand-total").text(currencyFromNumber(grandTotal));                                     
+           }
+
            return rows;
         } 
 
@@ -453,8 +464,13 @@
                 val = data.aData[data.iDataColumn];
                 if(val == 0){
                     return "";
-                }         
-                return floatToTime(val);
+                }  
+                if(mustGetHours()){
+                    val = floatToTime(val);
+                } else {                         
+                    val = currencyFromNumber(val);
+                }       
+                return val;
             }
             return [
                  {
@@ -558,7 +574,11 @@
                setCompanyDefaults(); 
                setTeamDefaults();
                setProviderDefaults();
-              
+                $("#display_type .radio").unbind("click").bind("click", function(){
+                    if($(this).hasClass("selected")) return false;
+                    $("#display_type .radio").toggleClass("selected");
+                    refreshReport();
+                });
                 $("#timereports_team_selector SELECT").unbind("change").bind("change", function(){
                     $("#timereports_team_selector SELECT option:selected").each(function(){
                         selectedTeamRef = $(this).val();  
