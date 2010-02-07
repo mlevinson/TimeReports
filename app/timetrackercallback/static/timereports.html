@@ -586,10 +586,10 @@
            }
            
            function setCompanyDefaults(){   
-                selectedCompanyRef = getParameterByName("company_ref", "49041");
-                $.getJSON("http://www.odesk.com/api/hr/v2/companies/" + selectedCompanyRef + ".json", 
+                selectedCompanyRef = getParameterByName("company_ref", "49041");    
+                var url = "http://www.odesk.com/api/hr/v2/companies/" + selectedCompanyRef + ".json?callback=?";
+                $.getJSON(url, 
                     function(data){     
-                     alert(data);   
                      selectedCompanyName = data.company.name;
                      $(".company_name").text(selectedCompanyName);
                      
