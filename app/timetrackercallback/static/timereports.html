@@ -237,7 +237,14 @@
             <div id="reports_header">
                 <div id="company_bar">
                     <span class="label">Company:</span>&nbsp;
-                    <span class="company_selector">Michael (teammichael)</span>
+                    <a id="company_switcher" href="#">
+                        <span class="company_name">Michael (teammichael)</span>  
+                        <span class="icon arrow_down"></span>        
+                    </a>    
+                    <div id="company_selector" style="display:none">
+                        <input type="text" id="company_reference"/>
+                        <button id="switch_company">Go</button>
+                    </div>    
                 </div>    
                 <h1>Monthly Timesheet</h1>
             </div>
@@ -310,6 +317,9 @@
             $.getJSON(url, function(data){ 
                   var options = "<option id='all_teams' value='0'>All</option>";  
                   $.each(data.teams, function(i, team){
+                       if(team.reference==selectedCompanyRef){
+                           selectedCompanyId = team.id;
+                       }
                        if(team.status == "active" && team.is_hidden == "0"){
                            options += "<option id='" + team.id + "' value='" + team.reference +"'>";
                            options += team.name;         
@@ -340,6 +350,7 @@
         }
               
         function getHours(month, year, company, team, provider){
+              if(!company) return;
               grandTotal = 0;  
               var start = year + "-" + month + "-" + "01";
               var dt = Date.parseExact(start, "yyyy-M-dd");
@@ -562,14 +573,41 @@
                selectedTeamName = "All Teams";
            }               
            
-           function setCompanyDefaults(){
-                selectedCompanyRef = "49041";  
-                selectedCompanyName = "Michael";
-                selectedCompanyId = "teammichael:teammichael";
+           function getParameterByName(name, defaultValue)
+           {
+             name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+             var regexS = "[\\?&]"+name+"=([^&#]*)";
+             var regex = new RegExp( regexS );
+             var results = regex.exec( window.location.href );
+             if( results == null )
+               return defaultValue;
+             else
+               return results[1];
+           }
+           
+           function setCompanyDefaults(){   
+                selectedCompanyRef = getParameterByName("company_ref", "49041");
+                $.getJSON("http://www.odesk.com/api/hr/v2/companies/" + selectedCompanyRef + ".json", 
+                    function(data){     
+                     alert(data);   
+                     selectedCompanyName = data.company.name;
+                     $(".company_name").text(selectedCompanyName);
+                     
+                }); 
            }
         
            $(function(){
                var initComplete = false;
+                  dataTable = 
+                  $("#time-reports-grid").dataTable({
+                       "aoColumns" : getColumns(),
+                         "bPaginate": false,
+                         "bLengthChange": false,
+                         "bFilter": false,
+                         "bSort": false,
+                         "bInfo": false,
+                         "bAutoWidth":false                   
+                  });
                setSelectedDate(Date.today());
                setCompanyDefaults(); 
                setTeamDefaults();
@@ -607,22 +645,24 @@
                             refreshReport();
                         }); 
                     });
-                
+               
+               $("#company_switcher").unbind("click").bind("click", function(){
+                  $("#company_selector").slideToggle(); 
+               });
+               
+               $("#switch_company").unbind("click").bind("click", function(){
+                   var new_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                   new_url += "?company_ref=";
+                   new_url += $("#company_reference").val();
+                   window.location.assign(new_url);
+               });
+               
                getTeams(selectedCompanyRef);                  
                getProviders(selectedCompanyRef);
                $("#month_year_display").ringceMonthSelector({
                    onSelectionChange: setSelectedDate
                });   
-               dataTable = 
-               $("#time-reports-grid").dataTable({
-                    "aoColumns" : getColumns(),
-                      "bPaginate": false,
-                      "bLengthChange": false,
-                      "bFilter": false,
-                      "bSort": false,
-                      "bInfo": false,
-                      "bAutoWidth":false                   
-               });    
+            
                               
                refreshReport();               
                initComplete = true;

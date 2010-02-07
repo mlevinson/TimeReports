@@ -20,7 +20,11 @@
     position: relative;
     white-space: nowrap;
     z-index: 10;
-}                 
+}    
+
+#company_selector{background-color:white; padding:8px; width: 240px; border:1px solid gray;}             
+
+#company_selector input[type="text"]{width:200px;}
 
 #timereports_month_selector{display:block;float:right;}
 
