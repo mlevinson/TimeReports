@@ -33,7 +33,8 @@
         <script type="text/javascript" src="http://www.odesk.com/js/jquery/jquery.pack.js">
 </script>
         <script type='text/javascript' src='http://www.odesk.com/js/jquery/plugins/static/REL201002040104/jquery.plugins.js'>
-</script>
+</script>  
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
         <link rel='stylesheet' href='http://www.odesk.com/js/jquery/plugins/css/static/REL201002040104/jquery.plugins.css' type='text/css' />
         <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/nav.js">
 </script>
@@ -42,6 +43,7 @@
         <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/odesk_console.js">
 </script>            
         <script src="js/date.js" type="text/javascript" charset="utf-8"></script> 
+        <script src="js/jquery.ui.ringceMonthSelector.js" type="text/javascript" charset="utf-8"></script>         
         <script src="js/jquery.dataTables.min.js" type="text/javascript" charset="utf-8"></script> 
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     </head>
@@ -248,13 +250,11 @@
                         Provider:&nbsp;<select class="dispatchable ie-onchange-fix">
                         </select>
                     </div>                                                  
-                    <div class="control" id="timereports_month_selector">
-                        <button clas="dispatchable">&lt;&lt;</button>
-                        <button clas="dispatchable">&lt;</button>    
-                        February 2010
-                        <button clas="dispatchable">&gt;</button>                        
-                        <button clas="dispatchable">&gt;&gt;</button>                        
-                    </div>                    
+                    <div class="upper-right">
+                        <div class="control" id="timereports_month_selector">
+                            <div id="month_year_display"></div>
+                        </div>                    
+                    </div>
                 </div>    
                 <div class="control_bar white">
                     <div class="upper-right">
@@ -507,7 +507,8 @@
                  }
             ];
         }
-           $(function(){
+           $(function(){ 
+               $("#month_year_display").ringceMonthSelector();
                 getTeams("49041");  
                 getProviders("49041");                  
                 getHours("02", "2010", "teammichael:teammichael", "teammichael:development", "mikelevinson");
