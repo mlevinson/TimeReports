@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>  
+    <head>  
+          <link rel="stylesheet" href="http://www.odesk.com/css/static/REL201002040104/odesk_console.css" type="text/css" />   
+          <script type="text/javascript" src="http://www.odesk.com/js/jquery/jquery.pack.js">
+          </script>     
+          <script src="js/date.js" type="text/javascript" charset="utf-8"></script>                
+        <script type="text/javascript">
+             var date;
+             function selectDate(d){
+                    $("#month_display").text(d.toString("MMMM"));
+                    $("#year_display").text(d.toString("yyyy"));                    
+                    $("#month_selector_list li span").removeClass("selected");
+                    var index = d.getMonth();
+                    $("#month_selector_list li span").eq(index).addClass('selected');
+             }
+             $(function(){        
+                date = Date.today();
+                date.moveToFirstDayOfMonth();
+                selectDate(date);                
+                $("#selection_display").unbind("click").bind("click", function(){
+                   $("#month_selector_container").slideToggle(); 
+                });
+
+                $("#one_year_back").unbind("click").bind("click", function(){ 
+                    date.moveToMonth(date.getMonth(), -1);
+                    selectDate(date);
+                });
+                
+                $("#one_year_forward").unbind("click").bind("click", function(){ 
+                    date.moveToMonth(date.getMonth());
+                    selectDate(date);
+                });                                 
+                
+                $("#one_month_back").unbind("click").bind("click", function(){ 
+                    date.moveToMonth(date.getMonth()-1, -1);
+                    selectDate(date);
+                });
+                
+                $("#one_month_forward").unbind("click").bind("click", function(){ 
+                    date.moveToMonth(date.getMonth()+1);
+                    selectDate(date);
+                });
+                
+                $("#month_selector_list li span").unbind("click").bind("click", function(){
+                    var index = $("#month_selector_list li span").index(this);
+                    date.set({month:index});
+                    selectDate(date);
+                }); 
+             });
+        </script>
+        <style type="text/css" media="screen">  
+               #month_selector_wrapper{padding-left: 100px;}
+               #month_year_display{line-height: 24px;width:230px;}
+               #selection_display{display:inline-block;width: 162px;text-align:center;cursor:pointer;}               
+               #month_selector_list{
+                   width: 230px;
+                   display:table;
+                   padding:0;
+                   margin:0;         
+                   border: 1px solid gray;  
+                   border-bottom:0;                              
+               }
+               #month_selector_list li{
+                   list-style-type:none; 
+                   width: 120px;  
+                   border-bottom: 1px solid gray;
+                   font-size: 12px;      
+               }  
+               #month_selector_list li span{ 
+                   display:block;
+                   width: 60px;
+                   padding: 0px 8px;
+                   cursor:pointer;   
+                   text-align:center;
+               }
+               #month_selector_list li span:hover{
+                   text-decoration:underline; 
+                   font-weight:bold
+               }                                             
+               #month_selector_list li span.selected{background-color: #345B9E;color:white;font-weight:bold;}
+               #month_selector_list li.column1 { margin-left: 0;}
+               #month_selector_list li.column2 { margin-left: 80px;}
+               #month_selector_list li.column3 { margin-left: 160px; width: 75px;} 
+               #month_selector_list li { line-height: 24px; }
+               #month_selector_list li.reset { margin-top: -100px; }
+        </style>
+    </head>    
+    <body>   
+        <div id="month_selector_wrapper">     
+        <div id="month_year_display">   
+            <a href="#" id="one_year_back" class="icon first"></a>
+            <a href="#" id="one_month_back" class="icon previous"></a>
+            <span id="selection_display">
+                <span id="month_display">May</span>
+                <span id="year_display">2009</span>  
+                <span class="icon arrow_down"></span>
+            </span>
+            <a href="#" id="one_month_forward" class="icon next"></a>
+            <a href="#" id="one_year_forward" class="icon last"></a>
+        </div>     
+        <div id="month_selector_container" style="display:none">
+             <ul id="month_selector_list"> 
+                 <li class="column1"><span>January</span></li>
+                 <li class="column1"><span>February</span></li>
+                 <li class="column1"><span>March</span></li>             
+                 <li class="column1"><span>April</span></li>
+                 <li class="column2 reset"><span class="selected">May</span></li>
+                 <li class="column2"><span>June</span></li>
+                 <li class="column2"><span>July</span></li>             
+                 <li class="column2"><span>August</span></li>
+                 <li class="column3 reset"><span>September</span></li>
+                 <li class="column3"><span>October</span></li>             
+                 <li class="column3"><span>November</span></li>
+                 <li class="column3"><span>December</span></li>
+             </ul> 
+         </div>
+    </body>
+</html>
