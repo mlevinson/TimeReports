@@ -46,6 +46,8 @@
         <script src="js/jquery.ui.ringceMonthSelector.js" type="text/javascript" charset="utf-8"></script>         
         <script src="js/jquery.dataTables.min.js" type="text/javascript" charset="utf-8"></script> 
         <script src="js/jquery.formatCurrency.js" type="text/javascript" charset="utf-8"></script>         
+        <script src="js/oDeskUtils.js" type="text/javascript" charset="utf-8"></script>                 
+        <script src="js/jquery.ui.odeskJSONSelect.js" type="text/javascript" charset="utf-8"></script>                         
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     </head>
     <body bgcolor="#FFFFFF">
@@ -331,22 +333,25 @@
         } 
         
         function getProviders(team_reference){
-             var url = "http://www.odesk.com/api/hr/v2/teams/" + 
-                        team_reference +
-                        "/users.json?callback=?";
-            $.getJSON(url, function(data){ 
-                  var options = "<option id='all_providers' value='0'>All</option>";  
-                  $.each(data.users, function(i, user){
-                       if(user.status == "active" && user.is_provider == "1"){
-                           options += "<option id='" + user.id + "' value='" + user.reference +"'>";
-                           options += user.first_name + " " + user.last_name + " (" + user.id + ")";         
-                           options += "</option>";
-                       }
-                  });                            
-                  $("#timereports_provider_selector SELECT").html(options);   
-                  setProviderDefaults();       
-                  refreshReport();
-            });
+             // var url = "http://www.odesk.com/api/hr/v2/teams/" + 
+             //                       team_reference +
+             //                       "/users.json?callback=?";
+             //           $.getJSON(url, function(data){ 
+             //                 var options = "<option id='all_providers' value='0'>All</option>";  
+             //                 $.each(data.users, function(i, user){
+             //                      if(user.status == "active" && user.is_provider == "1"){
+             //                          options += "<option id='" + user.id + "' value='" + user.reference +"'>";
+             //                          options += user.first_name + " " + user.last_name + " (" + user.id + ")";         
+             //                          options += "</option>";
+             //                      }
+             //                 });                            
+             //                 $("#timereports_provider_selector SELECT").html(options);   
+             //                 setProviderDefaults();       
+             //                 refreshReport();
+             //           });                                         
+             $("#timereports_provider_selector SELECT").oDeskJSONSelector("populate", {
+                "team": team_reference 
+             });
         }
               
         function getHours(month, year, company, team, provider){
@@ -610,42 +615,59 @@
                   });
                setSelectedDate(Date.today());
                setCompanyDefaults(); 
-               setTeamDefaults();
-               setProviderDefaults();
+               // setTeamDefaults();
+               // setProviderDefaults();
                 $("#display_type .radio").unbind("click").bind("click", function(){
                     if($(this).hasClass("selected")) return false;
                     $("#display_type .radio").toggleClass("selected");
                     refreshReport();
                 });
-                $("#timereports_team_selector SELECT").unbind("change").bind("change", function(){
-                    $("#timereports_team_selector SELECT option:selected").each(function(){
-                        selectedTeamRef = $(this).val();  
-                        if(selectedTeamRef == "0"){   
-                           setTeamDefaults();
-                           getProviders(selectedCompanyRef);                     
-                        } else {
-                           selectedTeamId = $(this).attr("id");
-                           selectedTeamName = $(this).text(); 
-                           getProviders(selectedTeamRef);
-                        }  
-                        refreshReport();
-                    }); 
-                }); 
-                
-                 $("#timereports_provider_selector SELECT").unbind("change").bind("change", function(){
-                        $("#timereports_provider_selector SELECT option:selected").each(function(){
-                            selectedProviderRef = $(this).val();    
-                            if(selectedProviderRef == "0"){ 
-                                selectedProviderId = null;   
-                                setProviderDefaults(true);
-                            } else {
-                                selectedProviderId = $(this).attr("id");  
-                                selectedProviderName = $(this).text();                                
-                            }
-                            refreshReport();
-                        }); 
-                    });
-               
+                // $("#timereports_team_selector SELECT").unbind("change").bind("change", function(){
+                //                    $("#timereports_team_selector SELECT option:selected").each(function(){
+                //                        selectedTeamRef = $(this).val();  
+                //                        if(selectedTeamRef == "0"){   
+                //                           setTeamDefaults();
+                //                           getProviders(selectedCompanyRef);                     
+                //                        } else {
+                //                           selectedTeamId = $(this).attr("id");
+                //                           selectedTeamName = $(this).text(); 
+                //                           getProviders(selectedTeamRef);
+                //                        }  
+                //                        refreshReport();
+                //                    }); 
+                //                }); 
+                //                
+                //                 $("#timereports_provider_selector SELECT").unbind("change").bind("change", function(){
+                //                        $("#timereports_provider_selector SELECT option:selected").each(function(){
+                //                            selectedProviderRef = $(this).val();    
+                //                            if(selectedProviderRef == "0"){ 
+                //                                selectedProviderId = null;   
+                //                                setProviderDefaults(true);
+                //                            } else {
+                //                                selectedProviderId = $(this).attr("id");  
+                //                                selectedProviderName = $(this).text();                                
+                //                            }
+                //                            refreshReport();
+                //                        }); 
+                //                    });
+               $("#timereports_provider_selector SELECT").oDeskJSONSelector({
+                   json_url_template: "http://www.odesk.com/api/hr/v2/teams/{team}/users.json?callback=?",
+                   all_options_id: "all_providers",
+                   all_options_text: "All Providers",
+                   dataVariable: "users",
+                   onSelectionChange: function(ref, id, name){
+                     selectedProviderId = id;
+                     selectedProviderRef = ref;
+                     selectedProviderName = name;
+                     refreshReport();  
+                   },
+                   processRow: function(user){
+                     return user.status == "active" && user.is_provider == "1";
+                   },                     
+                   rowName: function(user){
+                       return  user.first_name + " " + user.last_name + " (" + user.id + ")";
+                   }
+               });
                $("#company_switcher").unbind("click").bind("click", function(){
                   $("#company_selector").slideToggle(); 
                });

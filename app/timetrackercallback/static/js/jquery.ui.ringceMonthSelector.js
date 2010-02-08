@@ -95,7 +95,7 @@ $.widget("ui.ringceMonthSelector",{
                                                                 
 });      
     
-$.extend($.ui.ringceMenu, {
+$.extend($.ui.ringceMonthSelector, {
    defaults: {
        selectedItemClass: 'selected',
        onSelectionChange: null
