@@ -2,28 +2,31 @@
 $.widget("ui.oDeskJSONSelector",{
 
     _init: function(){     
-        var widget = this;
-        $(this).each(function(i, element){
-            $(this).unbind("change").bind("change", function(){
-                var select = this;
-                $(this).children("option:selected").each(function(){
-                    $.data(select, "selectedReference", $(this).val());
-                    if(selectedReference == "0"){
-                        widget.setDefaults();
-                        widget.selectionChanged(select);
-                    } else {                                           
-                        $.data(select, "selectedId", $(this).attr("id"));
-                        $.data(select, "selectedName", $(this).text());                                                
-                         widget.selectionChanged(select);                              
-                    }
-                });
+        var widget = this;   
+        var select = this.element[0];
+        widget.setDefaults(select);                    
+        $(select).unbind("change").bind("change", function(){
+            $(this).children("option:selected").each(function(){  
+                var selectedReference =  $(this).val();
+                $.data(select, "selectedReference", selectedReference);
+                if(selectedReference == "0"){
+                    widget.setDefaults(select);
+                } else {                                           
+                    $.data(select, "selectedId", $(this).attr("id"));
+                    $.data(select, "selectedName", $(this).text());                                                
+                     widget.selectionChanged(select);                              
+                }
             });
         });
     },
-    setDefaults: function(){
+    setDefaults: function(select){    
+        if(!select){
+            select = this.element[0];
+        }
         $.data(select, "selectedReference", null);                           
         $.data(select, "selectedId", 0);
-        $.data(select, "selectedName", this.options.all_option_text);        
+        $.data(select, "selectedName", this.options.all_option_text); 
+        this.selectionChanged(select);                              
     },
     selectionChanged: function(select){
         if(this.options.onSelectionChange){
@@ -48,7 +51,10 @@ $.widget("ui.oDeskJSONSelector",{
                 }
             });
 
-            $(widget.element[0]).html(options); 
+            $(widget.element[0]).html(options);  
+            if(widget.options.populationComplete){
+                widget.options.populationComplete();
+            }
        });
     }                                                           
 });      
@@ -71,6 +77,9 @@ $.extend($.ui.oDeskJSONSelector, {
        },
        rowName: function(row){
            return row.name;
+       },
+       populationComplete: function(){
+           
        }
        
    }

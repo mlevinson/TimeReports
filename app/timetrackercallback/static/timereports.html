@@ -299,58 +299,25 @@
         var selectedTeamRef, selectedTeamName, selectedTeamId;        
         var selectedProviderRef, selectedProviderName, selectedProviderId;        
         var grandTotal = 0; 
+        var initComplete = false;                          
         var dataTable; 
         
         function mustGetHours(){
             return $("#display_type #hours").hasClass("selected");
         }
         
-        function getDayNumber(date){
-            var number = date.getDay();
-            number--;
-            if(number < 0) number = 6;
-            return number;
-        }  
+       
         
         function getTeams(company_reference){                       
-            var url = "http://www.odesk.com/api/hr/v2/companies/" + 
-                        company_reference +
-                        "/teams.json?callback=?";
-            $.getJSON(url, function(data){ 
-                  var options = "<option id='all_teams' value='0'>All</option>";  
-                  $.each(data.teams, function(i, team){
-                       if(team.reference==selectedCompanyRef){
-                           selectedCompanyId = team.id;
-                       }
-                       if(team.status == "active" && team.is_hidden == "0"){
-                           options += "<option id='" + team.id + "' value='" + team.reference +"'>";
-                           options += team.name;         
-                           options += "</option>"
-                       }
-                  });                            
-                  $("#timereports_team_selector SELECT").html(options);
-            });
+              $("#timereports_team_selector SELECT").oDeskJSONSelector("populate", {
+                    "company": company_reference 
+                 });
         } 
         
-        function getProviders(team_reference){
-             // var url = "http://www.odesk.com/api/hr/v2/teams/" + 
-             //                       team_reference +
-             //                       "/users.json?callback=?";
-             //           $.getJSON(url, function(data){ 
-             //                 var options = "<option id='all_providers' value='0'>All</option>";  
-             //                 $.each(data.users, function(i, user){
-             //                      if(user.status == "active" && user.is_provider == "1"){
-             //                          options += "<option id='" + user.id + "' value='" + user.reference +"'>";
-             //                          options += user.first_name + " " + user.last_name + " (" + user.id + ")";         
-             //                          options += "</option>";
-             //                      }
-             //                 });                            
-             //                 $("#timereports_provider_selector SELECT").html(options);   
-             //                 setProviderDefaults();       
-             //                 refreshReport();
-             //           });                                         
+        function getProviders(team_reference){ 
+             
              $("#timereports_provider_selector SELECT").oDeskJSONSelector("populate", {
-                "team": team_reference 
+                "team": team_reference?team_reference:selectedCompanyRef 
              });
         }
               
@@ -372,7 +339,7 @@
                  }           
                  tq += " ORDER BY provider_id, worked_on";
                  
-                 var url = "http://odesk.com/gds/timereports/v1/companies/";
+                 var url = "http://www.odesk.com/gds/timereports/v1/companies/";
                  url += company;  
                  if(team){
                      url += "/teams/";
@@ -395,16 +362,6 @@
             
         }   
         
-        function floatToTime(val){
-             var hours = parseInt(val);
-             var minutes = Math.round((parseFloat(val) - hours) * 60);
-             if(minutes == 0){
-                 minutes = "00";
-             }
-             val = hours + ":" + minutes;
-             return val;
-        }
-
         function transformGDS(data, month, year){  
            grandTotal = 0; 
            var firstDayOfMonth = Date.parseExact("1/" + month + "/" + year, "d/M/yyyy");
@@ -557,40 +514,12 @@
             selectedMonthName = d.toString("MMMM");            
             selectedYear = d.toString("yyyy"); 
             $("#time-month").text(selectedMonthName);
-            $("#time-year").text(selectedYear);
-            refreshReport();
+            $("#time-year").text(selectedYear);  
+            if(initComplete) refreshReport();
             
         }     
            
-           function setProviderDefaults(){  
-               if(!selectedProviderId || !$("#timereports_provider_selector SELECT #" + selectedProviderId).length){
-                   selectedProviderRef = selectedProviderId = null;
-                   selectedProviderName = "All Providers";
-               } else {
-                   $("#timereports_provider_selector SELECT #" + selectedProviderId).each(function(){
-                       this.selected = true;
-                   });
-               } 
-           }    
-           
-           function setTeamDefaults(){
-               selectedTeamRef = selectedTeamId = null; 
-               selectedTeamName = "All Teams";
-           }               
-           
-           function getParameterByName(name, defaultValue)
-           {
-             name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-             var regexS = "[\\?&]"+name+"=([^&#]*)";
-             var regex = new RegExp( regexS );
-             var results = regex.exec( window.location.href );
-             if( results == null )
-               return defaultValue;
-             else
-               return results[1];
-           }
-           
-           function setCompanyDefaults(){   
+         function setCompanyDefaults(){   
                 selectedCompanyRef = getParameterByName("company_ref", "49041");    
                 var url = "http://www.odesk.com/api/hr/v2/companies/" + selectedCompanyRef + ".json?callback=?";
                 $.getJSON(url, 
@@ -602,7 +531,6 @@
            }
         
            $(function(){
-               var initComplete = false;
                   dataTable = 
                   $("#time-reports-grid").dataTable({
                        "aoColumns" : getColumns(),
@@ -613,43 +541,32 @@
                          "bInfo": false,
                          "bAutoWidth":false                   
                   });
-               setSelectedDate(Date.today());
-               setCompanyDefaults(); 
-               // setTeamDefaults();
-               // setProviderDefaults();
                 $("#display_type .radio").unbind("click").bind("click", function(){
                     if($(this).hasClass("selected")) return false;
                     $("#display_type .radio").toggleClass("selected");
                     refreshReport();
                 });
-                // $("#timereports_team_selector SELECT").unbind("change").bind("change", function(){
-                //                    $("#timereports_team_selector SELECT option:selected").each(function(){
-                //                        selectedTeamRef = $(this).val();  
-                //                        if(selectedTeamRef == "0"){   
-                //                           setTeamDefaults();
-                //                           getProviders(selectedCompanyRef);                     
-                //                        } else {
-                //                           selectedTeamId = $(this).attr("id");
-                //                           selectedTeamName = $(this).text(); 
-                //                           getProviders(selectedTeamRef);
-                //                        }  
-                //                        refreshReport();
-                //                    }); 
-                //                }); 
-                //                
-                //                 $("#timereports_provider_selector SELECT").unbind("change").bind("change", function(){
-                //                        $("#timereports_provider_selector SELECT option:selected").each(function(){
-                //                            selectedProviderRef = $(this).val();    
-                //                            if(selectedProviderRef == "0"){ 
-                //                                selectedProviderId = null;   
-                //                                setProviderDefaults(true);
-                //                            } else {
-                //                                selectedProviderId = $(this).attr("id");  
-                //                                selectedProviderName = $(this).text();                                
-                //                            }
-                //                            refreshReport();
-                //                        }); 
-                //                    });
+                $("#timereports_team_selector SELECT").oDeskJSONSelector({
+                   json_url_template: "http://www.odesk.com/api/hr/v2/companies/{company}/teams.json?callback=?",
+                   all_options_id: "all_teams",
+                   all_options_text: "All Teams",
+                   dataVariable: "teams",
+                   onSelectionChange: function(ref, id, name){
+                     selectedTeamId = id;
+                     selectedTeamRef = ref;
+                     selectedTeamName = name;
+                     getProviders(selectedTeamRef);                         
+                   },
+                   populationComplete: function(){
+                    $("#timereports_team_selector SELECT").oDeskJSONSelector("setDefaults");   
+                   },
+                   processRow: function(team){    
+                     if(team.reference == selectedCompanyRef){
+                         selectedCompanyId = team.id;
+                     }  
+                     return team.status == "active" && team.is_hidden == "0";
+                   }
+               }); 
                $("#timereports_provider_selector SELECT").oDeskJSONSelector({
                    json_url_template: "http://www.odesk.com/api/hr/v2/teams/{team}/users.json?callback=?",
                    all_options_id: "all_providers",
@@ -658,8 +575,20 @@
                    onSelectionChange: function(ref, id, name){
                      selectedProviderId = id;
                      selectedProviderRef = ref;
-                     selectedProviderName = name;
+                     selectedProviderName = name; 
                      refreshReport();  
+                   },
+                   populationComplete: function(){                                                
+                        if(!selectedProviderId 
+                            || !$("#timereports_provider_selector SELECT #" + selectedProviderId).length){
+                              $("#timereports_provider_selector SELECT").oDeskJSONSelector("setDefaults");
+                          } else {
+                              $("#timereports_provider_selector SELECT #" + selectedProviderId).each(
+                                  function(){
+                                      this.selected = true;
+                              });    
+                              refreshReport();
+                          }
                    },
                    processRow: function(user){
                      return user.status == "active" && user.is_provider == "1";
@@ -679,14 +608,12 @@
                    window.location.assign(new_url);
                });
                
-               getTeams(selectedCompanyRef);                  
-               getProviders(selectedCompanyRef);
                $("#month_year_display").ringceMonthSelector({
                    onSelectionChange: setSelectedDate
-               });   
-            
-                              
-               refreshReport();               
+               });
+               setSelectedDate(Date.today());
+               setCompanyDefaults();              
+               getTeams(selectedCompanyRef);                   
                initComplete = true;
             });            
         </script>
