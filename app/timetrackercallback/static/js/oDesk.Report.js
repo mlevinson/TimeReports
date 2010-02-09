@@ -74,6 +74,12 @@ oDesk = function(){
         this.provider = new oDeskObject();
         this.timeline = new oDeskTime(sTimeType);        
     };
+
+    services = function(){
+        
+    }; 
+    
+    services.prototype.dummyService = function(){};
     
     report = function(sTimeType){
         this.state = new reportState(sTimeType);
@@ -83,7 +89,7 @@ oDesk = function(){
         if(!this.state.company.reference) return null;
         return substitute(urlTemplates.company, {"company": this.state.company.reference});
     };                                            
-    report.prototype.getTeamQuery = function(){ 
+    report.prototype.getTeamsQuery = function(){ 
         if(!this.state.company.reference) return null;        
         return substitute(urlTemplates.team, {"company": this.state.company.reference});
     };
@@ -121,5 +127,13 @@ oDesk = function(){
         return query;                       
     };
     
-    return {"Report": report, "Timeline":oDeskTime, "HoursRecord": oDeskHoursRecord};
+    return {
+            "Team": oDeskObject, 
+            "Company": oDeskObject, 
+            "Provider": oDeskObject, 
+            "Report": report, 
+            "Services": services, 
+            "Timeline":oDeskTime, 
+            "HoursRecord": oDeskHoursRecord
+          };
 }();

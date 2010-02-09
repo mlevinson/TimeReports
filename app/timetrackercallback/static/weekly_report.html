@@ -49,13 +49,14 @@
         <script src="js/jquery.dataTables.min.js" type="text/javascript" charset="utf-8"></script> 
         <script src="js/jquery.formatCurrency.js" type="text/javascript" charset="utf-8"></script>         
         <script src="js/oDeskUtils.js" type="text/javascript" charset="utf-8"></script>                 
-        <script src="js/jquery.ui.odeskJSONSelect.js" type="text/javascript" charset="utf-8"></script>  
         <!--[if IE]><script type="text/javascript" src="js/jquery.bgiframe.pack.js"></script><![endif]-->
         <script type="text/javascript" src="js/jquery.datePicker.js"></script>                       
         <script type="text/javascript" src="js/oDesk.Report.js"></script>                               
+        <script type="text/javascript" src="js/oDesk.Services.js"></script>                                       
         <script type="text/javascript" src="js/oDesk.Report.DataTable.js"></script>                                       
         <script type="text/javascript" src="js/oDesk.ProviderSummary.js"></script>                                               
         <script type="text/javascript" src="js/jquery.ui.oDeskTimeReports.js"></script>                               
+        <script src="js/jquery.ui.oDeskSelectWidget.js" type="text/javascript" charset="utf-8"></script>          
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     </head>
     <body bgcolor="#FFFFFF">
@@ -300,11 +301,6 @@
     <script type="text/javascript">           
     var initComplete = false;                          
     var report = null;
-    function getTeams(company_reference){                       
-        $("#timereports_team_selector SELECT").oDeskJSONSelector("populate", {
-             "company": company_reference 
-        });
-    }   
    
     function refreshReport(){
        $(".team-name").text(report.state.team.getDisplayName());
@@ -318,38 +314,11 @@
      }
 
      function setCompanyDefaults(){                           
-            //TODO: Move this into a Services Area
-            report.state.company.reference = getParameterByName("company_ref", "49041");               
-            $.getJSON(report.getCompanyQuery(), 
-                function(data){     
-                 report.state.company.name = data.company.name;
-                 $(".company_name").text(report.state.company.name);
-            }); 
-       }
+         oDesk.Services.getCompany(report, getParameterByName("company_ref", "49041"), null);
+     }
 
        $(function(){
-             report = new oDesk.Report("week");
-             $("#timereports_team_selector SELECT").oDeskJSONSelector({
-               json_url_template: "http://www.odesk.com/api/hr/v2/companies/{company}/teams.json?callback=?",
-               all_option_id: "all_teams",
-               all_option_text: "All Teams",
-               dataVariable: "teams",
-               onSelectionChange: function(ref, id, name){
-                 report.state.team.id = id;
-                 report.state.team.reference = ref;
-                 report.state.team.name = name;
-               },
-               populationComplete: function(){
-                $("#timereports_team_selector SELECT").oDeskJSONSelector("setDefaults");   
-               },
-               processRow: function(team){    
-                 if(team.reference == report.state.company.reference){
-                     report.state.company.id = team.id;
-                 }  
-                 return true;
-               }
-           }); 
-    
+           report = new oDesk.Report("week");
            $("#company_switcher").unbind("click").bind("click", function(){
               $("#company_selector").slideToggle(); 
            });
@@ -395,14 +364,25 @@
                 }
             ); 
 
-           setCompanyDefaults();              
-           getTeams(report.state.company.reference); 
+           setCompanyDefaults();
+            $("#timereports_team_selector SELECT").oDeskSelectWidget({ 
+              "report": report,  
+              "all_option_id": "all_teams",
+               "all_option_text": "All Teams",
+               stateVariable: report.state.team,
+               service: oDesk.Services.getTeams
+               })
+               .unbind("populationComplete").bind("populationComplete", function(){
+                  $(this).oDeskJSONSelector("setDefaults"); 
+             }).oDeskSelectWidget("populate");
+
            $("#time-reports-grid")
                 .oDeskTimeReports({"report": report})
                 .unbind("dataTablePopulated").bind("dataTablePopulated", function(e, results){
                       $("#grand_total_hours").text(floatToTime(results.grandTotalHours));
                       $("#grand_total_charges").text(currencyFromNumber(results.grandTotalCharges)); 
                 });
+       
             $("body").ajaxComplete(function(){
                   if(!initComplete && report.state.company.id){
                       refreshReport();
