@@ -6,8 +6,13 @@ oDesk = function(){
     };
     
     oDeskObject.prototype.getDisplayName = function(){
+        if(this.id == 0) return this.name;
         return this.name + " (" + this.id + ")";
     };  
+    
+    oDeskObject.prototype.setDisplayName = function(displayName){
+        this.name = displayName.replace(" (" + this.id + ")", "");
+    };
     
     urlTemplates = {
         "company": "http://www.odesk.com/api/hr/v2/companies/{company}.json?callback=?",

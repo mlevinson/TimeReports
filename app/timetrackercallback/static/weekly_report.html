@@ -303,8 +303,8 @@
     var report = null;
    
     function refreshReport(){
-       $(".team-name").text(report.state.team.getDisplayName());
-       $("#time-week").text(report.state.timeline.getDisplayName());       
+       $(".team-name").text(report.state.team.name);
+       $("#time-week").text(report.state.timeline.getDisplayNameWithAbbreviations());       
        $("#time-reports-grid").oDeskTimeReports("generateReport");                                             
     } 
     
@@ -366,14 +366,14 @@
 
            setCompanyDefaults();
             $("#timereports_team_selector SELECT").oDeskSelectWidget({ 
-              "report": report,  
-              "all_option_id": "all_teams",
-               "all_option_text": "All Teams",
+              report: report,  
+              all_option_id: "all_teams",
+               all_option_text: "All Teams",
                stateVariable: report.state.team,
                service: oDesk.Services.getTeams
                })
                .unbind("populationComplete").bind("populationComplete", function(){
-                  $(this).oDeskJSONSelector("setDefaults"); 
+                  $(this).oDeskSelectWidget("setDefaults"); 
              }).oDeskSelectWidget("populate");
 
            $("#time-reports-grid")

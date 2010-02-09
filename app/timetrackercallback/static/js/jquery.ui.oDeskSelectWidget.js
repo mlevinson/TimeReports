@@ -10,10 +10,14 @@ $.widget("ui.oDeskSelectWidget",{
                 if(selectedReference == "0"){
                     widget.setDefaults(select);
                 } else {      
-                     var obj = this.options.stateVariable; 
+                     var obj = widget.options.stateVariable; 
                      obj.reference = selectedReference; 
-                     obj.id = $(this).attr("id");
-                     obj.name = $(this).text();                                                
+                     obj.id = $(this).attr("id"); 
+                     if(widget.options.useDisplayName){
+                         obj.setDisplayName($(this).text());
+                     } else {
+                         obj.name = $(this).text();                                                                         
+                     }   
                      $(select).trigger("selectionChanged", obj);                            
                 }
             });
@@ -39,7 +43,7 @@ $.widget("ui.oDeskSelectWidget",{
            $.each(objs, function(i, obj){
                options += "<option id='" + obj.id + "' value='" +
                            obj.reference +"'>";
-               options += obj.getDisplayName();
+               options += widget.options.useDisplayName ? obj.getDisplayName() : obj.name;
                options += "</option>";
            }); 
            $(widget.element[0]).html(options);  
@@ -53,7 +57,8 @@ $.extend($.ui.oDeskSelectWidget, {
        report: null,
        stateVariable: null,
        service: null,
-       all_option_text:   "All",
+       useDisplayName:  false,
+       all_option_text: "All",
        all_option_id:   "All"
    }
  });          

@@ -13,8 +13,8 @@
     oDesk.Services.getTeams = function(report, callBack){
         $.getJSON(report.getTeamsQuery(), function(data){  
             teams = [];
-            $.each(data, function(i, team){
-               var teamObject = oDesk.Team();
+            $.each(data.teams, function(i, team){
+               var teamObject = new oDesk.Team();
                teamObject.id = team.id;
                teamObject.reference = team.reference;
                teamObject.name = team.name;
@@ -32,8 +32,8 @@
     oDesk.Services.getProviders = function(report, callBack){
         $.getJSON(report.getProvidersQuery(), function(data){  
             providers = [];
-            $.each(data, function(i, team){
-               var providerObject = oDesk.Provider();
+            $.each(data.users, function(i, provider){
+               var providerObject = new oDesk.Provider();
                providerObject.id = provider.id;
                providerObject.reference = provider.reference;
                providerObject.name = provider.name;
