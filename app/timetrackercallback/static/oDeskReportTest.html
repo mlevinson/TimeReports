@@ -12,7 +12,11 @@
 <ul></ul>
 
 <script type="text/javascript">
-     $(function(){ 
+     $(function(){        
+         oDesk.Report.prototype.transform = function(){
+             return "SumpoSumpo";
+         };
+         
          var report = new oDesk.Report("month"); 
          report.state.company.id = "teammichael:teammichael";
          report.state.company.reference = "49041";
@@ -33,6 +37,7 @@
          $("ul").append("<li>" + report.getTeamQuery() + "</li>");         
          $("ul").append("<li>" + report.getProviderQuery() + "</li>");       
          $("ul").append("<li>" + report.getHoursQuery() + "</li>");                           
+         $("ul").append("<li>" + report.transform() + "</li>");           
      });
 </script>
     
