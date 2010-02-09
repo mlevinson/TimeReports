@@ -45,7 +45,6 @@
 </script>            
         <script src="js/date.js" type="text/javascript" charset="utf-8"></script> 
         <script src="js/date1.js" type="text/javascript" charset="utf-8"></script>        
-        <script src="js/jquery.ui.ringceMonthSelector.js" type="text/javascript" charset="utf-8"></script>         
         <script src="js/jquery.dataTables.min.js" type="text/javascript" charset="utf-8"></script> 
         <script src="js/jquery.formatCurrency.js" type="text/javascript" charset="utf-8"></script>         
         <script src="js/oDeskUtils.js" type="text/javascript" charset="utf-8"></script>                 
@@ -57,6 +56,8 @@
         <script type="text/javascript" src="js/oDesk.ProviderSummary.js"></script>                                               
         <script type="text/javascript" src="js/jquery.ui.oDeskTimeReports.js"></script>                               
         <script src="js/jquery.ui.oDeskSelectWidget.js" type="text/javascript" charset="utf-8"></script>          
+        <script src="js/jquery.ui.ringceMonthSelector.js" type="text/javascript" charset="utf-8"></script>         
+        <script src="js/jquery.ui.weekSelector.js" type="text/javascript" charset="utf-8"></script>                         
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     </head>
     <body bgcolor="#FFFFFF">
@@ -273,13 +274,7 @@
                         </select>
                     </div>
                     <div class="control" id="timereports_week_selector">                        
-                        <div id="week_display">          
-                            <a href="#" id="previous_week" class="icon previous"></a> 
-                            <a id="week_selector" class="dispatchable">
-                                <span id="week_selector_name"></span><span class="icon arrow_down"></span>
-                            </a>  
-                            <a href="#" id="next_week" class="icon next"></a>                            
-                        </div>
+                       
                     </div> 
                     <div class="control" id="run_report">
                         <button id="go_run_report">Go</button>
@@ -330,44 +325,19 @@
                new_url += "?company_ref=";
                new_url += $("#company_reference").val();
                window.location.assign(new_url);
-           });     
-       
-           $("#previous_week").unbind("click").bind("click", function(){
-              var newStartDate = report.state.timeline.startDate.clone();
-              newStartDate.moveToDayOfWeek(1, -1); 
-              $("#week_selector").dpSetSelected(newStartDate.toString("dd/MM/yyyy"));
-           }); 
-           
-          $("#next_week").unbind("click").bind("click", function(){
-             var newStartDate = report.state.timeline.startDate.clone();
-             newStartDate.moveToDayOfWeek(1, 1); 
-             $("#week_selector").dpSetSelected(newStartDate.toString("dd/MM/yyyy"));
-          });
-           setSelectedDate(Date.today()); 
-           $("#week_selector").datePicker(
-               {
-                   startDate:"01/01/1996", 
-                   selectWeek:true, 
-                   createButton:false,
-               
-               }
-            )
-           .dpSetSelected(report.state.timeline.startDate.toString("dd/MM/yyyy")) 
-           .unbind("click").bind("click", 
-                function(){
-                   $("#week_selector").dpDisplay();                   
-                 }  
-            )
-            .unbind("dateSelected").bind("dateSelected",
-                function(e, selectedDate, $td){
-                    setSelectedDate(selectedDate);
-                }
-            ); 
-
+           });
+        
+           setSelectedDate(Date.today());    
+           $("#timereports_week_selector")
+            .weekSelector({weekStartDate: report.state.timeline.startDate})
+            .unbind("dateSelected").bind("dateSelected", function(e, selectedDate){
+                setSelectedDate(selectedDate);
+            });     
+        
            setCompanyDefaults();
-            $("#timereports_team_selector SELECT").oDeskSelectWidget({ 
-              report: report,  
-              all_option_id: "all_teams",
+           $("#timereports_team_selector SELECT").oDeskSelectWidget({ 
+               report: report,  
+               all_option_id: "all_teams",
                all_option_text: "All Teams",
                stateVariable: report.state.team,
                service: oDesk.Services.getTeams
