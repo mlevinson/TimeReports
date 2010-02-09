@@ -32,14 +32,31 @@
 #hours-title{text-transform:capitalize;}
 #hours-small{text-transform:lowercase;}
 
-/* ========================= */
-/* = Month Selector Styles = */
-/* ========================= */
+#reports_list ul{
+    padding:0;
+    margin:0;  
+}
+
+#reports_list li{
+    list-style-type: none; 
+    margin-bottom: 16px;
+    border-bottom: 1px solid gray;
+}      
 
 #timereports_team_selector,
 #timereports_provider_selector,
 #timereports_week_selector,
 #timereports_month_selector{display:block;float:left;}
+
+#week_display{
+    width: 240px;
+}
+
+/* ========================= */
+/* = Month Selector Styles = */
+/* ========================= */
+
+
 
    #month_selector_wrapper{width:240px;}
    #month_year_display{line-height: 24px;width:240px;}

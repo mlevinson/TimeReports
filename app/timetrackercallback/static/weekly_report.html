@@ -239,7 +239,14 @@
                         </li>
                     </ul>
                 </form>
-                <div id="lev2" style="height:1.2em;"></div>
+                <div id="lev2" class="menu">
+                    <li class="menuitem">
+                        <a class="nav-tooltip" href="reports_home.html">Reports Home</a></li>
+                    <li class="menuitem">
+                        <a class="nav-tooltip" href="timereports.html">Monthly Report</a></li>                    
+                    <li class="menuitem nav-current">
+                        <a class="nav-tooltip" href="weekly_report.html">Weekly Report</a></li>                                        
+                </div>
             </div>                     
             <div id="reports_header">
                 <div id="company_bar">
@@ -264,12 +271,9 @@
                     <div class="control" id="timereports_week_selector">                        
                         <div id="week_display">          
                             <a href="#" id="previous_week" class="icon previous"></a> 
-                            &nbsp;
                             <a id="week_selector" class="dispatchable">
-                                <span id="week_selector_name"></span>
-                                <span class="icon arrow_down">
+                                <span id="week_selector_name"></span><span class="icon arrow_down"></span>
                             </a>  
-                            &nbsp;                              
                             <a href="#" id="next_week" class="icon next"></a>                            
                         </div>
                     </div> 
@@ -408,7 +412,7 @@
          }
          selectedStartDate = d;
          selectedEndDate = d.clone();
-         selectedEndDate.addDays(7);
+         selectedEndDate.addDays(6);
          selectedWeekName = selectedStartDate.toString("dd MMM yyyy")
                             + " - "  + selectedEndDate.toString("dd MMM yyyy"); 
          $("#week_selector_name").text(selectedWeekName);
@@ -462,7 +466,18 @@
                window.location.assign(new_url);
            });     
        
-       
+           $("#previous_week").unbind("click").bind("click", function(){
+              var newStartDate = selectedStartDate.clone();
+              newStartDate.moveToDayOfWeek(1, -1); 
+              $("#week_selector").dpSetSelected(newStartDate.toString("dd/MM/yyyy"));
+           }); 
+           
+          $("#next_week").unbind("click").bind("click", function(){
+             var newStartDate = selectedStartDate.clone();
+             newStartDate.moveToDayOfWeek(1, 1); 
+             $("#week_selector").dpSetSelected(newStartDate.toString("dd/MM/yyyy"));
+          });
+           setSelectedDate(Date.today()); 
            $("#week_selector").datePicker(
                {
                    startDate:"01/01/1996", 
@@ -471,7 +486,7 @@
                
                }
             )
-           .dpSetSelected(Date().toString("dd/MM/yyyy")) 
+           .dpSetSelected(selectedStartDate.toString("dd/MM/yyyy")) 
            .unbind("click").bind("click", 
                 function(){
                    $("#week_selector").dpDisplay();                   
@@ -482,7 +497,7 @@
                     setSelectedDate(selectedDate);
                 }
             ); 
-           setSelectedDate(Date.today()); 
+
            setCompanyDefaults();              
            getTeams(selectedCompanyRef); 
            $("#time-reports-grid").oDeskTimeReports({

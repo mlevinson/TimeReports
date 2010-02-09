@@ -5,8 +5,24 @@ api_version: 1
 
 handlers:
 - url: /
+  static_files: static/reports_home.html
+  upload: static/reports_home.html
+  
+- url: /monthly
   static_files: static/timereports.html
-  upload: static/timereports.html
+  upload: static/timereports.html  
+
+- url: /timereports.html
+  static_files: static/timereports.html
+  upload: static/timereports.html  
+
+- url: /weekly
+  static_files: static/weekly_report.html
+  upload: static/weekly_report.html
+  
+- url: /weekly_report.html
+  static_files: static/weekly_report.html
+  upload: static/weekly_report.html  
   
 - url: /css
   static_dir: static/css
