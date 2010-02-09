@@ -1,6 +1,5 @@
 (function($) { 
 $.widget("ui.oDeskJSONSelector",{
-
     _init: function(){     
         var widget = this;   
         var select = this.element[0];
@@ -82,7 +81,6 @@ $.extend($.ui.oDeskJSONSelector, {
        populationComplete: function(){
            
        }
-       
    }
  });          
 })(jQuery);

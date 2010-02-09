@@ -38,6 +38,7 @@
 
 #timereports_team_selector,
 #timereports_provider_selector,
+#timereports_week_selector,
 #timereports_month_selector{display:block;float:left;}
 
    #month_selector_wrapper{width:240px;}
