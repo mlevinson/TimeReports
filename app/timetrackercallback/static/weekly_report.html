@@ -58,6 +58,7 @@
         <script src="js/jquery.ui.oDeskSelectWidget.js" type="text/javascript" charset="utf-8"></script>          
         <script src="js/jquery.ui.ringceMonthSelector.js" type="text/javascript" charset="utf-8"></script>         
         <script src="js/jquery.ui.weekSelector.js" type="text/javascript" charset="utf-8"></script>                         
+        <script type="text/javascript" src="js/oDesk.ProviderSummaryUI.js"></script>           
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     </head>
     <body bgcolor="#FFFFFF">
@@ -293,72 +294,9 @@
                 </table>                                            
            </div> 
         </div>
-    <script type="text/javascript">           
-    var initComplete = false;                          
-    var report = null;
-   
-    function refreshReport(){
-       $(".team-name").text(report.state.team.name);
-       $("#time-week").text(report.state.timeline.getDisplayNameWithAbbreviations());       
-       $("#time-reports-grid").oDeskTimeReports("generateReport");                                             
-    } 
-    
-     function setSelectedDate(d){   
-         report.state.timeline = new oDesk.Timeline("week", d);
-         $("#week_selector_name").text(report.state.timeline.getDisplayNameWithAbbreviations());
-     }
-
-     function setCompanyDefaults(){                           
-         oDesk.Services.getCompany(report, getParameterByName("company_ref", "49041"), null);
-     }
-
+    <script type="text/javascript"> 
        $(function(){
-           report = new oDesk.Report("week");
-           $("#company_switcher").unbind("click").bind("click", function(){
-              $("#company_selector").slideToggle(); 
-           });
-           $("#go_run_report").unbind("click").bind("click", function(){
-              refreshReport(); 
-           });
-           $("#switch_company").unbind("click").bind("click", function(){
-               var new_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
-               new_url += "?company_ref=";
-               new_url += $("#company_reference").val();
-               window.location.assign(new_url);
-           });
-        
-           setSelectedDate(Date.today());    
-           $("#timereports_week_selector")
-            .weekSelector({weekStartDate: report.state.timeline.startDate})
-            .unbind("dateSelected").bind("dateSelected", function(e, selectedDate){
-                setSelectedDate(selectedDate);
-            });     
-        
-           setCompanyDefaults();
-           $("#timereports_team_selector SELECT").oDeskSelectWidget({ 
-               report: report,  
-               all_option_id: "all_teams",
-               all_option_text: "All Teams",
-               stateVariable: report.state.team,
-               service: oDesk.Services.getTeams
-               })
-               .unbind("populationComplete").bind("populationComplete", function(){
-                  $(this).oDeskSelectWidget("setDefaults"); 
-             }).oDeskSelectWidget("populate");
-
-           $("#time-reports-grid")
-                .oDeskTimeReports({"report": report})
-                .unbind("dataTablePopulated").bind("dataTablePopulated", function(e, results){
-                      $("#grand_total_hours").text(floatToTime(results.grandTotalHours));
-                      $("#grand_total_charges").text(currencyFromNumber(results.grandTotalCharges)); 
-                });
-       
-            $("body").ajaxComplete(function(){
-                  if(!initComplete && report.state.company.id){
-                      refreshReport();
-                      initComplete = true;     
-                  }
-             });
+            providerSummary.init();
         });            
     </script>  
     </body>
