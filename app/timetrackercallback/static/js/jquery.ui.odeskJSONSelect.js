@@ -38,7 +38,8 @@ $.widget("ui.oDeskJSONSelector",{
     },
     populate: function(params){              
        if(!this.options.dataVariable)  return;
-       var options = "<option id='" + this.options.all_option_id + "' value='0'>All</option>";         
+       var options = "<option id='" + this.options.all_option_id + "' value='0'>" +
+                        this.options.all_option_text + "</option>";         
        var url = substitute(this.options.json_url_template, params);
        var widget = this;
        $.getJSON(url, function(data){

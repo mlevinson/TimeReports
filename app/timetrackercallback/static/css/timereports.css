@@ -26,7 +26,19 @@
 
 #company_selector input[type="text"]{width:200px;}
 
-#timereports_month_selector{display:block;float:right;}
+#run_report{
+    float:right;
+}
+#hours-title{text-transform:capitalize;}
+#hours-small{text-transform:lowercase;}
+
+/* ========================= */
+/* = Month Selector Styles = */
+/* ========================= */
+
+#timereports_team_selector,
+#timereports_provider_selector,
+#timereports_month_selector{display:block;float:left;}
 
    #month_selector_wrapper{width:240px;}
    #month_year_display{line-height: 24px;width:240px;}
@@ -64,4 +76,5 @@
    #month_selector_list li.column3 { margin-left: 160px; width: 75px;} 
    #month_selector_list li { line-height: 24px; }
    #month_selector_list li.reset { margin-top: -100px; }
+   
     
