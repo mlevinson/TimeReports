@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" class="www-content" lang="en">
+<head>                     
+    <script type="text/javascript" src="http://www.odesk.com/js/jquery/jquery.pack.js"></script>
+    <script src="js/date.js" type="text/javascript"></script>           
+    <script src="js/date1.js" type="text/javascript"></script>          
+    <script src="js/oDeskUtils.js" type="text/javascript"></script>          
+    <script src="js/oDesk.Report.js" type="text/javascript"></script>
+</head>
+<body>
+<ul></ul>
+
+<script type="text/javascript">
+     $(function(){ 
+         var report = new oDesk.Report("month"); 
+         report.state.company.id = "teammichael:teammichael";
+         report.state.company.reference = "49041";
+         report.state.company.name = "Michael";                                   
+         $("ul").append("<li>" + report.state.company.reference + "</li>");         
+         $("ul").append("<li>" + report.state.company.getDisplayName() + "</li>");
+         $("ul").append("<li>" + report.state.timeline.getDisplayNameWithAbbreviations() + "</li>");   
+         $("ul").append("<li>" + report.state.timeline.getDisplayName() + "</li>");            
+         report = new oDesk.Report("week");
+         report.state.company.id = "teammichael:teammichael";
+         report.state.company.reference = "49041";
+         report.state.company.name = "Michael";                                                            
+         $("ul").append("<li>" + report.state.timeline.getDisplayNameWithAbbreviations() + "</li>");
+         $("ul").append("<li>" + report.state.timeline.getDisplayName() + "</li>");
+         
+         
+         $("ul").append("<li>" + report.getCompanyQuery() + "</li>");         
+         $("ul").append("<li>" + report.getTeamQuery() + "</li>");         
+         $("ul").append("<li>" + report.getProviderQuery() + "</li>");       
+         $("ul").append("<li>" + report.getHoursQuery() + "</li>");                           
+     });
+</script>
+    
+</body>
+
+</html>
