@@ -44,16 +44,19 @@ $.widget("ui.oDeskTimeReports",{
              return url;
      },
      generateReport: function(){
+         var dataTable = this.options.dataTable;
+         dataTable.fnClearTable(1);
          if(!this.options.transformFunction || !this.options.startDate || 
              !this.options.endDate || !this.options.companyId) return;
          var url = this.options.queryFunction ? this.options.queryFunction() : this.defaultQueryFunction();
          if(!url) return;
          var widget = this; 
-         var dataTable = this.options.dataTable;
          $.getJSON(url, function(data){
-             var rows = widget.options.transformFunction(data);
-             dataTable.fnClearTable(0);
-             dataTable.fnAddData(rows);             
+             var results = widget.options.transformFunction(data);
+             dataTable.fnAddData(results.rows);
+             if(widget.options.onComplete){
+                 widget.options.onComplete(results);
+             }
          });
      }
     
@@ -69,7 +72,8 @@ $.extend($.ui.oDeskTimeReports, {
        "endDate": null,
        "companyId": null,
        "teamId": null,
-       "providerId": null
+       "providerId": null,
+       "onComplete": null
    }
  });          
 })(jQuery);    

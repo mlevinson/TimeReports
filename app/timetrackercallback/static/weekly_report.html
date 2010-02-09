@@ -266,7 +266,8 @@
                             <a href="#" id="previous_week" class="icon previous"></a> 
                             &nbsp;
                             <a id="week_selector" class="dispatchable">
-                                <span id="week_selector_name">8th Feb 2010&nbsp;-&nbsp;14th Feb 2010</span>                     <span class="icon arrow_down">
+                                <span id="week_selector_name"></span>
+                                <span class="icon arrow_down">
                             </a>  
                             &nbsp;                              
                             <a href="#" id="next_week" class="icon next"></a>                            
@@ -277,7 +278,7 @@
                     </div>
                     <br class="clear">    
                 </div>
-            <h2 class="table-caption">Hours &amp; Charges for <span class="team-name">Team</span> during the week of <span id="time-week"></span>&nbsp;<span id="time-month"></span>&nbsp;<span id="time-year"></span></h2>                
+            <h2 class="table-caption">Hours &amp; Charges for <span class="team-name">Team</span> during the week of <span id="time-week"></span></h2>                
                 <table id="time-reports-grid" class="tabular">
                     <tfoot>
                         <tr>
@@ -289,196 +290,216 @@
                 </table>                                            
            </div> 
         </div>
-        <script type="text/javascript">           
-        var selectedWeekName, selectedMonthName, selectedStartDate, selectedEndDate;
-        var selectedCompanyRef, selectedCompanyName, selectedCompanyId;
-        var selectedTeamRef, selectedTeamName, selectedTeamId;        
-        var grandTotalHours = 0, grandTotalCharges = 0; 
-        var initComplete = false;                          
-        var dataTable; 
-        
-        function getTeams(company_reference){                       
-            $("#timereports_team_selector SELECT").oDeskJSONSelector("populate", {
-                 "company": company_reference 
-            });
-        }   
-        
-        var transFormGDSForWeeklyReports = function(data){
-              if(!data) return;     
-              var rows = []; 
-              if(data.table){
-                  var providers = [], rows = [];
-                  $.each(data.table.rows, function(i, record){  
-                      if(record=="") return false;
-                      var providerId = record.c[1].v;
-                      if($.inArray(providerId, providers) == -1){
-                          providers.push(providerId);
-                      }
-                  });                              
-                  providers.sort();
-                  $.each(providers, function(i, providerId){
-                      rows.push([providerId, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-                  });
+    <script type="text/javascript">           
 
-                  $.each(data.table.rows, function(i, record){
-                      if(record=="") return false;  
-                       var recordDate = Date.parseExact(record.c[0].v, "yyyyMMdd");   
-                       var row = rows[$.inArray(record.c[1].v, providers)];
-                       var recordWeekDay = getDayNumber(recordDate);
-                       var currentVal = parseFloat(row[recordWeekDay + 1]);    
-                       var hours = parseFloat(record.c[3].v);
-                       var charges = parseFloat(record.c[4].v);
-                       row[recordWeekDay + 1] = currentVal + hours;
-                       row[8] += hours;
-                       row[9] += charges;
-                       grandTotalHours +=  hours;                  
-                       grandTotalCharges +=  charges;                   
-                  });
-              } 
-              return rows;
-        };
-     
-        function getColumns(){ 
-            var renderHours = function(data){
-                val = data.aData[data.iDataColumn];
-                if(val == 0){
-                    return "";
-                }  
-                return floatToTime(val);
+    var selectedWeekName, selectedMonthName, selectedStartDate, selectedEndDate;
+    var selectedCompanyRef, selectedCompanyName, selectedCompanyId;
+    var selectedTeamRef, selectedTeamName, selectedTeamId;        
+    var grandTotalHours = 0, grandTotalCharges = 0; 
+    var initComplete = false;                          
+    var dataTable; 
+
+    function getTeams(company_reference){                       
+        $("#timereports_team_selector SELECT").oDeskJSONSelector("populate", {
+             "company": company_reference 
+        });
+    }   
+
+    var transFormGDSForWeeklyReports = function(data){  
+          var grandTotalHours = 0, grandTotalCharges = 0;
+          function providerDisplayNameFromRecord(record){
+              return  record.c[2].v + " (" + record.c[1].v + ")";
+          }
+          
+          if(!data) return;     
+          var rows = []; 
+          if(data.table){
+              var providers = [], rows = [];
+              $.each(data.table.rows, function(i, record){  
+                  if(record=="") return false;
+                  var providerName = providerDisplayNameFromRecord(record);
+                  if($.inArray(providerName, providers) == -1){
+                      providers.push(providerName);
+                  }
+              });                              
+              providers.sort();
+              $.each(providers, function(i, providerName){
+                  rows.push([providerName, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+              });
+
+              $.each(data.table.rows, function(i, record){
+                  if(record=="") return false;  
+                   var recordDate = Date.parseExact(record.c[0].v, "yyyyMMdd");
+                   var providerName = providerDisplayNameFromRecord(record);   
+                   var row = rows[$.inArray(providerName, providers)];
+                   var recordWeekDay = getDayNumber(recordDate);
+                   var currentVal = parseFloat(row[recordWeekDay + 1]);    
+                   var hours = parseFloat(record.c[3].v);
+                   var charges = parseFloat(record.c[4].v);
+                   row[recordWeekDay + 1] = currentVal + hours;
+                   row[8] += hours;
+                   row[9] += charges;
+                   grandTotalHours +=  hours;                  
+                   grandTotalCharges +=  charges;                   
+              });
+          } 
+          return {
+                "rows": rows,
+                "grandTotalHours": grandTotalHours,
+                "grandTotalCharges": grandTotalCharges
+          };
+    };
+
+    function getColumns(){ 
+        var renderHours = function(data){
+            val = data.aData[data.iDataColumn];
+            if(val == 0){
+                return "";
+            }  
+            return floatToTime(val);
+        }
+        var renderCharges = function(data){  
+            val = data.aData[data.iDataColumn];
+            if(val == 0){
+                return "";
             }
-            var renderCharges = function(data){  
-                val = data.aData[data.iDataColumn];
-                if(val == 0){
-                    return "";
-                }
-                return currencyFromNumber(val);  
-            }             
-            var cols = [{"sTitle":"Provider"}];
-            $.each(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], function(i, day){
-               cols.push({
-                   "sTitle": day,
-                   "sClass": "numeric",
-                   "fnRender": renderHours
-               }); 
-            });
-            cols.push({          
-              "sTitle": "Total Hours",                
-              "fnRender":renderHours,
-              "sClass":"numeric total",
-            });
-            cols.push({                               
-              "sTitle": "Total Charges",                                
-              "fnRender":renderCharges,
-              "sClass":"numeric total",
-            });
-            
-            return cols;
-        } 
-        
-        function refreshReport(){
-           $("#time-reports-grid").oDeskTimeReports("option", "companyId", selectedCompanyId)
-                                  .oDeskTimeReports("option", "teamId", selectedTeamId)
-                                  .oDeskTimeReports("option", "startDate", selectedStartDate)
-                                  .oDeskTimeReports("option", "endDate", selectedEndDate)
-                                  .oDeskTimeReports("generateReport");                                             
-        }  
-        
-         function setSelectedDate(d){    
-             if(getDayNumber(d) > 0){
-                 d.moveToDayOfWeek(1, -1);
-             }
-             selectedStartDate = d;
-             selectedEndDate = d.clone();
-             selectedEndDate.addDays(7);
-             selectedWeekName = selectedStartDate.toString("dd MMM yyyy")
-                                + " - "  + selectedEndDate.toString("dd MMM yyyy"); 
-             $("#week_selector_name").text(selectedWeekName);
+            return currencyFromNumber(val);  
+        }             
+        var cols = [{"sTitle":"Provider"}];
+        $.each(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], function(i, day){
+           cols.push({
+               "sTitle": day,
+               "sClass": "numeric",
+               "fnRender": renderHours
+           }); 
+        });
+        cols.push({          
+          "sTitle": "Total Hours",                
+          "fnRender":renderHours,
+          "sClass":"numeric total",
+        });
+        cols.push({                               
+          "sTitle": "Total Charges",                                
+          "fnRender":renderCharges,
+          "sClass":"numeric total",
+        });
+    
+        return cols;
+    } 
+
+    function refreshReport(){
+       $(".team-name").text(selectedTeamName);
+       $("#time-week").text(selectedWeekName);       
+       $("#time-reports-grid").oDeskTimeReports("option", "companyId", selectedCompanyId)
+                              .oDeskTimeReports("option", "teamId", selectedTeamId)
+                              .oDeskTimeReports("option", "startDate", selectedStartDate)
+                              .oDeskTimeReports("option", "endDate", selectedEndDate)
+                              .oDeskTimeReports("generateReport");                                             
+    } 
+    
+    function refreshTotals(results){
+        $("#grand_total_hours").text(floatToTime(results.grandTotalHours));
+        $("#grand_total_charges").text(currencyFromNumber(results.grandTotalCharges));        
+    } 
+
+     function setSelectedDate(d){    
+         if(getDayNumber(d) > 0){
+             d.moveToDayOfWeek(1, -1);
          }
-  
-         function setCompanyDefaults(){   
-                selectedCompanyRef = getParameterByName("company_ref", "49041");    
-                var url = "http://www.odesk.com/api/hr/v2/companies/" + selectedCompanyRef + ".json?callback=?";
-                $.getJSON(url, 
-                    function(data){     
-                     selectedCompanyName = data.company.name;
-                     $(".company_name").text(selectedCompanyName);
-                     
-                }); 
-           }
+         selectedStartDate = d;
+         selectedEndDate = d.clone();
+         selectedEndDate.addDays(7);
+         selectedWeekName = selectedStartDate.toString("dd MMM yyyy")
+                            + " - "  + selectedEndDate.toString("dd MMM yyyy"); 
+         $("#week_selector_name").text(selectedWeekName);
+     }
+
+     function setCompanyDefaults(){   
+            selectedCompanyRef = getParameterByName("company_ref", "49041");    
+            var url = "http://www.odesk.com/api/hr/v2/companies/{company}.json?callback=?";
+            url = substitute(url, {"company": selectedCompanyRef});
+            $.getJSON(url, 
+                function(data){     
+                 selectedCompanyName = data.company.name;
+                 $(".company_name").text(selectedCompanyName);
+             
+            }); 
+       }
+
+       $(function(){
         
-           $(function(){
-                
-                 $("#timereports_team_selector SELECT").oDeskJSONSelector({
-                   json_url_template: "http://www.odesk.com/api/hr/v2/companies/{company}/teams.json?callback=?",
-                   all_option_id: "all_teams",
-                   all_option_text: "All Teams",
-                   dataVariable: "teams",
-                   onSelectionChange: function(ref, id, name){
-                     selectedTeamId = id;
-                     selectedTeamRef = ref;
-                     selectedTeamName = name;
-                   },
-                   populationComplete: function(){
-                    $("#timereports_team_selector SELECT").oDeskJSONSelector("setDefaults");   
-                   },
-                   processRow: function(team){    
-                     if(team.reference == selectedCompanyRef){
-                         selectedCompanyId = team.id;
-                     }  
-                     return true;
-                   }
-               }); 
-            
-               $("#company_switcher").unbind("click").bind("click", function(){
-                  $("#company_selector").slideToggle(); 
-               });
-               $("#go_run_report").unbind("click").bind("click", function(){
-                  refreshReport(); 
-               });
-               $("#switch_company").unbind("click").bind("click", function(){
-                   var new_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                   new_url += "?company_ref=";
-                   new_url += $("#company_reference").val();
-                   window.location.assign(new_url);
-               });     
+             $("#timereports_team_selector SELECT").oDeskJSONSelector({
+               json_url_template: "http://www.odesk.com/api/hr/v2/companies/{company}/teams.json?callback=?",
+               all_option_id: "all_teams",
+               all_option_text: "All Teams",
+               dataVariable: "teams",
+               onSelectionChange: function(ref, id, name){
+                 selectedTeamId = id;
+                 selectedTeamRef = ref;
+                 selectedTeamName = name;
+               },
+               populationComplete: function(){
+                $("#timereports_team_selector SELECT").oDeskJSONSelector("setDefaults");   
+               },
+               processRow: function(team){    
+                 if(team.reference == selectedCompanyRef){
+                     selectedCompanyId = team.id;
+                 }  
+                 return true;
+               }
+           }); 
+    
+           $("#company_switcher").unbind("click").bind("click", function(){
+              $("#company_selector").slideToggle(); 
+           });
+           $("#go_run_report").unbind("click").bind("click", function(){
+              refreshReport(); 
+           });
+           $("#switch_company").unbind("click").bind("click", function(){
+               var new_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
+               new_url += "?company_ref=";
+               new_url += $("#company_reference").val();
+               window.location.assign(new_url);
+           });     
+       
+       
+           $("#week_selector").datePicker(
+               {
+                   startDate:"01/01/1996", 
+                   selectWeek:true, 
+                   createButton:false,
                
-               
-               $("#week_selector").datePicker(
-                   {
-                       startDate:"01/01/1996", 
-                       selectWeek:true, 
-                       createButton:false,
-                       
-                   }
-                )
-               .dpSetSelected(Date.today().toString("MM/dd/yyyy")) 
-               .unbind("click").bind("click", 
-                    function(){
-                       $("#week_selector").dpDisplay();                   
-                     }  
-                )
-                .unbind("dateSelected").bind("dateSelected",
-                    function(e, selectedDate, $td){
-                        setSelectedDate(selectedDate);
-                    }
-                ); 
-               setSelectedDate(Date.today()); 
-               setCompanyDefaults();              
-               getTeams(selectedCompanyRef); 
-               $("#time-reports-grid").oDeskTimeReports({
-                              "columnSpec": getColumns(),
-                              "transformFunction": transFormGDSForWeeklyReports,
-                              "startDate": selectedStartDate,
-                              "endDate": selectedEndDate,
-                              "companyId": selectedCompanyId
-               });
-                $("body").ajaxComplete(function(){
-                      if(!initComplete && selectedCompanyId){
-                          refreshReport();
-                          initComplete = true;     
-                      }
-                 });
-            });            
-        </script>
+               }
+            )
+           .dpSetSelected(Date().toString("dd/MM/yyyy")) 
+           .unbind("click").bind("click", 
+                function(){
+                   $("#week_selector").dpDisplay();                   
+                 }  
+            )
+            .unbind("dateSelected").bind("dateSelected",
+                function(e, selectedDate, $td){
+                    setSelectedDate(selectedDate);
+                }
+            ); 
+           setSelectedDate(Date.today()); 
+           setCompanyDefaults();              
+           getTeams(selectedCompanyRef); 
+           $("#time-reports-grid").oDeskTimeReports({
+                          "columnSpec": getColumns(),
+                          "transformFunction": transFormGDSForWeeklyReports,
+                          "onComplete": refreshTotals,
+                          "startDate": selectedStartDate,
+                          "endDate": selectedEndDate,
+                          "companyId": selectedCompanyId
+           });
+            $("body").ajaxComplete(function(){
+                  if(!initComplete && selectedCompanyId){
+                      refreshReport();
+                      initComplete = true;     
+                  }
+             });
+        });            
+    </script>  
     </body>
 </html>
