@@ -35,7 +35,7 @@ oDesk = function(){
     };  
     
     oDeskHoursRecord.prototype.recordDayOfWeek = function(){
-        return getDayNumber(this.workDate);
+        return oDeskUtil.getDayNumber(this.workDate);
     }                       
     
     
@@ -48,7 +48,7 @@ oDesk = function(){
             this.endDate = this.startDate.clone();
             this.endDate.moveToLastDayOfMonth();
         } else if (this.timeType == "week"){ 
-            if(getDayNumber(dt) > 0){
+            if(oDeskUtil.getDayNumber(dt) > 0){
                  dt.moveToDayOfWeek(1, -1);
              }
              this.startDate = dt;
@@ -96,16 +96,16 @@ oDesk = function(){
 
     report.prototype.getCompanyQuery = function(){  
         if(!this.state.company.reference) return null;
-        return substitute(urlTemplates.company, {"company": this.state.company.reference});
+        return oDeskUtil.substitute(urlTemplates.company, {"company": this.state.company.reference});
     };                                            
     report.prototype.getTeamsQuery = function(){ 
         if(!this.state.company.reference) return null;        
-        return substitute(urlTemplates.team, {"company": this.state.company.reference});
+        return oDeskUtil.substitute(urlTemplates.team, {"company": this.state.company.reference});
     };
     report.prototype.getProvidersQuery = function(){     
         if(!this.state.company.reference) return null;        
         var val = this.state.team.reference ? this.state.team.reference : this.state.company.reference;
-        return substitute(urlTemplates.provider, {"team": val});
+        return oDeskUtil.substitute(urlTemplates.provider, {"team": val});
     }; 
     
     report.prototype.getHoursQuery = function(){

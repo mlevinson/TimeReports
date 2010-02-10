@@ -3,7 +3,7 @@ oDesk.Report.prototype.dtFormatHours = function(data){
      if(val == 0){
          return "";
      }  
-     return floatToTime(val);
+     return oDeskUtil.floatToTime(val);
 }
 
 oDesk.Report.prototype.dtFormatCharges = function(data){  

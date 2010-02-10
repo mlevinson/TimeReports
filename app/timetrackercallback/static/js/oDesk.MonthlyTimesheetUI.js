@@ -50,7 +50,7 @@
      
          function setCompanyDefaults(){                           
               oDesk.Services.getCompany(this.report, 
-                  getParameterByName(this.parameters.company.name, 
+                  oDeskUtil.getParameterByName(this.parameters.company.name, 
                       this.parameters.company.defaultValue), null);
          }; 
          
@@ -145,7 +145,7 @@
                 .unbind("dataTablePopulated").bind("dataTablePopulated", function(e, results){
                     var grandTotal = results ? results.grandTotal : 0; 
                     $(ui.elements.report.grandTotal).text(        
-                       ui.report.state.mustGetHours? floatToTime(grandTotal):
+                       ui.report.state.mustGetHours? oDeskUtil.floatToTime(grandTotal):
                                                       currencyFromNumber(grandTotal)  
                        );
                });

@@ -31,7 +31,7 @@
           var report = this;     
           var grandTotal = 0; 
           var firstDayOfMonth = report.state.timeline.startDate;
-          var firstDayDayNumber = getDayNumber(firstDayOfMonth);    
+          var firstDayDayNumber = oDeskUtil.getDayNumber(firstDayOfMonth);    
           var daysInMonth = firstDayOfMonth.getDaysInMonth();
           var monthName = firstDayOfMonth.toString("MMM");
           var weekStartDateNumber = 1;     

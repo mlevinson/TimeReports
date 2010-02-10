@@ -47,7 +47,7 @@
      
          function setCompanyDefaults(){                           
               oDesk.Services.getCompany(this.report, 
-                  getParameterByName(this.parameters.company.name, 
+                  oDeskUtil.getParameterByName(this.parameters.company.name, 
                       this.parameters.company.defaultValue), null);
          };
      
@@ -96,11 +96,11 @@
                        var grandTotalCharges = results ? results.grandTotalCharges : 0;                       
                        var dayTotals = results? results.dayTotals : [0,0,0,0,0,0,0];
                        $(ui.elements.report.grandTotal.days).each(function(index, element){  
-                            var value = dayTotals[index] == 0 ? "" : floatToTime(dayTotals[index]);
+                            var value = dayTotals[index] == 0 ? "" : oDeskUtil.floatToTime(dayTotals[index]);
                             $(element).text(value); 
                        });                      
                        $(ui.elements.report.grandTotal.hours).text(
-                           floatToTime(grandTotalHours));
+                           oDeskUtil.floatToTime(grandTotalHours));
                        $(ui.elements.report.grandTotal.charges).text(
                            currencyFromNumber(grandTotalCharges)); 
                });
