@@ -30,9 +30,7 @@ $.widget("ui.ringceMonthSelector",{
         $(widget.element[0]).append(displayHtml);                              
         $("#month_selector_wrapper").append(selectorHtml);  
         var listHtml = "";
-        $.each(["January", "February", "March", "April", 
-                "May", "June", "July", "August", "September", 
-                "October", "November", "December"], function(monthIndex, month){
+        $.each(Date.CultureInfo.monthNames, function(monthIndex, month){
                     var column = parseInt(monthIndex / 4) + 1;
                     var className = "column" + column;
                     if(monthIndex == 4 || monthIndex == 8){
@@ -77,6 +75,7 @@ $.widget("ui.ringceMonthSelector",{
         });
         
         $("#month_selector_list li span").unbind("click").bind("click", function(){
+            $("#month_selector_container").hide();            
             var index = $("#month_selector_list li span").index(this);
             date.set({month:index});
             widget.selectDate(date);  
@@ -95,7 +94,7 @@ $.widget("ui.ringceMonthSelector",{
     
 $.extend($.ui.ringceMonthSelector, {
    defaults: {
-       
+       closeAfterSelect: true
    }
  });          
 })(jQuery);

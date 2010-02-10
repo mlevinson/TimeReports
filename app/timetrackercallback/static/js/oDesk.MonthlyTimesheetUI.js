@@ -38,7 +38,7 @@
         };     
     
         function refreshReport(){
-              $(this.elements.provider.name).text(this.report.state.team.name);
+              $(this.elements.provider.name).text(this.report.state.provider.name);
               $(this.elements.team.name).text(this.report.state.team.name);  
               $(this.elements.timeline.tableCaption).text(this.report.state.timeline.getDisplayName());  
               $(this.elements.report.table).oDeskTimeReports("generateReport");                                             
