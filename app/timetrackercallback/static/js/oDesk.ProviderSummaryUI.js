@@ -53,7 +53,7 @@
          function init(){ 
               var ui = this;                          
               this.initComplete = false;
-              this.report = new oDesk.Report("week");
+              this.report = new oDesk.Report(ui.parameters.timeline.type);
               $(ui.elements.company.switcher).unbind("click").bind("click", function(){
                    $(ui.elements.company.selector).slideToggle(); 
               });

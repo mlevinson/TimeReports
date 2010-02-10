@@ -47,7 +47,15 @@
         <script src="js/jquery.dataTables.min.js" type="text/javascript" charset="utf-8"></script> 
         <script src="js/jquery.formatCurrency.js" type="text/javascript" charset="utf-8"></script>         
         <script src="js/oDeskUtils.js" type="text/javascript" charset="utf-8"></script>                 
-        <script src="js/jquery.ui.odeskJSONSelect.js" type="text/javascript" charset="utf-8"></script>                         
+        <script type="text/javascript" src="js/oDesk.Report.js"></script>                               
+        <script type="text/javascript" src="js/oDesk.Services.js"></script>                                       
+        <script type="text/javascript" src="js/oDesk.Report.DataTable.js"></script>                                       
+        <script type="text/javascript" src="js/oDesk.MonthlyTimeSheet.js"></script>                                               
+        <script type="text/javascript" src="js/jquery.ui.oDeskTimeReports.js"></script>                               
+        <script src="js/jquery.ui.oDeskSelectWidget.js" type="text/javascript" charset="utf-8"></script>          
+        <script src="js/jquery.ui.ringceMonthSelector.js" type="text/javascript" charset="utf-8"></script>         
+        <script type="text/javascript" src="js/oDesk.MonthlyTimesheetUI.js"></script>           
+                       
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     </head>
     <body bgcolor="#FFFFFF">
@@ -297,7 +305,7 @@
                 <span id="hours_title" class="hours_label">Hours</span> for 
                 <span class="provider-name">Provider</span> in 
                 <span class="team-name">Team</span> for the month of 
-                <span id="time-month"></span>&nbsp;<span id="time-year"></span></h2>                
+                <span id="time-month-name"></span></h2>                
                 <table id="time-reports-grid" class="tabular">
                     <tfoot>
                         <tr>
@@ -305,332 +313,14 @@
                                 Total <span id="hours_small" class="hours_label">Hours</span> for 
                                 <span class="provider-name">Provider</span>
                             </td>
-                            <td class="numeric grand-total"><span id="grand-total"></span></td>
+                            <td class="numeric grand-total"><span id="grand_total"></span></td>
                         </tr>
                     </tfoot>   
                 </table>                                            
            </div> 
         </div>
         <script type="text/javascript">           
-        var selectedMonthName, selectedYear, selectedMonthNumber, selectedDate;
-        var selectedCompanyRef, selectedCompanyName, selectedCompanyId;
-        var selectedTeamRef, selectedTeamName, selectedTeamId;        
-        var selectedProviderRef, selectedProviderName, selectedProviderId;
-        var grandTotal = 0; 
-        var initComplete = false;                          
-        var dataTable; 
-        
-        function mustGetHours(){
-            return $("#display_type #hours").hasClass("selected");
-        } 
-        
-        function getTeams(company_reference){                       
-              $("#timereports_team_selector SELECT").oDeskJSONSelector("populate", {
-                    "company": company_reference 
-                 });
-        }
-        
-        function getProviders(team_reference){ 
-             $("#timereports_provider_selector SELECT").oDeskJSONSelector("populate", {
-                "team": team_reference?team_reference:selectedCompanyRef 
-             });
-        }
-              
-        function getHours(month, year, company, team, provider){
-              if(!company) return;
-              grandTotal = 0;  
-              var start = year + "-" + month + "-" + "01";
-              var dt = Date.parseExact(start, "yyyy-M-dd");
-              var end = dt.moveToLastDayOfMonth().toString("yyyy-M-dd");
-              var tq = "SELECT worked_on,provider_id, provider_name, sum(hours), sum(charges) WHERE worked_on >= '";
-                 tq += start;
-                 tq += "' AND worked_on <= '";
-                 tq += end;                
-                 tq += "'";
-                 if(provider){
-                     tq += " AND provider_id='";
-                     tq += provider;        
-                     tq += "'";          
-                 }           
-                 tq += " ORDER BY provider_id, worked_on";
-                 
-                 var url = "http://www.odesk.com/gds/timereports/v1/companies/";
-                 url += company;  
-                 if(team){
-                     url += "/teams/";
-                     url += team;          
-                 }
-                 url += "?tq=";
-                 url += escape(tq); 
-                 url += "&callback=?"
-             
-              $.getJSON(url, function(data){ 
-                   refreshGrid(transformGDS(data, month, year)); 
-              });
-        }        
-
-        function refreshGrid(data){
-            dataTable.fnClearTable(0);
-            dataTable.fnAddData(data);
-        }   
-        
-        function transformGDS(data, month, year){  
-           grandTotal = 0; 
-           var firstDayOfMonth = Date.parseExact("1/" + month + "/" + year, "d/M/yyyy");
-           var daysInMonth = Date.getDaysInMonth(parseInt(year), parseInt(month) - 1); 
-           var firstDayDayNumber = getDayNumber(firstDayOfMonth);
-           var monthName = firstDayOfMonth.toString("MMM");    
-           var weekStartDateNumber = 1;
-           var rows = [];                    
-           var weeks = [];
-           var daysInFirstWeek = 6 - firstDayDayNumber;
-           var weekDays = daysInFirstWeek;
-           var done = false;
-           while(!done){               
-              var start = monthName + " " + ("00" + weekStartDateNumber).slice(-2);           
-              var weekEndDay =  weekStartDateNumber + weekDays;
-              weekDays = 6;
-              if (weekEndDay >= daysInMonth){
-                  weekEndDay = daysInMonth;   
-                  done = true;
-              }
-              var end = monthName + " "   + ("00" + weekEndDay).slice(-2);
-              weeks.push(year + '' + month + '' + ("00" + weekStartDateNumber).slice(-2));  
-              var weekLabel = start;
-              if(end != start){
-                  weekLabel += " - "  + end;
-              } 
-              rows.push([weekLabel, 0, 0, 0, 0, 0, 0, 0, 0]);
-              weekStartDateNumber = weekEndDay + 1;
-           }      
-           if(data.table){
-                 $.each(data.table.rows, function(i, record){
-                     if(record=="") return false;
-                     var recordDate = Date.parseExact(record.c[0].v, "yyyyMMdd");   
-                     var whichWeek = 0;
-                     $.each(weeks, function(weekIndex, weekFirstDay){
-                         var weekDate = Date.parseExact(weekFirstDay, "yyyyMMdd"); 
-                         if (recordDate < weekDate){
-                             whichWeek = weekIndex - 1; 
-                             return false;
-                         }
-                     });                  
-                     var recordWeekDay = getDayNumber(recordDate);
-                     var currentVal = parseFloat(rows[whichWeek][recordWeekDay + 1]);    
-                     var value = mustGetHours()?  record.c[3].v : record.c[4].v;
-                     rows[whichWeek][recordWeekDay + 1] = currentVal + parseFloat(value);
-                  });
-           }
-           
-           $.each(rows, function(i, row){
-               row[8] = 0;
-               var col = 1;
-               for(col=1; col<8; col+=1){  
-                  if(row[col] != ''){
-                      row[8] += parseFloat(row[col]);                      
-                  }   
-               }              
-               grandTotal += row[8];
-           });        
-           if(mustGetHours()){
-               $("#grand-total").text(floatToTime(grandTotal));                      
-           } else {
-               $("#grand-total").text(currencyFromNumber(grandTotal));                                     
-           }
-
-           return rows;
-        } 
-
-        function getColumns(){ 
-            var render = function(data){
-                val = data.aData[data.iDataColumn];
-                if(val == 0){
-                    return "";
-                }  
-                if(mustGetHours()){
-                    val = floatToTime(val);
-                } else {                         
-                    val = currencyFromNumber(val);
-                }       
-                return val;
-            }
-            return [
-                 {
-                     "sTitle":"Week",
-                     "sClass":"week-col",
-                     "sWidth": "96px"                     
-                 }, 
-                 {
-                     "sTitle":"Mon",
-                     "fnRender":render,
-                     "sWidth": "32px",   
-                      "sClass":"numeric"
-                 },
-                 {
-                     "sTitle":"Tue",
-                      "fnRender":render,
-                     "sWidth": "32px" ,   
-                       "sClass":"numeric"                      
-                 },
-                 {
-                     "sTitle":"Wed",
-                      "fnRender":render,
-                     "sWidth": "32px" ,   
-                       "sClass":"numeric"                      
-                 },
-                 {
-                     "sTitle":"Thu",
-                      "fnRender":render,
-                     "sWidth": "32px" ,   
-                       "sClass":"numeric"                      
-                 },
-                 {
-                     "sTitle":"Fri",
-                      "fnRender":render,
-                     "sWidth": "32px" ,   
-                       "sClass":"numeric"                      
-                 },
-                 {
-                     "sTitle":"Sat",
-                      "fnRender":render,
-                     "sWidth": "32px" ,   
-                       "sClass":"numeric"                      
-                 }, 
-                 {
-                      "sTitle":"Sun",
-                       "fnRender":render,
-                     "sWidth": "32px",   
-                     "sClass":"numeric"                     
-                 },
-                 {
-                     "sTitle":"Total",
-                      "fnRender":render,
-                      "sClass":"numeric total",
-                      "sWidth": "48px" 
-                 }
-            ];
-        }   
-        
-        function refreshReport(){
-            $(".provider-name").text(selectedProviderName);                        
-            $("#time-month").text(selectedMonthName);
-            $("#time-year").text(selectedYear);
-            $(".team-name").text(selectedTeamName);
-            getHours(selectedMonthNumber, selectedYear, selectedCompanyId, selectedTeamId, selectedProviderId);                                                               
-        }                          
-        
-        
-        function setSelectedDate(d){
-            selectedDate = d;
-            selectedMonthNumber = d.toString("MM");
-            selectedMonthName = d.toString("MMMM");            
-            selectedYear = d.toString("yyyy"); 
-        }     
-           
-         function setCompanyDefaults(){   
-                selectedCompanyRef = getParameterByName("company_ref", "49041");    
-                var url = "http://www.odesk.com/api/hr/v2/companies/" + selectedCompanyRef + ".json?callback=?";
-                $.getJSON(url, 
-                    function(data){     
-                     selectedCompanyName = data.company.name;
-                     $(".company_name").text(selectedCompanyName);
-                     
-                }); 
-           }
-        
-           $(function(){
-                  dataTable = 
-                  $("#time-reports-grid").dataTable({
-                       "aoColumns" : getColumns(),
-                         "bPaginate": false,
-                         "bLengthChange": false,
-                         "bFilter": false,
-                         "bSort": false,
-                         "bInfo": false,
-                         "bAutoWidth":false                   
-                  });
-                $("#display_type .radio").unbind("click").bind("click", function(){
-                    if($(this).hasClass("selected")) return false;
-                    $("#display_type .radio").toggleClass("selected");
-                    $(".hours_label").text(mustGetHours()?"Hours":"Charges");
-                    refreshReport();
-                });
-                $("#timereports_team_selector SELECT").oDeskJSONSelector({
-                   json_url_template: "http://www.odesk.com/api/hr/v2/companies/{company}/teams.json?callback=?",
-                   all_option_id: "all_teams",
-                   all_option_text: "All Teams",
-                   dataVariable: "teams",
-                   onSelectionChange: function(ref, id, name){
-                     selectedTeamId = id;
-                     selectedTeamRef = ref;
-                     selectedTeamName = name;
-                     getProviders(selectedTeamRef);                         
-                   },
-                   populationComplete: function(){
-                    $("#timereports_team_selector SELECT").oDeskJSONSelector("setDefaults");   
-                   },
-                   processRow: function(team){    
-                     if(team.reference == selectedCompanyRef){
-                         selectedCompanyId = team.id;
-                     }  
-                     return true;
-                   }
-               }); 
-               $("#timereports_provider_selector SELECT").oDeskJSONSelector({
-                   json_url_template: "http://www.odesk.com/api/hr/v2/teams/{team}/users.json?callback=?",
-                   all_option_id: "all_providers",
-                   all_option_text: "All Providers",
-                   dataVariable: "users",
-                   onSelectionChange: function(ref, id, name){
-                     selectedProviderId = id;
-                     selectedProviderRef = ref;
-                     selectedProviderName = name; 
-                   },
-                   populationComplete: function(){                                                
-                        if(!selectedProviderId 
-                            || !$("#timereports_provider_selector SELECT #" + selectedProviderId).length){
-                              $("#timereports_provider_selector SELECT").oDeskJSONSelector("setDefaults");
-                          } else {
-                              $("#timereports_provider_selector SELECT #" + selectedProviderId).each(
-                                  function(){
-                                      this.selected = true;
-                              });    
-                          }
-                   },
-                   processRow: function(user){
-                     return user.status == "active" && user.is_provider == "1";
-                   },                     
-                   rowName: function(user){
-                       return  user.first_name + " " + user.last_name + " (" + user.id + ")";
-                   }
-               });
-               $("#company_switcher").unbind("click").bind("click", function(){
-                  $("#company_selector").slideToggle(); 
-               });
-               $("#go_run_report").unbind("click").bind("click", function(){
-                  refreshReport(); 
-               });
-               $("#switch_company").unbind("click").bind("click", function(){
-                   var new_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                   new_url += "?company_ref=";
-                   new_url += $("#company_reference").val();
-                   window.location.assign(new_url);
-               });
-               
-               $("#month_year_display").ringceMonthSelector({
-                   onSelectionChange: setSelectedDate
-               });
-               setSelectedDate(Date.today());
-               setCompanyDefaults();              
-               getTeams(selectedCompanyRef);
-               $("body").ajaxComplete(function(){
-                   if(!initComplete && selectedMonthNumber && selectedYear && selectedCompanyId){
-                       refreshReport();                   
-                       initComplete = true;     
-                   }
-               });
-              
-            });            
+             monthlyTimeSheet.init();    
         </script>
     </body>
 </html>

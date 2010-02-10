@@ -36,7 +36,7 @@
                var providerObject = new oDesk.Provider();
                providerObject.id = provider.id;
                providerObject.reference = provider.reference;
-               providerObject.name = provider.name;
+               providerObject.name = provider.first_name + " " + provider.last_name;
                providers.push(providerObject);
             });
              if($.isFunction(callBack)){        

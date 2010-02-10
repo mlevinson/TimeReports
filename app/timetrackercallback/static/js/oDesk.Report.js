@@ -98,7 +98,7 @@ oDesk = function(){
         if(!this.state.company.reference) return null;        
         return substitute(urlTemplates.team, {"company": this.state.company.reference});
     };
-    report.prototype.getProviderQuery = function(){     
+    report.prototype.getProvidersQuery = function(){     
         if(!this.state.company.reference) return null;        
         var val = this.state.team.reference ? this.state.team.reference : this.state.company.reference;
         return substitute(urlTemplates.provider, {"team": val});

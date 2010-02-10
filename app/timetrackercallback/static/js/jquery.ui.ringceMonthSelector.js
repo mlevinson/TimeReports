@@ -87,17 +87,15 @@ $.widget("ui.ringceMonthSelector",{
           $("#year_display").text(d.toString("yyyy"));                    
           $("#month_selector_list li span").removeClass("selected");
           var index = d.getMonth();
-          $("#month_selector_list li span").eq(index).addClass('selected');  
-          if(this.options.onSelectionChange) {
-              this.options.onSelectionChange(d);
-          }
+          $("#month_selector_list li span").eq(index).addClass('selected');
+          $(this.element[0]).trigger("monthSelected", d);  
     }                    
                                                                 
 });      
     
 $.extend($.ui.ringceMonthSelector, {
    defaults: {
-       onSelectionChange: null
+       
    }
  });          
 })(jQuery);
