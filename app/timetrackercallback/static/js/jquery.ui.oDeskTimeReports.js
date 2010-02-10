@@ -18,18 +18,27 @@ $.widget("ui.oDeskTimeReports",{
                                             defaultTableParams, 
                                             this.options.tableParams));
      },
+     triggerError : function(){                        
+         var dataTable = this.options.dataTable;         
+         dataTable.fnClearTable(1);
+         $(this.element[0]).trigger("dataTablePopulated", null);         
+     },
      generateReport: function(){
          var dataTable = this.options.dataTable;
-         var report = this.options.report;
-         dataTable.fnClearTable(1);
-         var url = report.getHoursQuery();
-         if(!url) return;
+         var report = this.options.report;  
+         var service = this.options.service;
          var widget = this; 
-         $.getJSON(url, function(data){
+         if(!report || !service){
+            widget.triggerError();
+         }
+         service(report, function(data, status){
              var results = report.transformData(data);
+             dataTable.fnClearTable(1); 
              dataTable.fnAddData(results.rows);
-             $(widget.element[0]).trigger("dataTablePopulated", results);
-         });
+             $(widget.element[0]).trigger("dataTablePopulated", results);             
+         }, function(error, status){
+             widget.triggerError();
+         });         
      }
     
 });      
@@ -37,6 +46,7 @@ $.widget("ui.oDeskTimeReports",{
 $.extend($.ui.oDeskTimeReports, {
    defaults: {
        "report": null,
+       "service": null,
        "tableParams": {}
    }
  });          

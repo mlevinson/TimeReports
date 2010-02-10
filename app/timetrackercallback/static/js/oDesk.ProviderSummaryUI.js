@@ -89,12 +89,14 @@
                }).oDeskSelectWidget("populate");
 
                $(ui.elements.report.table)
-                 .oDeskTimeReports({"report": ui.report})
+                 .oDeskTimeReports({"report": ui.report, "service": oDesk.Services.getHours})
                  .unbind("dataTablePopulated").bind("dataTablePopulated", function(e, results){
+                       var grandTotalHours = results ? results.grandTotalHours : 0;  
+                       var grandTotalCharges = results ? results.grandTotalCharges : 0;                       
                        $(ui.elements.report.grandTotal.hours).text(
-                           floatToTime(results.grandTotalHours));
+                           floatToTime(grandTotalHours));
                        $(ui.elements.report.grandTotal.charges).text(
-                           currencyFromNumber(results.grandTotalCharges)); 
+                           currencyFromNumber(grandTotalCharges)); 
                });
 
                $("body").ajaxComplete(function(){

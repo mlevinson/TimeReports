@@ -19,9 +19,9 @@ oDesk = function(){
     };
     
     urlTemplates = {
-        "company": "http://www.odesk.com/api/hr/v2/companies/{company}.json?callback=?",
-        "team": "http://www.odesk.com/api/hr/v2/companies/{company}/teams.json?callback=?",
-        "provider": "http://www.odesk.com/api/hr/v2/teams/{team}/users.json?callback=?",
+        "company": "http://www.odesk.com/api/hr/v2/companies/{company}.json",
+        "team": "http://www.odesk.com/api/hr/v2/companies/{company}/teams.json",
+        "provider": "http://www.odesk.com/api/hr/v2/teams/{team}/users.json",
         "hours": "http://www.odesk.com/gds/timereports/v1/companies/"
     };
     
@@ -132,7 +132,6 @@ oDesk = function(){
         }
         query += "?tq=";
         query += escape(tq); 
-        query += "&callback=?" 
         return query;                       
     };
     

@@ -141,11 +141,12 @@
               ui.bindTeamSelector();
               ui.bindProviderSelector();
               $(ui.elements.report.table)
-                .oDeskTimeReports({"report": ui.report})
+                .oDeskTimeReports({"report": ui.report, "service": oDesk.Services.getHours})
                 .unbind("dataTablePopulated").bind("dataTablePopulated", function(e, results){
-                    $(ui.elements.report.grandTotal).text(  
-                       ui.report.state.mustGetHours? floatToTime(results.grandTotal):
-                                                      currencyFromNumber(results.grandTotal)  
+                    var grandTotal = results ? results.grandTotal : 0; 
+                    $(ui.elements.report.grandTotal).text(        
+                       ui.report.state.mustGetHours? floatToTime(grandTotal):
+                                                      currencyFromNumber(grandTotal)  
                        );
                });
 
