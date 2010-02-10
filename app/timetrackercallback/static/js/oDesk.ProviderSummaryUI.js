@@ -94,7 +94,7 @@
                  .unbind("dataTablePopulated").bind("dataTablePopulated", function(e, results){
                        var grandTotalHours = results ? results.grandTotalHours : 0;  
                        var grandTotalCharges = results ? results.grandTotalCharges : 0;                       
-                       var dayTotals = results? results.dayTotals : [];
+                       var dayTotals = results? results.dayTotals : [0,0,0,0,0,0,0];
                        $(ui.elements.report.grandTotal.days).each(function(index, element){
                                                 $(element).text(floatToTime(dayTotals[index])); 
                                              });        

@@ -48,7 +48,7 @@
                    var recordWeekDay = record.recordDayOfWeek();
                    var currentVal = parseFloat(row[recordWeekDay + 1]);    
                    row[recordWeekDay + 1] = currentVal + record.hours;
-                   dayTotals[recordWeekDay] == record.hours;
+                   dayTotals[recordWeekDay] += record.hours;
                    row[8] += record.hours;
                    row[9] += record.charges;
                    grandTotalHours +=  record.hours;                  
