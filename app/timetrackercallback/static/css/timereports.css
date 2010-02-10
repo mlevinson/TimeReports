@@ -103,11 +103,14 @@ a:hover {color:#0033FF; text-decoration:underline; }
     border-bottom: 1px solid gray;
 }      
 
+
+
 #timereports_team_selector,
 #timereports_provider_selector,
 #timereports_week_selector,
 #timereports_month_selector{display:block;float:left;}
 
+#timereports_week_selector,
 #week_display{
     width: 240px;
 }
