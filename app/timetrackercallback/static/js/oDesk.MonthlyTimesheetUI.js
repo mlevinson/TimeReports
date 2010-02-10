@@ -149,8 +149,11 @@
                                                       currencyFromNumber(grandTotal)  
                        );
                });
-
-               $("body").ajaxComplete(function(){
+               $("body").ajaxStart(function(){
+                      loading_process("Loading...", false); 
+               });
+               $("body").ajaxComplete(function(){      
+                   loading_process();
                    if(!ui.initComplete && ui.report.state.company.id){
                        ui.refreshReport();
                        ui.initComplete = true;     

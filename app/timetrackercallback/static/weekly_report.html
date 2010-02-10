@@ -32,7 +32,10 @@
         //]]>
         </script>
         <script type="text/javascript" src="http://www.odesk.com/js/jquery/jquery.pack.js">
+</script>      
+        <script type='text/javascript' src='http://www.odesk.com/js/static/REL201002040104/common.utils.js'>
 </script>
+
         <script type='text/javascript' src='http://www.odesk.com/js/jquery/plugins/static/REL201002040104/jquery.plugins.js'>
 </script>  
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
@@ -245,13 +248,15 @@
                     </ul>
                 </form>
                 <div id="lev2" class="menu">
+                   <ul> 
                     <li class="menuitem">
-                        <a class="nav-tooltip" href="reports_home.html">Reports Home</a></li>
+                        <a class="nav-tooltip" href="javascript:carry_url('reports_home.html')">Reports Home</a></li>
                     <li class="menuitem">
-                        <a class="nav-tooltip" href="timereports.html">Monthly Report</a></li>                    
+                        <a class="nav-tooltip" href="javascript:carry_url('timereports.html')">Monthly Report</a></li>                    
                     <li class="menuitem nav-current">
-                        <a class="nav-tooltip" href="weekly_report.html">Weekly Report</a></li>                                        
+                        <a class="nav-tooltip" href="javascript:carry_url('weekly_report.html')">Weekly Report</a></li>       </ul>                                 
                 </div>
+ 
             </div>                     
             <div id="reports_header">
                 <div id="company_bar">

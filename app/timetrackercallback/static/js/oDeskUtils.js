@@ -1,3 +1,7 @@
+function carry_url(url){
+ window.location.assign(url + window.location.search);
+}   
+
 function substitute(str, params){ 
      var pattern, re;
      $.each(params, function(key, value){

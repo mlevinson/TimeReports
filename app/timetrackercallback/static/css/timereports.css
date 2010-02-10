@@ -1,3 +1,63 @@
+/* ======== */
+/* = Rest = */
+/* ======== */
+
+/* http://meyerweb.com/eric/tools/css/reset/ */
+/* v1.0 | 20080212 */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+	
+}
+body {
+	line-height: 1.3;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+/* remember to highlight inserts somehow! */
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+body {font-family:Tahoma,sans-serif; font-size:10pt;}
+a {text-decoration:none; color:#0033FF;}
+a:hover {color:#0033FF; text-decoration:underline; }
+
 .table-caption{border-bottom: 1px solid black;}
 #time-reports-grid td.total{background-color:#ffffcc;font-weight:bold;}
 #time-reports-grid td.grand-total {background-color:#ffff66;font-weight:bold;}  
@@ -96,3 +156,206 @@
    #month_selector_list li.reset { margin-top: -100px; }
    
     
+    
+/* ============================ */
+/* = From PageLayout.css labs = */
+/* ============================ */    
+
+
+#pageTitle {
+	width:970px;
+	margin:auto;
+	padding:1em 0 0 0;
+}
+#pageTitle h1,
+#col1PageTitle {
+	font-size:1.6em;
+	color:#225A94;
+	margin-bottom:.6em;
+}
+#mainBody.layout1, 
+#mainBody.layout2,
+#mainBody.layout3 {
+	width:970px;
+	margin:auto;
+}
+#mainBody.layout1 #col1 {
+	width:100%;
+}
+#mainBody.layout2 #col1 {
+	margin-right:245px;
+	width:725px;
+	float:left;
+}
+#mainBody.layout2 #col2 {
+	float:right;
+	width:224px;
+	margin-left:-224px;
+}
+#mainBody.layout3 #col1 {
+	width:725px;
+	float:right;
+}
+#mainBody.layout3 #col2 {
+	float:left;
+}
+
+/* =============== */
+/* = Reports.css = */
+/* =============== */
+
+/* ======================== Reports "Home" ==========================*/
+#mainBody.layout2 #col1 {
+	width: 520px;
+}
+#mainBody.layout2 #col2 {
+	width: 420px;
+}
+#savedReports {
+	margin-bottom: 1.2em;
+}
+#savedReports .noData {
+	text-align: center;
+}
+.sidebar.boxed .noData {
+	text-align: center;
+}
+.sidebar.boxed .horizontalLinks {
+	text-align: right;
+	margin-bottom: 2em;
+}
+.sidebar.boxed .headerBar {
+	font-size: 1em;
+}
+.reportsList dt {
+	font-weight: bold;
+	font-size: 1.1em;
+}
+.reportsList dd {
+	margin: 0 0 1em 24px;
+	color: #666;
+}
+.reportsList dt.tabularReport {
+	padding-left: 24px;
+	background: url('../images/table.png') 0 2px no-repeat;
+}
+.reportsList dt.piechartReport {
+	padding-left: 24px;
+	background: url('images/chart_pie.png') 0 2px no-repeat;
+}
+.reportsList dt.barchartReport {
+	padding-left: 24px;
+	background: url('images/chart_bar.png') 0 2px no-repeat;
+}
+.reportsList dt.taskCode {
+	padding-left: 24px;
+	background: url('images/tag_blue.png') 0 2px no-repeat;
+}
+/* ======================== Saved Reports module ==========================*/
+.removeMe {
+	font-weight: normal;
+	float: right;
+	color: #ccc;
+}
+/* ======================== Report "Configurator" ==========================*/
+#configurator {
+	background-color: #eee;
+	margin-bottom: 1em;
+	/*-moz-border-radius: .6em;*/
+}
+#configurator {
+	padding: 2em;
+}
+#customRange {
+	margin-top: 1em;
+	display: none;
+}
+#submitArea {
+	margin: 3em 0 0 180px;
+}
+/* ======================== Report Detail ==========================*/
+	#report #printTitle {
+		display: none; /* we'll turn it back on for print */
+	}
+	#report table#configuration {
+		border: 1px solid #ccc;
+		margin-bottom: 1em;
+		width: 100%;
+	}
+	
+	#report table#configuration td {
+		padding: .6em 1em;
+		border-right: 1px solid #ccc;
+	}
+	
+	/* control Bar */
+	#report .controlBar {
+		margin-bottom: 1em;
+	}
+	
+	
+	/* Tables */
+	#report table.tabularData  td.elapsed, #report .tabularData  td.percentage, #report .tabularData  td.charge {
+		text-align: right;
+	}
+	
+	#report table.tabularData {
+		margin-bottom: 2em;
+	}
+	
+	#report table.tabularData td,
+	#report table.tabularData th {
+		padding-right: 1em;
+		padding-left: 1em;
+	}
+	
+	#report td.emptyCell {
+		background-color: #fff;
+	}
+	
+	#report td.zero {
+		color: #ccc;
+	}
+	
+	#report table.tabularData th.weekdayLabel,
+	#report table.tabularData th.hoursLabel,
+	#report table.tabularData th.offlineLabel,
+	#report table.tabularData th.chargesLabel {
+		text-align: right;
+	}
+	
+	#report table.tabularData caption {
+		text-align: left;
+		font-weight: bold;
+		margin-bottom: .4em;
+		font-size: 1.1em;
+	}
+	
+	#report table.tabularData colgroup.weeks {
+		border-right: 1px solid #ccc;
+		text-align: left;
+		background-color: #eee;
+	}
+	
+	#report table.tabularData colgroup.totals {
+		border-left: 1px solid #ccc;
+		background-color: #FFFFCC;
+	}
+	
+	#report table.tabularData colgroup.totals td {
+		font-weight: bold;
+	}
+	
+	#report table.tabularData td.grandTotal {
+		background-color: #FFFF66;
+		font-weight: bold;
+	}
+/* ======================== Visualization Overrides ==================================*/
+.google-visualization-table-th {
+	color: #666;
+	
+}
+/* ======================== Modals ==================================*/
+#saveThisReport .content {
+	margin: 2em;
+}
