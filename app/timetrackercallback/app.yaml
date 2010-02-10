@@ -29,7 +29,10 @@ handlers:
   upload: static/weekly_report.html  
   
 - url: /css
-  static_dir: static/css
+  static_dir: static/css 
+  
+- url: /images
+  static_dir: static/images  
   
 - url: /js
   static_dir: static/js  

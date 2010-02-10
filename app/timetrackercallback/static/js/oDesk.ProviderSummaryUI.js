@@ -19,7 +19,8 @@
             "report": {
                 "table": "#time-reports-grid",
                 "goButton": "#go_run_report",
-                "grandTotal": {
+                "grandTotal": { 
+                    "days": ".total.day span",
                     "hours": "#grand_total_hours",
                     "charges": "#grand_total_charges"
                 } 
@@ -93,6 +94,10 @@
                  .unbind("dataTablePopulated").bind("dataTablePopulated", function(e, results){
                        var grandTotalHours = results ? results.grandTotalHours : 0;  
                        var grandTotalCharges = results ? results.grandTotalCharges : 0;                       
+                       var dayTotals = results? results.dayTotals : [];
+                       $(ui.elements.report.grandTotal.days).each(function(index, element){
+                                                $(element).text(floatToTime(dayTotals[index])); 
+                                             });        
                        $(ui.elements.report.grandTotal.hours).text(
                            floatToTime(grandTotalHours));
                        $(ui.elements.report.grandTotal.charges).text(

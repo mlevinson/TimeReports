@@ -12,12 +12,12 @@
         cols.push({          
           "sTitle": "Total Hours",                
           "fnRender":report.dtFormatHours,
-          "sClass":"numeric total",
+          "sClass":"numeric total"
         });
         cols.push({                               
           "sTitle": "Total Charges",                                
           "fnRender":report.dtFormatCharges,
-          "sClass":"numeric total",
+          "sClass":"numeric total"
         });
 
         return cols;  
@@ -25,7 +25,7 @@
 
     oDesk.Report.prototype.transformData = function(data){
           if(!data) return null;     
-          var grandTotalHours = 0, grandTotalCharges = 0;
+          var grandTotalHours = 0, grandTotalCharges = 0, dayTotals = [0, 0, 0, 0, 0, 0, 0];
           var rows = [], records = [], providers = []; 
           if(data.table){
               $.each(data.table.rows, function(i, record){  
@@ -48,6 +48,7 @@
                    var recordWeekDay = record.recordDayOfWeek();
                    var currentVal = parseFloat(row[recordWeekDay + 1]);    
                    row[recordWeekDay + 1] = currentVal + record.hours;
+                   dayTotals[recordWeekDay] == record.hours;
                    row[8] += record.hours;
                    row[9] += record.charges;
                    grandTotalHours +=  record.hours;                  
@@ -57,7 +58,8 @@
           return {
                 "rows": rows,
                 "grandTotalHours": grandTotalHours,
-                "grandTotalCharges": grandTotalCharges
+                "grandTotalCharges": grandTotalCharges,
+                "dayTotals": dayTotals
           };
     };    
 })(jQuery);   
