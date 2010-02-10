@@ -3,7 +3,11 @@ oDesk = function(){
         this.reference = null;
         this.name = null;        
         this.id = null;
-    };
+    };   
+    
+    oDeskObject.prototype.toString = function(){
+      return this.getDisplayName();  
+    };   
     
     oDeskObject.prototype.getDisplayName = function(){
         if(this.id == 0) return this.name;

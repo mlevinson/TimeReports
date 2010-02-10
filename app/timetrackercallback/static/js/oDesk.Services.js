@@ -12,17 +12,24 @@
 
     oDesk.Services.getTeams = function(report, callBack){
         $.getJSON(report.getTeamsQuery(), function(data){  
-            teams = [];
+            teams = [];  
+            var companyTeamObject = null;
             $.each(data.teams, function(i, team){
                var teamObject = new oDesk.Team();
                teamObject.id = team.id;
                teamObject.reference = team.reference;
                teamObject.name = team.name;
-               teams.push(teamObject);
                if (team.reference == report.state.company.reference){
                    report.state.company.id = team.id;
-               }
-            }); 
+                   companyTeamObject = teamObject;
+               } else {
+                   teams.push(teamObject);                   
+               }   
+            });    
+            teams.sort();                    
+            if(companyTeamObject){
+                teams.unshift(companyTeamObject);                
+            }   
             if($.isFunction(callBack)){
                 callBack(teams);
             }    
@@ -38,10 +45,11 @@
                providerObject.reference = provider.reference;
                providerObject.name = provider.first_name + " " + provider.last_name;
                providers.push(providerObject);
-            });
-             if($.isFunction(callBack)){        
-                 callBack(providers);
-             }
+            });   
+            providers.sort();
+            if($.isFunction(callBack)){        
+                callBack(providers);
+            }
         }); 
     }
 })(jQuery);
