@@ -20,30 +20,6 @@
 
 
     oDesk.Services.getTeams = function(report, success, failure){
-        $.getJSON(report.getTeamsQuery(), function(data){  
-            teams = [];  
-            var companyTeamObject = null;
-            $.each(data.teams, function(i, team){
-               var teamObject = new oDesk.Team();
-               teamObject.id = team.id;
-               teamObject.reference = team.reference;
-               teamObject.name = team.name;
-               if (team.reference == report.state.company.reference){
-                   report.state.company.id = team.id;
-                   companyTeamObject = teamObject;
-               } else {
-                   teams.push(teamObject);                   
-               }   
-            });    
-            teams.sort();                    
-            if(companyTeamObject){
-                teams.unshift(companyTeamObject);                
-            }   
-            if($.isFunction(callBack)){
-                callBack(teams);
-            }    
-        }); 
-        
          $.ajax({
              url: report.getTeamsQuery(), 
              dataType: 'jsonp',
