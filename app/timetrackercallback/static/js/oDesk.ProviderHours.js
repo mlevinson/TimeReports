@@ -1,0 +1,56 @@
+(function($){
+    oDesk.Report.prototype.columnSpec = function(){
+        var cols = [{"sTitle":"Buyer"}];  
+        var report = this;
+        $.each(Date.CultureInfo.abbreviatedDayNames, function(i, day){
+           cols.push({
+               "sTitle": day,     
+               "fnRender": report.dtFormatHours,           
+               "sClass": "numeric"
+           }); 
+        });
+        cols.push({          
+          "sTitle": "Total Hours",                
+          "fnRender":report.dtFormatHours,
+          "sClass":"numeric total"
+        });
+        return cols;  
+    };
+
+    oDesk.Report.prototype.transformData = function(data){
+          if(!data) return null;     
+          var grandTotalHours = 0, grandTotalCharges = 0, dayTotals = [0, 0, 0, 0, 0, 0, 0];
+          var rows = [], records = [], buyers = []; 
+          if(data.table){
+              $.each(data.table.rows, function(i, record){  
+                  if(record=="") return false;
+                  var oDeskRecord = new oDesk.ProviderHoursRecord(record);
+                  records.push(oDeskRecord);              
+                  var buyerName = oDeskRecord.buyerCompany.name;
+                  if($.inArray(buyerName, buyers) == -1){
+                      buyers.push(buyerName);
+                  }
+              });                              
+              buyers.sort();
+              $.each(buyers, function(i, buyerName){
+                  rows.push([buyerName, 0, 0, 0, 0, 0, 0, 0, 0]);
+              });
+
+              $.each(records, function(i, record){
+                   var buyerName = record.buyerCompany.name;   
+                   var row = rows[$.inArray(buyerName, buyers)];   
+                   var recordWeekDay = record.recordDayOfWeek();
+                   var currentVal = parseFloat(row[recordWeekDay + 1]);    
+                   row[recordWeekDay + 1] = currentVal + record.hours;
+                   dayTotals[recordWeekDay] += record.hours;
+                   row[8] += record.hours;
+                   grandTotalHours +=  record.hours;                  
+              });
+          } 
+          return {
+                "rows": rows,
+                "grandTotalHours": grandTotalHours,
+                "dayTotals": dayTotals
+          };
+    };    
+})(jQuery);

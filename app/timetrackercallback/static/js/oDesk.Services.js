@@ -52,11 +52,15 @@
                  }   
              }
          });
-    }  
+    }
     
-    oDesk.Services.getHours = function(report, success, failure){
+    function _ajax(query, success, failure){ 
+        if(!query && $.isFunction(failure)){
+            failure("Not Connected.", "Queryis null");
+            return null;
+        }
         $.ajax({
-             url: report.getHoursQuery(), 
+             url: query, 
              dataType: 'jsonp',
              error: function(request, status, error){
                  if($.isFunction(failure)){
@@ -69,7 +73,15 @@
                      success(data, status);
                  }    
              }
-         });
+         });        
+    }  
+    
+    oDesk.Services.getHours = function(report, success, failure){
+        _ajax(report.getHoursQuery(), success, failure);
+    }
+    
+    oDesk.Services.getProviderHours = function(report, success, failure){
+        _ajax(report.getProviderHoursQuery(), success, failure);
     }
  
     oDesk.Services.getProviders = function(report, success, failure){

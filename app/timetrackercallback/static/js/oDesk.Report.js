@@ -22,7 +22,8 @@ oDesk = function(){
         "company": "http://www.odesk.com/api/hr/v2/companies/{company}.json",
         "team": "http://www.odesk.com/api/hr/v2/companies/{company}/teams.json",
         "provider": "http://www.odesk.com/api/hr/v2/teams/{team}/users.json",
-        "hours": "http://www.odesk.com/gds/timereports/v1/companies/"
+        "hours": "http://www.odesk.com/gds/timereports/v1/companies/",
+        "providerHours": "http://www.odesk.com/gds/timereports/v1/providers/{provider}",        
     };
     
     oDeskHoursRecord = function(record){
@@ -34,10 +35,23 @@ oDesk = function(){
       this.charges = parseFloat(record.c[4].v);
     };  
     
+    
     oDeskHoursRecord.prototype.recordDayOfWeek = function(){
         return oDeskUtil.getDayNumber(this.workDate);
     }                       
     
+    
+    oDeskProviderHoursRecord = function(record){
+        this.workDate = Date.parseExact(record.c[0].v, "yyyyMMdd");
+        this.hours = parseFloat(record.c[1].v);
+        this.buyerCompany = new oDeskObject();  
+        this.buyerCompany.name = record.c[2].v;
+        this.buyerCompany.id = record.c[3].v;        
+    };
+
+    oDeskProviderHoursRecord.prototype.recordDayOfWeek = function(){
+           return oDeskUtil.getDayNumber(this.workDate);
+    }
     
     oDeskTime = function(sTimeType, d){
         var dt = d ? d.clone() : Date.today();
@@ -108,6 +122,24 @@ oDesk = function(){
         return oDeskUtil.substitute(urlTemplates.provider, {"team": val});
     }; 
     
+    report.prototype.getProviderHoursQuery = function(){
+        if(!this.state.provider.id 
+            || !this.state.timeline.startDate || !this.state.timeline.endDate){
+            return null;
+        }               
+        var tq = "SELECT worked_on, sum(hours), team_name, team_id WHERE worked_on >= '";
+        tq += this.state.timeline.startDate.toString("yyyy-MM-dd");
+        tq += "' AND worked_on <= '";
+        tq += this.state.timeline.endDate.toString("yyyy-MM-dd");                
+        tq += "'";        
+        tq += " ORDER BY team_name, worked_on";
+        var query = urlTemplates.providerHours;
+        query = oDeskUtil.substitute(query, {"provider":this.state.provider.id});
+        query += "?tq=";
+        query += escape(tq);
+        return query; 
+    }
+    
     report.prototype.getHoursQuery = function(){
         if(!this.state.company.id ||
             !this.state.timeline.startDate ||
@@ -142,6 +174,7 @@ oDesk = function(){
             "Report": report, 
             "Services": services, 
             "Timeline":oDeskTime, 
-            "HoursRecord": oDeskHoursRecord
+            "HoursRecord": oDeskHoursRecord,
+            "ProviderHoursRecord": oDeskProviderHoursRecord            
           };
 }();
