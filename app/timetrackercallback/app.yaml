@@ -28,6 +28,14 @@ handlers:
   static_files: static/weekly_report.html
   upload: static/weekly_report.html  
   
+- url: /provider_weekly
+  static_files: static/provider_weekly_report.html
+  upload: static/provider_weekly_report.html
+
+- url: /provider_weekly_report.html
+  static_files: static/provider_weekly_report.html
+  upload: static/provider_weekly_report.html  
+  
 - url: /css
   static_dir: static/css 
   
