@@ -1,3 +1,4 @@
+(function($){
 oDesk = function(){         
     oDeskObject = function(){
         this.reference = null;
@@ -24,7 +25,98 @@ oDesk = function(){
         "provider": "http://www.odesk.com/api/hr/v2/teams/{team}/users.json",
         "hours": "http://www.odesk.com/gds/timereports/v1/companies/",
         "providerHours": "http://www.odesk.com/gds/timereports/v1/providers/{provider}",        
+    };                   
+    
+    datasource = function(){};
+    
+    
+    datasource.Field = function(name){
+        this.name = name;      
+        this.dataType = "string";
+        this.value = null;
     };
+    
+    datasource.Field.prototype.set = function(value){
+        this.value = value;
+    } 
+    
+    datasource.Field.prototype.clone = function(){
+        var newf = this.prototype.constructor(this.name);
+        newf.set(this.value);
+        return newf;
+    }
+    
+     
+    
+    datasource.dateField = function(name){
+        this.prototype = new field(name);
+    }            
+    
+    datasource.dateField.prototype.constructor = dateField;    
+    datasource.dateField.prototype.set = function(value){
+        this.setStringValue(value);
+    }    
+    datasource.dateField.prototype.setStringValue = function(value, format){
+        if(!value) return;
+        var f = format || "yyyyMMdd";
+        this.value = Date.parseExact(value, f);
+    }
+    datasource.dateField.prototype.dayOfWeek = function(){
+        return oDeskUtil.getDayNumber(this.value);
+    }
+    
+    datasource.numberField = function(name){
+        this.prototype = new field(name);
+    } 
+    datasource.numberField.prototype.set = function(value){
+        this.value = parseFloat(value);
+    }    
+    datasource.numberField.prototype.constructor = numberField;
+    datasource.numberField.prototype.toHours = function(){
+        return oDeskUtil.floatToTime(this.value);
+    }                                            
+    datasource.numberField.prototype.toMoney = function(){
+        return currencyFromNumber(this.value);
+    }
+    
+    
+    datasource.constructField = function(col){
+        var f;
+        if(col.type == "number") f = numberField;
+        else if(col.type == "date") f = dateField;
+        else f = field;
+        return f(col.name);
+    }          
+    
+    datasource.read = function(data){
+       if(!data.table) return [];
+       if(!data.table.cols) return [];
+       if(!data.table.rows) return [];       
+       var table = datasource.Table(data.table.cols);
+       return table.readRows(data.table.rows);
+    }
+    
+    datasource.Table = function(cols){
+       if(!cols) return;
+       this.fields  = [];
+       $.each(cols, function(i, col){
+          this.fields.push(datasource.constructField(col));
+       });    
+    };
+     
+     datasource.Table.prototype.readRows = function(rows){
+         var records = [];
+         $.each(rows, function(i, row){
+             var record = {};
+             $.each(row.c, function(colIndex, col){
+                 var field = this.fields[colIndex].clone();
+                 record[field.name] = field;  
+                 field.set(col.v);                 
+             });
+             records.push(record);
+         });                      
+         return records;
+     }; 
     
     oDeskHoursRecord = function(record){
       this.workDate = Date.parseExact(record.c[0].v, "yyyyMMdd");
@@ -50,7 +142,7 @@ oDesk = function(){
     };
 
     oDeskProviderHoursRecord.prototype.recordDayOfWeek = function(){
-           return oDeskUtil.getDayNumber(this.workDate);
+        return oDeskUtil.getDayNumber(this.workDate);
     }
     
     oDeskTime = function(sTimeType, d){
@@ -167,14 +259,74 @@ oDesk = function(){
         return query;                       
     };
     
+    report.prototype.createFulcrum = function(records, pivotFunction){
+          var fulcrum = [];
+          $.each(records, function(i, record){
+              var f = null;
+              if($.isFunction(pivotFunction)){
+                  f = pivotFunction(records);  
+              } else {
+                  f = record[pivotFunction];    
+              }
+              if($.inArray(f, fulcrum) == -1){
+                 fulcrum.push(f);
+              }
+          });
+          fulcrum.sort();
+          return fulcrum;
+    }       
+    
+    
+    report.prototype.pivotWeekDays = function(records, s){   
+
+        var defaultSpec = {
+            pivotFucntion = null,
+            valueFunction = null,
+            dateField = "worked_on",
+            rowTotalFunctions = [],
+            columnTotalFunctions = []
+        };
+        
+        var spec = $.extend({}, defaultSpec, s);
+        var columnTotals = [];
+        var fulcrum = this.createFulcrum(records, spec.pivotFunction);
+        var f = oDesk.DataSource.NumberField("value");   
+        var totalColumns = 8 + spec.rowTotals.length;
+        var rows = $.map(fulcrum, function(val){  
+                            var row = [val];
+                            for(c=0; c < totalColumns; c++){
+                                row.push(f.clone());
+                            }
+                            return row;
+                    });
+
+        $.each(spec.columnTotals, function(i){
+              var totalRow = [];
+              for(c=0; c < totalColumns; c++){
+                  totalRow.push(f.clone());
+              } 
+              columnTotals.push(totalRow);              
+        });
+
+        $.each(records, function(i, record){                      
+             var f = pivotFunction(record); 
+             var row = rows[$.inArray(f, fulcrum)];
+             var weekDay = record[spec.dateField].dayOfWeek();
+             row[weekDay + 1].value += spec.valueFunction(record); 
+        });
+        return rows;
+    }
+    
     return {
             "Team": oDeskObject, 
             "Company": oDeskObject, 
             "Provider": oDeskObject, 
-            "Report": report, 
+            "Report": report,
+            "DataSource": dataSource, 
             "Services": services, 
             "Timeline":oDeskTime, 
             "HoursRecord": oDeskHoursRecord,
             "ProviderHoursRecord": oDeskProviderHoursRecord            
           };
 }();
+})(jQuery);
