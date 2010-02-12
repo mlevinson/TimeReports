@@ -117,11 +117,11 @@ a:hover {color:#0033FF; text-decoration:underline; }
     width: 240px;
 }    
 
-#provider_list li{
+.report_table_list li{
     list-style-type:none;
     padding:16px 0;    
 }
-#provider_list{
+.report_table_list{
     list-style-type:none;
     margin:0;
     padding:0;

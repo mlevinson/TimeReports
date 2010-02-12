@@ -1,5 +1,5 @@
 (function($){
-    agencyReport = function(){  
+    agencyBuyerReport = function(){  
         this.report = null;
         this.elements = { 
             "company" : {
@@ -13,10 +13,10 @@
                 "selector": "#timereports_week_selector"
             },
             "report": {      
-                "providerList": "#provider_list",
-                "providerTemplate": "#provider_list > li:first",
+                "buyerList": "#buyer_list",
+                "buyerTemplate": "#buyer_list > li:first",
                 "table": " .tabular",
-                "provider_name": " .provider_name",                
+                "buyer_name": " .buyer_name",                
                 "goButton": "#go_run_report",
                 "grandTotal": { 
                     "days": " .total.day span",
@@ -34,8 +34,8 @@
         };    
         
         this.template = 
-'<li id="#report_{provider_id}">\
-    <h2 class="provider_name">{provider_name}</h2>\
+'<li id="#report_{buyer_id}">\
+    <h2 class="buyer_name">{buyer_name}</h2>\
 </li>';                          
         
         function setCompanyDefaults(){                           
@@ -51,17 +51,16 @@
               $(this.elements.week.tableCaption).text(
                   this.report.state.timeline.getDisplayNameWithAbbreviations());
               var ui = this;  
-              $(this.elements.report.providerList + " li").remove();
-              ui.report.state.provider.id = ui.report.state.provider.name = null;
+              $(this.elements.report.buyerList + " li").remove();
+              ui.report.state.buyer = null;
               ui.report.state.filter_agency_hours = false; 
               oDesk.Services.getAgencyHours(ui.report, function(data, success){
                      ui.createSummaryTable();                     
                      ui.report.state.filter_agency_hours = true;                  
-                     var providers = ui.filterProviders(data);
-                     $.each(providers, function(i, provider){
-                         ui.report.state.provider.id = provider.id;
-                         ui.report.state.provider.name = provider.name;
-                         ui.createTableForProvider(i, provider);
+                     var buyers = ui.filterBuyers(data);
+                     $.each(buyers, function(i, buyer){
+                         ui.report.state.buyer = buyer;
+                         ui.createTableForBuyer(i, buyer);
                      });
 
               });                                          
@@ -72,36 +71,36 @@
          };
          
          
-         function filterProviders(data){
-             var providers = [], providerIds = [];
+         function filterBuyers(data){
+             var buyers = [], buyerIds = [];
              $.each(data.table.rows, function(i, row){
                  if (row == "") return false;
              
-                  if($.inArray(row.c[6].v, providerIds) == -1){  
-                      var provider = new oDesk.Provider();
-                      provider.name = row.c[5].v;
-                      provider.id = row.c[6].v;      
-                      providerIds.push(provider.id);
-                      providers.push(provider);                    
+                  if($.inArray(row.c[4].v, buyerIds) == -1){  
+                      var buyer = new oDesk.Company();
+                      buyer.name = row.c[3].v;
+                      buyer.id = row.c[4].v;      
+                      buyerIds.push(buyer.id);
+                      buyers.push(buyer);                    
                  }
              }); 
              
-             providers.sort();
-             return providers;
+             buyers.sort();
+             return buyers;
          } 
 
          function createSummaryTable(){  
               var ui = this;                       
-              var html = oDeskUtil.substitute(this.template, {"provider_id":"summary", "provider_name":"Summary"});
-              var element = $(html).appendTo(this.elements.report.providerList);  
+              var html = oDeskUtil.substitute(this.template, {"buyer_id":"summary", "buyer_name":"Summary"});
+              var element = $(html).appendTo(this.elements.report.buyerList);  
               var id = "#" + element.attr("id");    
               $(element).oDeskDataTable({"report": ui.report, "service": oDesk.Services.getAgencyHours});
           }
          
-         function createTableForProvider(index, provider){  
+         function createTableForBuyer(index, buyerCompany){  
              var ui = this;                       
-             var html = oDeskUtil.substitute(this.template, {"provider_id":provider.id, "provider_name":provider.name});
-             var element = $(html).appendTo(this.elements.report.providerList);  
+             var html = oDeskUtil.substitute(this.template, {"buyer_id":buyerCompany.id, "buyer_name":buyerCompany.name});
+             var element = $(html).appendTo(this.elements.report.buyerList);  
              var id = "#" + element.attr("id");    
              $(element).oDeskDataTable({"report": ui.report, "service": oDesk.Services.getAgencyHours});
          }  
@@ -135,10 +134,10 @@
               });  
               ui.report.state.filter_agency_hours = false;
               // $.getJSON("js/data.json", function(data){
-              //                               ui.report.state.agency_hours_cache = data;
-              //                               ui.report.state.agency_hours_status_cache = "success";
-              //                               ui.refreshReport(); 
-              //                         });                       
+              //                                            ui.report.state.agency_hours_cache = data;
+              //                                            ui.report.state.agency_hours_status_cache = "success";
+              //                                            ui.refreshReport(); 
+              //                                      });                       
             
 
                $("body").ajaxStart(function(){
@@ -147,8 +146,8 @@
                $("body").ajaxComplete(function(){ 
                    loading_process();
                     if(!ui.initComplete && ui.report.state.company.id){
-                        ui.initComplete = true; 
-                        ui.refreshReport();    
+                        ui.initComplete = true;  
+                        ui.refreshReport();   
                    }                                                          
                });   
            };  
@@ -161,9 +160,9 @@
              "refreshReport": refreshReport,
              "setCompanyDefaults":setCompanyDefaults,
              "setSelectedDate": setSelectedDate,
-             "createTableForProvider": createTableForProvider,
+             "createTableForBuyer": createTableForBuyer,
              "createSummaryTable": createSummaryTable,             
-             "filterProviders": filterProviders
+             "filterBuyers": filterBuyers
            };
     }();
 })(jQuery);

@@ -93,8 +93,11 @@
         }
         var filtered = {};
         filtered["table"] = {"cols": data.table.cols, "rows": []};
-        $.each(data.table.rows, function(i, row){
-           if(row.c[6].v == report.state.provider.id){
+        var filterBuyer = (report.state.buyer != null);
+        $.each(data.table.rows, function(i, row){ 
+           if(filterBuyer && row.c[4].v == report.state.buyer.id){
+               filtered.table.rows.push(row);               
+           } else if(row.c[6].v == report.state.provider.id){
                filtered.table.rows.push(row);
            } 
         });
