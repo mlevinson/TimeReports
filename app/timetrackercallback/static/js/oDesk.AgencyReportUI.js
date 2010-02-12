@@ -52,7 +52,9 @@
                   this.report.state.timeline.getDisplayNameWithAbbreviations());
               var ui = this;  
               $(this.elements.report.providerList + " li").remove();
+              ui.report.state.filter_agency_hours = false; 
               oDesk.Services.getAgencyHours(ui.report, function(data, success){
+                     ui.createSummaryTable();                     
                      ui.report.state.filter_agency_hours = true;                  
                      var providers = ui.filterProviders(data);
                      $.each(providers, function(i, provider){
@@ -86,6 +88,14 @@
              providers.sort();
              return providers;
          } 
+
+         function createSummaryTable(){  
+              var ui = this;                       
+              var html = oDeskUtil.substitute(this.template, {"provider_id":"summary", "provider_name":"Summary"});
+              var element = $(html).appendTo(this.elements.report.providerList);  
+              var id = "#" + element.attr("id");    
+              $(element).oDeskDataTable({"report": ui.report, "service": oDesk.Services.getAgencyHours});
+          }
          
          function createTableForProvider(index, provider){  
              var ui = this;                       
@@ -150,6 +160,7 @@
              "setCompanyDefaults":setCompanyDefaults,
              "setSelectedDate": setSelectedDate,
              "createTableForProvider": createTableForProvider,
+             "createSummaryTable": createSummaryTable,             
              "filterProviders": filterProviders
            };
     }();
