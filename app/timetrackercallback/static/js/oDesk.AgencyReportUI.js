@@ -33,27 +33,10 @@
             "timeline": {"type":"week"}
         };    
         
-        this.template = '<li id="#report_{provider_id}">\
-            <h2 class="provider_name">{provider_name}</h2>\
-            <table class="tabular">\
-                <tfoot>\
-                    <tr>\
-                        <td>Total for {provider_name}:</td>\
-                        <td class="numeric total day"><span></span></td>\
-                        <td class="numeric total day"><span></span></td>\
-                        <td class="numeric total day"><span></span></td>\
-                        <td class="numeric total day"><span></span></td>\
-                        <td class="numeric total day"><span></span></td>\
-                        <td class="numeric total day"><span></span></td>\
-                        <td class="numeric total day"><span></span></td>\
-                        <td class="numeric grand-total">\
-                            <span class="grand_total_hours"></span></td>\
-                        <td class="numeric grand-total">\
-                            <span class="grand_total_charges"></span></td>\
-                    </tr>\
-                </tfoot>\
-            </table>\
-        </li>';     
+        this.template = 
+'<li id="#report_{provider_id}">\
+    <h2 class="provider_name">{provider_name}</h2>\
+</li>';                          
         
         function setCompanyDefaults(){                           
               oDesk.Services.getCompany(this.report, 
@@ -107,26 +90,9 @@
          function createTableForProvider(index, provider){  
              var ui = this;                       
              var html = oDeskUtil.substitute(this.template, {"provider_id":provider.id, "provider_name":provider.name});
-             var element = $(this.elements.report.providerList).append(html);  
+             var element = $(html).appendTo(this.elements.report.providerList);  
              var id = "#" + element.attr("id");    
-             
-             $(id + ui.elements.report.table)
-               .oDeskTimeReports({"report": ui.report, "oneshot":true, "service": oDesk.Services.getAgencyHours})
-               .unbind("dataTablePopulated").bind("dataTablePopulated", function(e, results){
-                     var grandTotalHours = results ? results.grandTotalHours : 0;  
-                     var grandTotalCharges = results ? results.grandTotalCharges : 0;                       
-                     var dayTotals = results? results.dayTotals : [0,0,0,0,0,0,0];
-                     $(id + ui.elements.report.grandTotal.days).each(function(index, element){  
-                          var value = dayTotals[index] == 0 ? "" : oDeskUtil.floatToTime(dayTotals[index]);
-                          $(element).text(value); 
-                     });                      
-                     $(id + ui.elements.report.grandTotal.hours).text(
-                         oDeskUtil.floatToTime(grandTotalHours));
-                     $(id + ui.elements.report.grandTotal.charges).text(
-                         currencyFromNumber(grandTotalCharges)); 
-               })
-               .oDeskTimeReports("generateReport");   
-                         
+             $(element).oDeskDataTable({"report": ui.report, "service": oDesk.Services.getAgencyHours});
          }  
     
          function init(){ 

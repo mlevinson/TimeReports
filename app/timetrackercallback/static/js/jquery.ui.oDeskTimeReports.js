@@ -16,19 +16,19 @@ $.widget("ui.oDeskTimeReports",{
          }; 
          if(!this.options.oneshot){
              var dataTable = $(table).dataTable(
-                                            $.extend({}, 
-                                                this.options.defaultTableParams, 
+                                            $.extend({},
+                                                this.options.defaultTableParams,
                                                 this.options.tableParams));
-             $.data(table, "dataTable", dataTable);             
+             $.data(table, "dataTable", dataTable);
          }
      },
      dataTable: function(){
-       return $.data(this.element[0], "dataTable");  
+       return $.data(this.element[0], "dataTable");
      },
-     triggerError : function(){                        
-         var dataTable = this.dataTable();  
+     triggerError : function(){
+         var dataTable = this.dataTable();
          dataTable.fnClearTable(1);
-         $(this.element[0]).trigger("dataTablePopulated", null);         
+         $(this.element[0]).trigger("dataTablePopulated", null);
      },
      generateReport: function(){
          var report = this.options.report;
@@ -41,25 +41,25 @@ $.widget("ui.oDeskTimeReports",{
          service(report, function(data, status){
              var results = report.transformData(data);
              if(!widget.options.oneshot){
-                 var dataTable = widget.dataTable();             
-                 dataTable.fnClearTable(1); 
-                 dataTable.fnAddData(results.rows);                 
+                 var dataTable = widget.dataTable();
+                 dataTable.fnClearTable(1);
+                 dataTable.fnAddData(results.rows);
              } else {
                var dataTable = $(table).dataTable(
-                                                 $.extend({"aaData":results.rows}, 
-                                                     widget.options.defaultTableParams, 
+                                                 $.extend({"aaData":results.rows},
+                                                     widget.options.defaultTableParams,
                                                      widget.options.tableParams));
                 $.data(table, "dataTable", dataTable); 
              }
 
-             $(widget.element[0]).trigger("dataTablePopulated", results);             
+             $(widget.element[0]).trigger("dataTablePopulated", results);
          }, function(error, status){
              widget.triggerError();
-         });         
+         });
      }
-    
-});      
-    
+
+});
+
 $.extend($.ui.oDeskTimeReports, {
    defaults: {
        "report": null,
@@ -67,5 +67,5 @@ $.extend($.ui.oDeskTimeReports, {
        "tableParams": {},
        "oneshot":false
    }
- });          
+ });
 })(jQuery);    

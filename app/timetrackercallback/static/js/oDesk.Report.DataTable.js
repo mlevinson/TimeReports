@@ -12,4 +12,18 @@ oDesk.Report.prototype.dtFormatCharges = function(data){
                return "";
         }
      return currencyFromNumber(val);
+}  
+
+oDesk.Report.prototype.formatHours = function(val, zeroOk){
+     if(val == 0 && !zeroOk){
+         return "";
+     }  
+     return oDeskUtil.floatToTime(val);
+}
+
+oDesk.Report.prototype.formatCharges = function(val, zeroOk){  
+     if(val == 0  && !zeroOk){
+         return "";
+     }
+     return currencyFromNumber(val);
 }

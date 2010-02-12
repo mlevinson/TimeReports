@@ -22,6 +22,8 @@
 
         return cols;  
     };
+    
+  
 
     oDesk.Report.prototype.transformData = function(data){
           if(!data) return null;     

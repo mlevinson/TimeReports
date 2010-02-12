@@ -20,7 +20,45 @@
           "sClass":"numeric total"
         });
         return cols;  
-    };
+    };   
+    
+    oDesk.Report.prototype.footerSpec = function(){
+          var report = this;
+          function dayTotalRenderer(results, col){
+                return report.formatHours(results.dayTotals[col-1]);
+          }           
+          
+          var footerRows = [];
+          footerRows.push({
+                fnRender: function(results, col){
+                    return "Total for " + results.provider.name + ":";
+                }
+          });         
+          for(d = 0; d < 7; d++) { 
+             footerRows.push({
+                 fnRender: dayTotalRenderer,
+                 sClass: "numeric total"
+             });   
+          }
+          
+          footerRows.push(
+              {
+                  "fnRender": function(results, col){  
+                      return report.formatHours(results.grandTotalHours, true);
+                  },
+                  sClass: "numeric grand-total"
+              }
+           );            
+           footerRows.push(           
+              {
+                  "fnRender": function(results, col){  
+                      return report.formatCharges(results.grandTotalCharges, true);
+                  },                           
+                  sClass: "numeric grand-total"                  
+              }
+           );
+           return footerRows;   
+      };
 
     oDesk.Report.prototype.transformData = function(data){
           if(!data) return null;     
@@ -56,6 +94,7 @@
           } 
           return {
                 "rows": rows,
+                "provider": this.state.provider, 
                 "grandTotalHours": grandTotalHours,
                 "grandTotalCharges": grandTotalCharges,                
                 "dayTotals": dayTotals
