@@ -82,6 +82,10 @@ a:hover {color:#0033FF; text-decoration:underline; }
     z-index: 10;
 }    
 
+#mainBody h2{
+    margin: 16px 0;
+}  
+
 #company_selector{background-color:white; padding:8px; width: 240px; border:1px solid gray;}             
 
 #company_selector input[type="text"]{width:200px;}
@@ -102,8 +106,6 @@ a:hover {color:#0033FF; text-decoration:underline; }
     margin-bottom: 16px;
     border-bottom: 1px solid gray;
 }      
-
-
 
 #timereports_team_selector,
 #timereports_provider_selector,

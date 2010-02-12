@@ -52,6 +52,7 @@
                   this.report.state.timeline.getDisplayNameWithAbbreviations());
               var ui = this;  
               $(this.elements.report.providerList + " li").remove();
+              ui.report.state.provider.id = ui.report.state.provider.name = null;
               ui.report.state.filter_agency_hours = false; 
               oDesk.Services.getAgencyHours(ui.report, function(data, success){
                      ui.createSummaryTable();                     
@@ -133,11 +134,11 @@
                  ui.setSelectedDate(selectedDate);
               });  
               ui.report.state.filter_agency_hours = false;
-              $.getJSON("js/data.json", function(data){
-                                ui.report.state.agency_hours_cache = data;
-                                ui.report.state.agency_hours_status_cache = "success";
-                                ui.refreshReport(); 
-                          });                       
+              // $.getJSON("js/data.json", function(data){
+              //                               ui.report.state.agency_hours_cache = data;
+              //                               ui.report.state.agency_hours_status_cache = "success";
+              //                               ui.refreshReport(); 
+              //                         });                       
             
 
                $("body").ajaxStart(function(){

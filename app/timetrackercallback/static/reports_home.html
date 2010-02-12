@@ -240,25 +240,46 @@
             <div id="pageTitle">
                 <h1>Reports</h1>
             </div>
-            <div id="mainBody" class="layout2">    
+            <div id="mainBody" class="layout2">
+                <h2>Buyer Reports</h2>    
                 <div id="col1">
                     <dl class="reportsList"> 
                         <dt class="tabularReport">
-                           <a href="javascript:oDeskUtil.carry_url('timereports.html')">Timesheet</a> 
+                           <a href="javascript:oDeskUtil.carry_url('timereports.html')">Monthly Timesheet</a> 
                         </dt>                           
-                        <dd>Provider time worked in calendar format.</dd>
+                        <dd>Summarizes the work done by each provider during a calendar month.</dd>
                         <dt class="tabularReport">
-                           <a href="javascript:oDeskUtil.carry_url('weekly_report.html')">Provider Summary</a> 
+                           <a href="javascript:oDeskUtil.carry_url('weekly_report.html')">Weekly Provider Summary</a> 
                         </dt>                           
-                        <dd>Summarizes work done by each provider for the period selected.</dd>
+                        <dd>Summarizes work done by each provider during the course of a week.</dd>
+                    </dl>                                                
+                    <h2>Provider Reports</h2>
+                    <dl class="reportsList"> 
                         <dt class="tabularReport">
                             <a  href="javascript:oDeskUtil.carry_url('provider_weekly_report.html')">
-                                Weekly Provider Timelog</a>
+                                My Weekly Summary</a>
                         </dt>
-                        <dd>Summarizes work done by you for each buyer during a given week.</dd>                                
+                        <dd>Summarizes work done by you for 
+                            each buyer during a given week.</dd> 
+                        </dl>                            
+                        <h2>Agency Reports</h2>
+                        <dl class="reportsList">                                                           
+                        <dt class="tabularReport">
+                            <a  href="javascript:oDeskUtil.carry_url('agency_report.html')">
+                                Weekly Provider Report</a>
+                        </dt>
+                        <dd>Reports on time and earnings by your providers 
+                            during a given week.</dd>                                
+                            
+                        <dt class="tabularReport">
+                            <a  href="javascript:oDeskUtil.carry_url('agency_report.html')">
+                                Weekly Buyer Report</a>
+                        </dt>
+                        <dd>Reports on time and earnings from buyers 
+                            during a given week.</dd>                            
                     </dl>                                                
                     
-                </div>    
+                </div>                
             </div>    
          </div>
     </body>
