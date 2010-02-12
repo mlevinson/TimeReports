@@ -34,7 +34,15 @@ handlers:
 
 - url: /provider_weekly_report.html
   static_files: static/provider_weekly_report.html
-  upload: static/provider_weekly_report.html  
+  upload: static/provider_weekly_report.html
+  
+- url: /agency_report.html
+  static_files: static/agency_report.html
+  upload: static/agency_report.html    
+  
+- url: /agency_report
+  static_files: static/agency_report.html
+  upload: static/agency_report.html  
   
 - url: /css
   static_dir: static/css 

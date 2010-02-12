@@ -60,7 +60,7 @@
         <script type="text/javascript" src="js/jquery.ui.oDeskTimeReports.js"></script>                               
         <script src="js/jquery.ui.oDeskSelectWidget.js" type="text/javascript" charset="utf-8"></script>          
         <script src="js/jquery.ui.weekSelector.js" type="text/javascript" charset="utf-8"></script>                         
-        <script type="text/javascript" src="js/oDesk.ProviderHoursUI.js"></script>           
+        <script type="text/javascript" src="js/oDesk.AgencyReportUI.js"></script>           
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     </head>
     <body bgcolor="#FFFFFF">
@@ -272,38 +272,25 @@
             </div>
             <div id="reports_main_content" class="content_main">
                 <div class="control_bar">
-                    <div class="control" id="timereports_provider_selector">
-                        Provider:&nbsp;<input id="provider_id" type="text"></input>
-                    </div>
                     <div class="control" id="timereports_week_selector">
                     </div> 
                     <div class="control" id="run_report">
                         <button id="go_run_report">Go</button>
                     </div>
                     <br class="clear">    
+                </div> 
+                <div id="agency_summary">
+                    <h2 class="table-caption">
+                        Hours &amp; Charges for during the week of 
+                        <span id="time-week"></span>
+                    </h2>                                                                                   
                 </div>
-            <h2 class="table-caption">Hours &amp; Charges for you during the week of <span id="time-week"></span></h2>                
-                <table id="time-reports-grid" class="tabular">
-                    <tfoot>
-                        <tr>
-                            <td>Total for all buyers:</td>
-                            <td class="numeric total day"><span></span></td>
-                            <td class="numeric total day"><span></span></td>
-                            <td class="numeric total day"><span></span></td>
-                            <td class="numeric total day"><span></span></td>
-                            <td class="numeric total day"><span></span></td>
-                            <td class="numeric total day"><span></span></td>
-                            <td class="numeric total day"><span></span></td>                                                                                                                                                                        
-                            <td class="numeric grand-total"><span id="grand_total_hours"></span></td>                             
-                            <td class="numeric grand-total"><span id="grand_total_charges"></span></td>                                                         
-                        </tr>
-                    </tfoot>   
-                </table>                                            
+                <ul id="provider_list"></ul>
            </div> 
         </div>
     <script type="text/javascript"> 
        $(function(){
-            providerHours.init();
+            agencyReport.init();
         });            
     </script>  
     </body>

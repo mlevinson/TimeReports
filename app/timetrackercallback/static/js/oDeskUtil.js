@@ -1,11 +1,13 @@
 oDeskUtil = function(){};
 
+oDeskUtil.dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
 oDeskUtil.carry_url = function(url){
  window.location.assign(url + window.location.search);
 }   
 
 oDeskUtil.substitute = function(str, params){ 
-     var pattern, re;
+     var pattern, re, result;
      $.each(params, function(key, value){
        pattern = "\\{" + key + "\\}";   
        re = new RegExp(pattern, "g");        

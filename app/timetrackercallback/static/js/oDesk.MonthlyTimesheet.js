@@ -9,7 +9,7 @@
                 return report.dtFormatCharges(data);                
             }
         }
-        $.each(Date.CultureInfo.abbreviatedDayNames, function(i, day){
+        $.each(oDeskUtil.dayNames, function(i, day){
            cols.push({
                "sTitle": day,
                "fnRender": render,

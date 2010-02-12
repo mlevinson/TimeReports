@@ -83,6 +83,50 @@
     oDesk.Services.getProviderHours = function(report, success, failure){
         _ajax(report.getProviderHoursQuery(), success, failure);
     }
+    
+    function filterAgencyHours(report, success, failure){
+        var data = report.state.agency_hours_cache;
+        var status = report.state.agency_hours_status_cache;
+        if(!data || !data.table || !data.table.cols || !data.table.rows){
+            success(data,status);
+            return;
+        }
+        var filtered = {};
+        filtered["table"] = {"cols": data.table.cols, "rows": []};
+        $.each(data.table.rows, function(i, row){
+           if(row.c[6].v == report.state.provider.id){
+               filtered.table.rows.push(row);
+           } 
+        });
+        
+        if($.isFunction(success)){
+            success(filtered, status);
+        }
+    }
+    
+    oDesk.Services.getAgencyHours = function(report, success, failure){
+       var cached_data = report.state.agency_hours_cache;
+       var cached_status = report.state.agency_hours_status_cache;
+       if(cached_data == 'undefined' || !cached_data){
+           _ajax(report.getAgencyQuery(), 
+                function(data, status){
+                    report.state.agency_hours_cache = data;
+                    report.state.agency_hours_status_cache = status;
+                    if(report.state.filter_agency_hours){
+                        filterAgencyHours(report, success, failure);                   
+                    } else if($.isFunction(success)){
+                        success(data, status);    
+                    }
+                }, 
+                failure);           
+       } 
+       else if(report.state.filter_agency_hours){
+          filterAgencyHours(report, success, failure);                   
+       } else if($.isFunction(success)){
+          success(cached_data, cached_status);    
+       }
+    }
+    
  
     oDesk.Services.getProviders = function(report, success, failure){
         

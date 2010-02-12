@@ -59,8 +59,8 @@ a {text-decoration:none; color:#0033FF;}
 a:hover {color:#0033FF; text-decoration:underline; }
 
 .table-caption{border-bottom: 1px solid black;}
-#time-reports-grid td.total{background-color:#ffffcc;font-weight:bold;}
-#time-reports-grid td.grand-total {background-color:#ffff66;font-weight:bold;}  
+.tabular td.total{background-color:#ffffcc;font-weight:bold;}
+.tabular td.grand-total {background-color:#ffff66;font-weight:bold;}  
 #grand-total{padding-left: 60px;font-weight:bold;}  
 #reports_header h1{
     margin: 16px 0;
@@ -113,6 +113,16 @@ a:hover {color:#0033FF; text-decoration:underline; }
 #timereports_week_selector,
 #week_display{
     width: 240px;
+}    
+
+#provider_list li{
+    list-style-type:none;
+    padding:16px 0;    
+}
+#provider_list{
+    list-style-type:none;
+    margin:0;
+    padding:0;
 }
 
 /* ========================= */

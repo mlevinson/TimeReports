@@ -24,6 +24,8 @@ oDesk = function(){
         "provider": "http://www.odesk.com/api/hr/v2/teams/{team}/users.json",
         "hours": "http://www.odesk.com/gds/timereports/v1/companies/",
         "providerHours": "http://www.odesk.com/gds/timereports/v1/providers/{provider}",        
+        "agencyHours":
+         "http://www.odesk.com/gds/timereports/v1/companies/{agency}/agencies/{agency}"
     };
     
     oDeskHoursRecord = function(record){
@@ -31,7 +33,7 @@ oDesk = function(){
       this.provider = new oDeskObject();
       this.provider.id = record.c[1].v;
       this.provider.name = record.c[2].v;      
-      this.hours = parseFloat(record.c[3].v);
+      this.hours = parseFloat(record.c[3].v);  
       this.charges = parseFloat(record.c[4].v);
     };  
     
@@ -44,9 +46,15 @@ oDesk = function(){
     oDeskProviderHoursRecord = function(record){
         this.workDate = Date.parseExact(record.c[0].v, "yyyyMMdd");
         this.hours = parseFloat(record.c[1].v);
+        this.charges = parseFloat(record.c[2].v);        
         this.buyerCompany = new oDeskObject();  
-        this.buyerCompany.name = record.c[2].v;
-        this.buyerCompany.id = record.c[3].v;        
+        this.buyerCompany.name = record.c[3].v;
+        this.buyerCompany.id = record.c[4].v; 
+        if(record.c.length > 5){
+            this.provider = new oDeskObject();
+            this.provider.name = record.c[5].v;
+            this.provider.id = record.c[6].v;
+        }
     };
 
     oDeskProviderHoursRecord.prototype.recordDayOfWeek = function(){
@@ -110,15 +118,21 @@ oDesk = function(){
 
     report.prototype.getCompanyQuery = function(){  
         if(!this.state.company.reference) return null;
-        return oDeskUtil.substitute(urlTemplates.company, {"company": this.state.company.reference});
-    };                                            
-    report.prototype.getTeamsQuery = function(){ 
-        if(!this.state.company.reference) return null;        
-        return oDeskUtil.substitute(urlTemplates.team, {"company": this.state.company.reference});
+        return oDeskUtil.substitute(urlTemplates.company, 
+            {"company": this.state.company.reference});
     };
+    
+    report.prototype.getTeamsQuery = function(){
+        if(!this.state.company.reference) return null;
+        return oDeskUtil.substitute(urlTemplates.team, 
+            {"company": this.state.company.reference});
+    };
+    
     report.prototype.getProvidersQuery = function(){     
         if(!this.state.company.reference) return null;        
-        var val = this.state.team.reference ? this.state.team.reference : this.state.company.reference;
+        var val = this.state.team.reference ? 
+                        this.state.team.reference : 
+                        this.state.company.reference;
         return oDeskUtil.substitute(urlTemplates.provider, {"team": val});
     }; 
     
@@ -127,7 +141,7 @@ oDesk = function(){
             || !this.state.timeline.startDate || !this.state.timeline.endDate){
             return null;
         }               
-        var tq = "SELECT worked_on, sum(hours), team_name, team_id WHERE worked_on >= '";
+        var tq = "SELECT worked_on, sum(hours), sum(earnings), team_name, team_id WHERE worked_on >= '";
         tq += this.state.timeline.startDate.toString("yyyy-MM-dd");
         tq += "' AND worked_on <= '";
         tq += this.state.timeline.endDate.toString("yyyy-MM-dd");                
@@ -144,29 +158,53 @@ oDesk = function(){
         if(!this.state.company.id ||
             !this.state.timeline.startDate ||
             !this.state.timeline.endDate ) return null;
-        var tq = "SELECT worked_on, provider_id, provider_name, sum(hours), sum(charges) WHERE worked_on >= '";
+        var tq = "SELECT worked_on, provider_id, provider_name,\
+                  sum(hours), sum(charges) WHERE worked_on >= '";
         tq += this.state.timeline.startDate.toString("yyyy-MM-dd");
         tq += "' AND worked_on <= '";
-        tq += this.state.timeline.endDate.toString("yyyy-MM-dd");                
+        tq += this.state.timeline.endDate.toString("yyyy-MM-dd");
         tq += "'";
         if(this.state.provider.id){
            tq += " AND provider_id='";
-           tq += this.state.provider.id;        
+           tq += this.state.provider.id;
            tq += "'";          
         }           
         tq += " ORDER BY provider_id, worked_on";
 
         var query = urlTemplates.hours;
-        query += this.state.company.id;  
+        query += this.state.company.id; 
         if(this.state.team.id){
             query += "/teams/";
-            query += this.state.team.id;          
+            query += this.state.team.id;
         }
         query += "?tq=";
         query += escape(tq); 
-        return query;                       
-    };
+        return query;
+    };  
     
+    report.prototype.getAgencyQuery = function(){
+        if(!this.state.company.id 
+                || !this.state.timeline.startDate 
+                || !this.state.timeline.endDate){
+               
+               return null;
+           }               
+           var tq = "SELECT worked_on, sum(hours), sum(earnings), team_name, team_id,";
+           tq += " provider_name, provider_id"
+           
+           tq += " WHERE worked_on >= '";
+           tq += this.state.timeline.startDate.toString("yyyy-MM-dd");
+           tq += "' AND worked_on <= '";
+           tq += this.state.timeline.endDate.toString("yyyy-MM-dd");                
+           tq += "'";        
+           tq += " ORDER BY provider_name, team_name, worked_on";
+           var query = urlTemplates.agencyHours;
+           query = oDeskUtil.substitute(query, {"agency":this.state.company.id});
+           query += "?tq=";
+           query += escape(tq);
+           return query;
+    };
+
     return {
             "Team": oDeskObject, 
             "Company": oDeskObject, 
@@ -175,6 +213,6 @@ oDesk = function(){
             "Services": services, 
             "Timeline":oDeskTime, 
             "HoursRecord": oDeskHoursRecord,
-            "ProviderHoursRecord": oDeskProviderHoursRecord            
+            "ProviderHoursRecord": oDeskProviderHoursRecord
           };
 }();
