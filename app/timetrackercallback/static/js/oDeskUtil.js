@@ -30,10 +30,7 @@ oDeskUtil.getParameterByName = function(name, defaultValue){
 oDeskUtil.floatToTime = function(val){
         var hours = parseInt(val);
         var minutes = Math.round((parseFloat(val) - hours) * 60);
-        if(minutes == 0){
-            minutes = "00";
-        }
-        val = hours + ":" + minutes;
+        val = hours + ":" + ("00" + minutes).slice(-2);
         return val;
 }   
 

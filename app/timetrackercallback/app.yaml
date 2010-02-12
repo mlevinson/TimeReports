@@ -44,6 +44,14 @@ handlers:
   static_files: static/agency_report.html
   upload: static/agency_report.html  
   
+- url: /agency_buyer_report.html
+  static_files: static/agency_buyer_report.html
+  upload: static/agency_buyer_report.html    
+
+- url: /agency_buyer_report
+  static_files: static/agency_buyer_report.html
+  upload: static/agency_buyer_report.html  
+  
 - url: /css
   static_dir: static/css 
   
