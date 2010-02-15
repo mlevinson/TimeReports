@@ -1,23 +1,23 @@
 (function($){
     oDesk.Report.prototype.columnSpec = function(){
-        var cols = [{"sTitle":"Provider"}];  
+        var cols = [{sTitle:"Provider"}];  
         var report = this;
         $.each(oDeskUtil.dayNames, function(i, day){
            cols.push({
-               "sTitle": day,     
-               "fnRender": report.dtFormatHours,           
-               "sClass": "numeric"
+               sTitle: day,     
+               fnRender: report.dtFormatHours,           
+               sClass: "numeric"
            }); 
         });
         cols.push({          
-          "sTitle": "Total Hours",                
-          "fnRender":report.dtFormatHours,
-          "sClass":"numeric total"
+          sTitle: "Total Hours",                
+          fnRender:report.dtFormatHours,
+          sClass:"numeric total"
         });
         cols.push({                               
-          "sTitle": "Total Charges",                                
-          "fnRender":report.dtFormatCharges,
-          "sClass":"numeric total"
+          sTitle: "Total Charges",                                
+          fnRender:report.dtFormatCharges,
+          sClass:"numeric total"
         });
 
         return cols;  

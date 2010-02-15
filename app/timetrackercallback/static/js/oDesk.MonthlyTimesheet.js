@@ -1,6 +1,6 @@
 (function($){
     oDesk.Report.prototype.columnSpec = function(){
-        var cols = [{"sTitle":"Week"}];  
+        var cols = [{sTitle:"Week"}];  
         var report = this; 
         function render(data){
             if(report.state.mustGetHours){
@@ -11,16 +11,16 @@
         }
         $.each(oDeskUtil.dayNames, function(i, day){
            cols.push({
-               "sTitle": day,
-               "fnRender": render,
-               "sClass": "numeric"
+               sTitle: day,
+               fnRender: render,
+               sClass: "numeric"
            }); 
         });
         
         cols.push({          
-          "sTitle": "Total",                
-          "fnRender":render,
-          "sClass":"numeric total",
+          sTitle: "Total",                
+          fnRender:render,
+          sClass:"numeric total",
         });
 
         return cols;  

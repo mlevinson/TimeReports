@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script type="text/javascript"
+            src="http://www.odesk.com/js/jquery/jquery.pack.js"
+            charset="utf-8"></script>
+
+        <script type="text/javascript"
+            src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"
+            charset="utf-8"></script>
+
+        <script type="text/javascript"
+                src="../js/oDeskUtil.js"
+                charset="utf-8"></script>
+
+        <script type="text/javascript"
+                src="../js/jquery.ui.oDeskDataTable.js"
+                charset="utf-8"></script>          
+        
+        
+        <style type="text/css" media="screen">  
+            table{
+                border-collapse: collapse;
+            }
+            td{
+                border-bottom: 1px solid black;                                
+            }
+            tr.footer-row td{
+                border-top:1px solid black;
+                border-bottom:1px solid black;                
+            }  
+            tr.group_row td{
+                border-bottom:0;
+            }
+            tr td.group_column{
+                border-bottom: 1px solid black;                
+            }
+            .last_group_row td{
+                border-bottom: 1px solid black;
+            }
+        </style>        
+                
+    </head>
+    <body>
+         <div id="datatable"></div>
+        <script type="text/javascript">
+
+            $(function(){
+                var cols = [
+                    {
+                        sTitle: "Label",
+                        canGroup: true
+                    },
+                    {
+                        sTitle: "Value"
+                    }
+                ];
+
+                var rows = [
+                    ["Group One", 1],
+                    ["Group One", 4],
+                    ["Group One", 7],
+                    ["Group One", 9],
+                    ["Group Two", 3],
+                    ["Group Three", 2],
+                    ["Group Three", 2],
+                    ["Group Three", 8],
+                    ["Group Three", 5],
+                    ["Group Four", 13],
+                    ["Group Five", 15],
+                    ["Group Six", 22],
+                    ["Group Six", 28],
+                    ["Group Six", 32],
+                    ["Group Six", 1],
+                    ["Group Six", 0]
+                ]; 
+                
+                $("#datatable").oDeskDataTable({
+                    report: {
+                        columnSpec : function(){
+                            return cols;
+                        },
+                        getGroupFooter: function(results, group){
+                            return { 
+                              sClass: "footer-row",  
+                              columns: [
+                              {
+                                    fnRender: function(results, group){  
+                                        var total = 0;
+                                        $.each(results.rows, function(i, row){
+                                           if(row[0] == group.value){
+                                               total += parseFloat(row[1]);
+                                           }
+                                        });                                
+                                        return total;
+                                    }
+                              }
+                              ]  
+                            };
+                        }
+                    },
+                    groupRows: true
+                }).oDeskDataTable("processResults", {rows:rows});
+                
+                
+            });
+
+        </script>
+
+    </body>
+</html>

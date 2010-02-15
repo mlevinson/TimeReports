@@ -20,7 +20,7 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 	font-size: 100%;
 	vertical-align: baseline;
 	background: transparent;
-	
+
 }
 body {
 	line-height: 1.3;
@@ -60,10 +60,15 @@ a:hover {color:#0033FF; text-decoration:underline; }
 
 .table-caption{border-bottom: 1px solid black;}
 .tabular td.total{background-color:#ffffcc;font-weight:bold;}
-.tabular td.grand-total {background-color:#ffff66;font-weight:bold;}  
-.tabular tbody td{width:140px;}
-.tabular tbody td.fixed.label{width:360px; background-color:white}
-#grand-total{padding-left: 60px;font-weight:bold;}  
+.tabular td.grand-total {background-color:#ffff66;font-weight:bold;}
+.tabular td.fixed.label{background-color:white;}
+
+.table10 table{table-layout:fixed;}
+.table10 td.numeric{width:63px;}
+.table10 td.total{width:100px;}
+.table10 td.fixed.label{width: 218px;}
+
+#grand-total{padding-left: 60px;font-weight:bold;}
 #reports_header h1{
     margin: 16px 0;
 }
@@ -82,13 +87,13 @@ a:hover {color:#0033FF; text-decoration:underline; }
     position: relative;
     white-space: nowrap;
     z-index: 10;
-}    
+}
 
 #mainBody h2{
     margin: 16px 0;
-}  
+}
 
-#company_selector{background-color:white; padding:8px; width: 240px; border:1px solid gray;}             
+#company_selector{background-color:white; padding:8px; width: 240px; border:1px solid gray;}
 
 #company_selector input[type="text"]{width:200px;}
 
@@ -100,14 +105,14 @@ a:hover {color:#0033FF; text-decoration:underline; }
 
 #reports_list ul{
     padding:0;
-    margin:0;  
+    margin:0;
 }
 
 #reports_list li{
-    list-style-type: none; 
+    list-style-type: none;
     margin-bottom: 16px;
     border-bottom: 1px solid gray;
-}      
+}
 
 #timereports_team_selector,
 #timereports_provider_selector,
@@ -117,11 +122,11 @@ a:hover {color:#0033FF; text-decoration:underline; }
 #timereports_week_selector,
 #week_display{
     width: 240px;
-}    
+}
 
 .report_table_list li{
     list-style-type:none;
-    padding:16px 0;    
+    padding:16px 0;
 }
 .report_table_list{
     list-style-type:none;
@@ -137,46 +142,46 @@ a:hover {color:#0033FF; text-decoration:underline; }
 
    #month_selector_wrapper{width:240px;}
    #month_year_display{line-height: 24px;width:240px;}
-   #selection_display{display:inline-block;width: 162px;text-align:center;cursor:pointer;}               
+   #selection_display{display:inline-block;width: 162px;text-align:center;cursor:pointer;}
    #month_selector_list{
        width: 235px;
        padding:0;
-       margin:0;         
-       border: 1px solid gray;  
-       border-bottom:0;  
+       margin:0;
+       border: 1px solid gray;
+       border-bottom:0;
        position:absolute;
-       z-index:1000;   
-       background-color:white;                         
+       z-index:1000;
+       background-color:white;
    }
    #month_selector_list li{
-       list-style-type:none; 
-       width: 80px;  
+       list-style-type:none;
+       width: 80px;
        border-bottom: 1px solid gray;
-       font-size: 12px;      
-   }  
-   #month_selector_list li span{ 
+       font-size: 12px;
+   }
+   #month_selector_list li span{
        display:block;
        width: 60px;
        padding: 0px 8px;
-       cursor:pointer;   
+       cursor:pointer;
        text-align:center;
    }
    #month_selector_list li span:hover{
-       text-decoration:underline; 
+       text-decoration:underline;
        color:#345B9E;
-   }                                             
+   }
    #month_selector_list li span.selected{background-color: #345B9E;color:white;}
    #month_selector_list li.column1 { margin-left: 0;}
    #month_selector_list li.column2 { margin-left: 80px;}
-   #month_selector_list li.column3 { margin-left: 160px; width: 75px;} 
+   #month_selector_list li.column3 { margin-left: 160px; width: 75px;}
    #month_selector_list li { line-height: 24px; }
    #month_selector_list li.reset { margin-top: -100px; }
-   
-    
-    
+
+
+
 /* ============================ */
 /* = From PageLayout.css labs = */
-/* ============================ */    
+/* ============================ */
 
 
 #pageTitle {
@@ -190,7 +195,7 @@ a:hover {color:#0033FF; text-decoration:underline; }
 	color:#225A94;
 	margin-bottom:.6em;
 }
-#mainBody.layout1, 
+#mainBody.layout1,
 #mainBody.layout2,
 #mainBody.layout3 {
 	width:970px;
@@ -299,70 +304,70 @@ a:hover {color:#0033FF; text-decoration:underline; }
 		margin-bottom: 1em;
 		width: 100%;
 	}
-	
+
 	#report table#configuration td {
 		padding: .6em 1em;
 		border-right: 1px solid #ccc;
 	}
-	
+
 	/* control Bar */
 	#report .controlBar {
 		margin-bottom: 1em;
 	}
-	
-	
+
+
 	/* Tables */
 	#report table.tabularData  td.elapsed, #report .tabularData  td.percentage, #report .tabularData  td.charge {
 		text-align: right;
 	}
-	
+
 	#report table.tabularData {
 		margin-bottom: 2em;
 	}
-	
+
 	#report table.tabularData td,
 	#report table.tabularData th {
 		padding-right: 1em;
 		padding-left: 1em;
 	}
-	
+
 	#report td.emptyCell {
 		background-color: #fff;
 	}
-	
+
 	#report td.zero {
 		color: #ccc;
 	}
-	
+
 	#report table.tabularData th.weekdayLabel,
 	#report table.tabularData th.hoursLabel,
 	#report table.tabularData th.offlineLabel,
 	#report table.tabularData th.chargesLabel {
 		text-align: right;
 	}
-	
+
 	#report table.tabularData caption {
 		text-align: left;
 		font-weight: bold;
 		margin-bottom: .4em;
 		font-size: 1.1em;
 	}
-	
+
 	#report table.tabularData colgroup.weeks {
 		border-right: 1px solid #ccc;
 		text-align: left;
 		background-color: #eee;
 	}
-	
+
 	#report table.tabularData colgroup.totals {
 		border-left: 1px solid #ccc;
 		background-color: #FFFFCC;
 	}
-	
+
 	#report table.tabularData colgroup.totals td {
 		font-weight: bold;
 	}
-	
+
 	#report table.tabularData td.grandTotal {
 		background-color: #FFFF66;
 		font-weight: bold;
@@ -370,7 +375,7 @@ a:hover {color:#0033FF; text-decoration:underline; }
 /* ======================== Visualization Overrides ==================================*/
 .google-visualization-table-th {
 	color: #666;
-	
+
 }
 /* ======================== Modals ==================================*/
 #saveThisReport .content {
