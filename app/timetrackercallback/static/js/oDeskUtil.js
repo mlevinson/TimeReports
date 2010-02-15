@@ -2,8 +2,11 @@ oDeskUtil = function(){};
 
 oDeskUtil.dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-oDeskUtil.carry_url = function(url){
- window.location.assign(url + window.location.search);
+oDeskUtil.decorateUrl = function(links, window){ 
+    $(links).each(function(i, link){
+        var href = $(link).attr("href");
+        $(link).attr("href", href + window.location.search);
+    });
 }   
 
 oDeskUtil.substitute = function(str, params){ 

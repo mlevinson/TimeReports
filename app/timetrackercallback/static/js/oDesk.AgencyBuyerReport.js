@@ -1,7 +1,12 @@
 (function($){
     oDesk.Report.prototype.columnSpec = function(){
-        var cols = [{"sTitle":"Provider"}];  
-        var report = this;
+        var report = this;       
+        var cols = [];
+        if (report.state.buyer){
+            cols.push({"sTitle":"Provider", "sClass":"fixed label"});
+        } else {
+            cols.push({"sTitle":"Buyer", "sClass":"fixed label"});            
+        }
         $.each(oDeskUtil.dayNames, function(i, day){
            cols.push({
                "sTitle": day,     

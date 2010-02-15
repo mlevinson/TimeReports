@@ -133,11 +133,15 @@
                  ui.setSelectedDate(selectedDate);
               });  
               ui.report.state.filter_agency_hours = false;
-              // $.getJSON("js/data.json", function(data){
-              //                                            ui.report.state.agency_hours_cache = data;
-              //                                            ui.report.state.agency_hours_status_cache = "success";
-              //                                            ui.refreshReport(); 
-              //                                      });                       
+              if(oDeskUtil.getParameterByName("test", null) == "test"){
+                  $.getJSON("js/data.json", 
+                        function(data){
+                            ui.report.state.agency_hours_cache = data;
+                            ui.report.state.agency_hours_status_cache = "success";
+                            ui.refreshReport(); 
+                            });                       
+                  
+              }
             
 
                $("body").ajaxStart(function(){

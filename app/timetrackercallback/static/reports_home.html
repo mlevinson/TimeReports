@@ -245,18 +245,18 @@
                 <div id="col1">
                     <dl class="reportsList"> 
                         <dt class="tabularReport">
-                           <a href="javascript:oDeskUtil.carry_url('timereports.html')">Monthly Timesheet</a> 
+                           <a href="timereports.html">Monthly Timesheet</a> 
                         </dt>                           
                         <dd>Summarizes the work done by each provider during a calendar month.</dd>
                         <dt class="tabularReport">
-                           <a href="javascript:oDeskUtil.carry_url('weekly_report.html')">Weekly Provider Summary</a> 
+                           <a href="weekly_report.html">Weekly Provider Summary</a> 
                         </dt>                           
                         <dd>Summarizes work done by each provider during the course of a week.</dd>
                     </dl>                                                
                     <h2>Provider Reports</h2>
                     <dl class="reportsList"> 
                         <dt class="tabularReport">
-                            <a  href="javascript:oDeskUtil.carry_url('provider_weekly_report.html')">
+                            <a  href="provider_weekly_report.html">
                                 My Weekly Summary</a>
                         </dt>
                         <dd>Summarizes work done by you for 
@@ -265,14 +265,14 @@
                         <h2>Agency Reports</h2>
                         <dl class="reportsList">                                                           
                         <dt class="tabularReport">
-                            <a  href="javascript:oDeskUtil.carry_url('agency_report.html')">
+                            <a  href="agency_report.html">
                                 Weekly Provider Report</a>
                         </dt>
                         <dd>Reports on time and earnings by your providers 
                             during a given week.</dd>                                
                             
                         <dt class="tabularReport">
-                            <a  href="javascript:oDeskUtil.carry_url('agency_buyer_report.html')">
+                            <a  href="agency_buyer_report.html">
                                 Weekly Buyer Report</a>
                         </dt>
                         <dd>Reports on time and earnings from buyers 
@@ -281,6 +281,11 @@
                     
                 </div>                
             </div>    
-         </div>
+         </div>    
+         <script type="text/javascript" >
+            $(function(){
+                oDeskUtil.decorateUrl(".tabularReport > a", window);
+            });
+         </script>
     </body>
 </html>            
