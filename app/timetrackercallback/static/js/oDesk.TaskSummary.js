@@ -3,12 +3,12 @@
         var report = this;
         var cols = [];
         cols.push({
-            sTitle:"Task", 
+            sTitle:"Task",
             width:"360px",
             fnRender: function(data){
-              var record = data.aData[data.iDataColumn]; 
+              var record = data.aData[data.iDataColumn];
               if (record.taskUrl && record.taskUrl != ""){
-                  return '<a href="' + record.taskUrl + '">' + record.taskDescription + '</a>';                  
+                  return '<a href="' + record.taskUrl + '">' + record.taskDescription + '</a>';
               } else {
                   return record.taskDescription;
               }
@@ -31,7 +31,7 @@
         });
         return cols;
     };
-     
+
     oDesk.Report.prototype.transformData = function(records){
           var rows = [];
           var totals = {};
@@ -40,8 +40,8 @@
           var currentTotalHours = 0;
           var currentTotalCharges = 0;
           var currentTask = null;
-          
-          
+
+
           function taskDone(){
               if(currentTask != null){
                   totals[currentTask] = {hours:currentTotalHours, charges:currentTotalCharges};
@@ -49,7 +49,7 @@
                   grandTotalCharges += currentTotalCharges;
               }
           }
-          
+
           $.each(records, function(i, record){
               if(currentTask != record.taskDescription){
                   taskDone();
@@ -59,7 +59,7 @@
               rows.push([record, record.provider.name, record.hours, record.charges]);
               currentTotalHours += record.hours;
               currentTotalCharges += record.charges;
-          });                                       
+          });
           taskDone();
           return {
               rows: rows,
