@@ -58,7 +58,9 @@ body {font-family:Tahoma,sans-serif; font-size:10pt;}
 a {text-decoration:none; color:#0033FF;}
 a:hover {color:#0033FF; text-decoration:underline; }
 
-.table-caption{border-bottom: 1px solid black;}
+.table-caption{border-bottom: 1px solid black; margin-top: 16px;}
+.table-sub-caption{margin-top:8px;font-weight:normal;font-size:12px;font-style:italic;display:block;clear:both;}
+
 .tabular td.total{background-color:#ffffcc;font-weight:bold;}
 .tabular td.grand-total {background-color:#ffff66;font-weight:bold;}
 .tabular td.fixed.label{background-color:white;}
@@ -67,6 +69,10 @@ a:hover {color:#0033FF; text-decoration:underline; }
 .table10 td.numeric{width:63px;}
 .table10 td.total{width:100px;}
 .table10 td.fixed.label{width: 218px;}
+
+#reports-grid{
+    padding-top: 16px;
+}
 
 #grand-total{padding-left: 60px;font-weight:bold;}
 #reports_header h1{
@@ -179,6 +185,12 @@ a:hover {color:#0033FF; text-decoration:underline; }
 
 
 
+
+input.calendar{
+    border: 1px solid gray;
+    width: 170px !important;
+    text-align: center;
+}
 /* ============================ */
 /* = From PageLayout.css labs = */
 /* ============================ */

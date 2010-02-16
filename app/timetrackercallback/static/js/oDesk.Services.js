@@ -1,19 +1,19 @@
 (function($){
     oDesk.Services.getCompany = function(report, companyReference, success, failure){
         report.state.company.reference = companyReference;
-        
+
         $.ajax({
-             url: report.getCompanyQuery(), 
+             url: report.getCompanyQuery(),
              dataType: 'jsonp',
              error: function(request, status, error){
                  if($.isFunction(failure)){
-                     failure(status, error);                     
-                 }   
+                     failure(status, error);
+                 }
              },
              success: function(data, status, request){
                  if($.isFunction(success)){
-                     success(report.state.company);                     
-                 }   
+                     success(report.state.company);
+                 }
              }
          });
     }
@@ -21,12 +21,12 @@
 
     oDesk.Services.getTeams = function(report, success, failure){
          $.ajax({
-             url: report.getTeamsQuery(), 
+             url: report.getTeamsQuery(),
              dataType: 'jsonp',
              error: function(request, status, error){
                  if($.isFunction(failure)){
-                     failure(status, error);                     
-                 }   
+                     failure(status, error);
+                 }
              },
              success: function(data, status, request){
                  teams = [];
@@ -40,50 +40,50 @@
                         report.state.company.id = team.id;
                         companyTeamObject = teamObject;
                     } else {
-                        teams.push(teamObject);                   
-                    }   
-                 });    
-                 teams.sort();                    
+                        teams.push(teamObject);
+                    }
+                 });
+                 teams.sort();
                  if(companyTeamObject){
-                     teams.unshift(companyTeamObject);                
-                 }   
+                     teams.unshift(companyTeamObject);
+                 }
                  if($.isFunction(success)){
-                     success(teams);                     
-                 }   
+                     success(teams);
+                 }
              }
          });
     }
-    
-    function _ajax(query, success, failure){ 
+
+    function _ajax(query, success, failure){
         if(!query && $.isFunction(failure)){
             failure("Not Connected.", "Queryis null");
             return null;
         }
         $.ajax({
-             url: query, 
+             url: query,
              dataType: 'jsonp',
              error: function(request, status, error){
                  if($.isFunction(failure)){
                      failure(status, error);
                  }
-                 
+
              },
              success: function(data, status, request){
-                 if($.isFunction(success)){                 
+                 if($.isFunction(success)){
                      success(data, status);
-                 }    
+                 }
              }
-         });        
-    }  
-    
+         });
+    }
+
     oDesk.Services.getHours = function(report, success, failure){
         _ajax(report.getHoursQuery(), success, failure);
     }
-    
+
     oDesk.Services.getProviderHours = function(report, success, failure){
         _ajax(report.getProviderHoursQuery(), success, failure);
     }
-    
+
     function filterAgencyHours(report, success, failure){
         var data = report.state.agency_hours_cache;
         var status = report.state.agency_hours_status_cache;
@@ -94,52 +94,106 @@
         var filtered = {};
         filtered["table"] = {"cols": data.table.cols, "rows": []};
         var filterBuyer = (report.state.buyer != null);
-        $.each(data.table.rows, function(i, row){ 
+        $.each(data.table.rows, function(i, row){
            if(filterBuyer && row.c[4].v == report.state.buyer.id){
-               filtered.table.rows.push(row);               
+               filtered.table.rows.push(row);
            } else if(row.c[6].v == report.state.provider.id){
                filtered.table.rows.push(row);
-           } 
+           }
         });
-        
+
         if($.isFunction(success)){
             success(filtered, status);
         }
     }
-    
+
     oDesk.Services.getAgencyHours = function(report, success, failure){
        var cached_data = report.state.agency_hours_cache;
        var cached_status = report.state.agency_hours_status_cache;
        if(cached_data == 'undefined' || !cached_data){
-           _ajax(report.getAgencyQuery(), 
+           _ajax(report.getAgencyQuery(),
                 function(data, status){
                     report.state.agency_hours_cache = data;
                     report.state.agency_hours_status_cache = status;
                     if(report.state.filter_agency_hours){
-                        filterAgencyHours(report, success, failure);                   
+                        filterAgencyHours(report, success, failure);
                     } else if($.isFunction(success)){
-                        success(data, status);    
+                        success(data, status);
                     }
-                }, 
-                failure);           
-       } 
+                },
+                failure);
+       }
        else if(report.state.filter_agency_hours){
-          filterAgencyHours(report, success, failure);                   
+          filterAgencyHours(report, success, failure);
        } else if($.isFunction(success)){
-          success(cached_data, cached_status);    
+          success(cached_data, cached_status);
        }
     }
-    
- 
-    oDesk.Services.getProviders = function(report, success, failure){
+
+    function addTaskDescriptions(report, data, success, failure){
         
+        var records = [];  
+        
+        if(!data || !data.table || !data.table.rows || data.table.rows == ""){ 
+            if($.isFunction(success)){
+                success(records, "Succcess");                
+            }
+
+            return;
+        }
+
+        var taskCodes = [];        
+        $.each(data.table.rows, function(i, row){
+            var record = new oDesk.TaskHoursRecord(row);
+            records.push(record);
+            if($.inArray(record.taskCode, taskCodes) == -1){
+                taskCodes.push(record.taskCode);
+            }
+        })
+        
+        _ajax(report.getTasksQuery(taskCodes), function(tasksData, status, request){
+            if(!tasksData || !tasksData.tasks || !tasksData.tasks.task || !tasksData.tasks.task.length){
+                if($.isFunction(success)){
+                    success(records, "Succcess");                
+                }
+                return;
+            }  
+            var taskRecords = {};
+            $.each(tasksData.tasks.task, function(i, task){
+                taskRecords[task.code] = task;
+            });          
+            
+            $.each(records, function(i, record){                    
+               var task = taskRecords[record.taskCode];
+               record.taskDescription = task.description;
+               record.taskUrl = task.url;               
+            });
+            
+            records.sort();
+            
+            if($.isFunction(success)){
+                success(records, "Succcess");                
+            }
+            
+        }, failure);
+        
+    }
+
+    oDesk.Services.getTaskSummary = function(report, success, failure){
+        _ajax(report.getTaskHoursQuery(), function(data, status, request){
+            addTaskDescriptions(report, data, success, failure);
+        }, failure);
+    }
+
+    oDesk.Services.getProviders = function(report, success, failure){
+
          $.ajax({
-             url: report.getProvidersQuery(), 
+             url: report.getProvidersQuery(),
              dataType: 'jsonp',
              error: function(request, status, error){
                  if($.isFunction(failure)){
-                     failure(status, error);                     
-                 }   
+                     failure(status, error);
+                 }
              },
              success: function(data, status, request){
                  providers = [];
@@ -149,11 +203,11 @@
                     providerObject.reference = provider.reference;
                     providerObject.name = provider.first_name + " " + provider.last_name;
                     providers.push(providerObject);
-                 });   
+                 });
                  providers.sort();
                  if($.isFunction(success)){
-                     success(providers);                     
-                 }   
+                     success(providers);
+                 }
              }
          });
     }
