@@ -56,7 +56,7 @@
 
     function _ajax(query, success, failure){
         if(!query && $.isFunction(failure)){
-            failure("Not Connected.", "Queryis null");
+            failure("Not Connected.", "Query is null");
             return null;
         }
         $.ajax({
@@ -177,7 +177,9 @@
             
         }, failure);
         
-    }
+    } 
+    
+    oDesk.Services.addTaskDescriptions = addTaskDescriptions;
 
     oDesk.Services.getTaskSummary = function(report, success, failure){
         _ajax(report.getTaskHoursQuery(), function(data, status, request){

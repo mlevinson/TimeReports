@@ -20,6 +20,7 @@ $.widget("ui.oDeskDataTable",{
      },
      createHeader: function(){
          $(this.options.table).children("thead").remove();
+         $(this.options.table).children("tfoot").remove();
          this.options.columns = this.options.report.columnSpec();
          var header = "<thead><tr>";
          $.each(this.options.columns, function(i, column){
@@ -29,8 +30,8 @@ $.widget("ui.oDeskDataTable",{
                  th += " class=\"";
                  th += column.sClass;
                  th += "\"";
-             }  
-             
+             }
+
              if(column.width){
                  th += " width=\"";
                  th += column.width;
@@ -56,6 +57,8 @@ $.widget("ui.oDeskDataTable",{
          $(this.options.table).children("tbody").append(noRowsHtml);
      },
      clearData: function(){
+        this.createTable();  
+        this.createHeader();
         this.createBody();
      },
      triggerError : function(){
@@ -189,6 +192,7 @@ $.widget("ui.oDeskDataTable",{
               $(tr).append(td);
           });
           $.each(rowGroupings, function(i, group){
+              if(!group.footerRow) return;
               if(group.startRowIndex + group.numberOfRows == rowIndex + 1){
                 $(group.footerRow).appendTo(widget.options.table.children("tbody"));
               }
@@ -204,6 +208,11 @@ $.widget("ui.oDeskDataTable",{
                if(col.sClass){
                    td += " class=\"";
                    td += col.sClass;
+                   td += "\"";
+               }
+               if(col.colspan){
+                   td += " colspan=\"";
+                   td += col.colspan;
                    td += "\"";
                }
                td += ">";
@@ -321,6 +330,14 @@ $.widget("ui.oDeskDataTable",{
           }
       };
 
+      function getValue(row, column, columnIndex){
+           var value = row[columnIndex];
+           if($.isFunction(column.groupValue)){
+               value = column.groupValue(value);
+           }
+           return value;
+      }
+
       function defineGroups(rows, columns){
           var grouper = this;
           var previousRow = null;
@@ -331,11 +348,14 @@ $.widget("ui.oDeskDataTable",{
               }
               $.each(columns, function(c, col){
                  if(!col.canGroup) return;
-                 var value = row[c];
+                 var value = grouper.getValue(row, col, c);
+                 if($.isFunction(col.groupValue)){
+                     value = col.groupValue(row[c]);
+                 }
                  var group = grouper.currentColumnGroup(c);
                  if(group && group.value != value){
                      grouper.endGroup(group, r - 1);
-                 } else if (!group && previousRow[c] == value){
+                 } else if (!group && grouper.getValue(previousRow, col, c) == value){
                      grouper.beginGroup(c, r - 1, value);
                  }
               });
@@ -356,6 +376,7 @@ $.widget("ui.oDeskDataTable",{
       };
 
       return {
+          getValue: getValue,
           defineGroups: defineGroups,
           beginGroup: beginGroup,
           endGroup: endGroup,

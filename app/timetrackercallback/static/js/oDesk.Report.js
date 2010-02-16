@@ -26,9 +26,8 @@ oDesk = function(){
         "providerHours": "http://www.odesk.com/gds/timereports/v1/providers/{provider}",
         "agencyHours":
          "http://www.odesk.com/gds/timereports/v1/companies/{agency}/agencies/{agency}",
-         "tasks":"https://www.odesk.com/api/otask/v1/tasks/companies/{company}/tasks/{tasks}.json",
-         "all_tasks":"https://www.odesk.com/api/otask/v1/tasks/companies/{company}/tasks/full_list.json"         
-         
+        "tasks":"https://www.odesk.com/api/otask/v1/tasks/companies/{company}/tasks/{tasks}.json",
+        "all_tasks":"https://www.odesk.com/api/otask/v1/tasks/companies/{company}/tasks/full_list.json"
     };
 
     oDeskHoursRecord = function(record){
@@ -37,28 +36,27 @@ oDesk = function(){
       this.provider.id = record.c[1].v;
       this.provider.name = record.c[2].v;
       this.hours = parseFloat(record.c[3].v);
-      this.charges = parseFloat(record.c[4].v); 
+      this.charges = parseFloat(record.c[4].v);
     };
 
     oDeskHoursRecord.prototype.recordDayOfWeek = function(){
         return oDeskUtil.getDayNumber(this.workDate);
-    }     
-    
-    
+    }
+
     oDeskTaskHoursRecord = function(record){
         this.provider = new oDeskObject();
         this.provider.id = record.c[0].v;
         this.provider.name = record.c[1].v;
         this.hours = parseFloat(record.c[2].v);
-        this.charges = parseFloat(record.c[3].v); 
+        this.charges = parseFloat(record.c[3].v);
         this.taskCode = record.c[4].v;
-        this.taskDescription = this.taskCode; 
+        this.taskDescription = this.taskCode;
         this.taskUrl = null;
-      };
-      
-      oDeskTaskHoursRecord.prototype.toString = function(){
-          return this.taskDescription + " " + this.provider.name;
-      }      
+    };
+
+    oDeskTaskHoursRecord.prototype.toString = function(){
+        return this.taskDescription + " " + this.provider.name;
+    }
 
     oDeskProviderHoursRecord = function(record){
         this.workDate = Date.parseExact(record.c[0].v, "yyyyMMdd");
@@ -75,7 +73,7 @@ oDesk = function(){
     };
 
     oDeskProviderHoursRecord.prototype.recordDayOfWeek = function(){
-           return oDeskUtil.getDayNumber(this.workDate);
+        return oDeskUtil.getDayNumber(this.workDate);
     }
 
     oDeskTime = function(sTimeType, start, end){
@@ -93,7 +91,7 @@ oDesk = function(){
              this.startDate = dt;
              this.endDate = dt.clone();
              this.endDate.addDays(6);
-        } else if (this.timeType == "range"){               
+        } else if (this.timeType == "range"){
             this.startDate = dt;
             this.endDate = end ? end.clone() : Date.today();
         } else {
@@ -102,7 +100,7 @@ oDesk = function(){
     };
 
     oDeskTime.prototype.getDisplayName = function(abbr){
-        var monthString = abbr? "MMM" : "MMMM";
+      var monthString = abbr? "MMM" : "MMMM";
 
       if(this.timeType == "month"){
           return this.startDate.toString(monthString + " yyyy");
@@ -133,15 +131,15 @@ oDesk = function(){
 
     report = function(sTimeType){
         this.state = new reportState(sTimeType);
-    }; 
-    
-    
+    };
+
+
     report.prototype.getTasksQuery = function(tasks){
         // TODO: The specific tasks query does not work
-        // Using the full list for now.  
+        // Using the full list for now.
         // Also, currently not using the team. Must.
         //
-        if(!this.state.company.id) return null;        
+        if(!this.state.company.id) return null;
         return oDeskUtil.substitute(
             urlTemplates.all_tasks,
             // urlTemplates.tasks,
@@ -150,7 +148,7 @@ oDesk = function(){
                 tasks: escape(tasks.join(";"))
             }
          );
-        
+
     };
 
     report.prototype.getCompanyQuery = function(){
@@ -171,8 +169,8 @@ oDesk = function(){
                         this.state.team.reference :
                         this.state.company.reference;
         return oDeskUtil.substitute(urlTemplates.provider, {"team": val});
-    }; 
-    
+    };
+
     report.prototype.getProviderHoursQuery = function(){
         if(!this.state.provider.id
             || !this.state.timeline.startDate || !this.state.timeline.endDate){
@@ -189,9 +187,9 @@ oDesk = function(){
         query += "?tq=";
         query += escape(tq);
         return query;
-    }  
-    
-    
+    }
+
+
     report.prototype.getTaskHoursQuery = function(){
         if(!this.state.company.id ||
             !this.state.timeline.startDate ||
@@ -279,7 +277,7 @@ oDesk = function(){
             "Services": services,
             "Timeline":oDeskTime,
             "HoursRecord": oDeskHoursRecord,
-            "TaskHoursRecord": oDeskTaskHoursRecord,            
+            "TaskHoursRecord": oDeskTaskHoursRecord,
             "ProviderHoursRecord": oDeskProviderHoursRecord
           };
 }();

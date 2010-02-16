@@ -5,6 +5,10 @@
         cols.push({
             sTitle:"Task",
             width:"360px",
+            canGroup: true,
+            groupValue: function(record){
+              return record.taskDescription;
+            },
             fnRender: function(data){
               var record = data.aData[data.iDataColumn];
               if (record.taskUrl && record.taskUrl != ""){
@@ -31,6 +35,63 @@
         });
         return cols;
     };
+
+    oDesk.Report.prototype.getGroupFooter = function(results, group){
+          var report = this;
+          return {
+              sClass: "footer-row",
+              columns: [
+                  {   sClass: "footer-label",
+                      fnRender: function(results, group){
+                          return "Total:";
+                      }
+                  },
+                  {
+                      sClass: "numeric grand-total",
+                      fnRender: function(results, group){
+                         var total = results.totals[group.value];
+                         return report.formatHours(total.hours, true);
+                      }
+                  },
+                  {
+                      sClass: "numeric grand-total",
+                      fnRender: function(results, group){
+                         var total = results.totals[group.value];
+                         return report.formatCharges(total.charges, true);
+                      }
+                  }
+              ]
+          };
+    };
+
+    oDesk.Report.prototype.footerSpec = function(){
+          var report = this;
+          var footerRows = [];
+          footerRows.push({
+                sClass: "footer-label",
+                colspan: 2,
+                fnRender: function(results, col){
+                    return "Total for all tasks and users:";
+                }
+          });
+          footerRows.push(
+              {
+                  fnRender: function(results, col){
+                      return report.formatHours(results.grandTotalHours, true);
+                  },
+                  sClass: "numeric grand-total"
+              }
+           );
+           footerRows.push(
+              {
+                  fnRender: function(results, col){
+                      return report.formatCharges(results.grandTotalCharges, true);
+                  },
+                  sClass: "numeric grand-total"
+              }
+           );
+           return footerRows;
+      };
 
     oDesk.Report.prototype.transformData = function(records){
           var rows = [];

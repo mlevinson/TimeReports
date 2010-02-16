@@ -73,6 +73,8 @@ a:hover {color:#0033FF; text-decoration:underline; }
 #reports-grid{
     padding-top: 16px;
 }
+ 
+.footer-label{font-weight:bold;}
 
 #grand-total{padding-left: 60px;font-weight:bold;}
 #reports_header h1{

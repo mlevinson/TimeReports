@@ -44,6 +44,10 @@
 
         function refreshReport(){
             var ui = this;
+            ui.setSelectedDateRange(
+                    Date.fromString($(ui.elements.timerange.startDate).val()),
+                    Date.fromString($(ui.elements.timerange.endDate).val())
+                );
             $(ui.elements.team.name).text(ui.report.state.team.name);
             $(ui.elements.timerange.tableCaption).text(this.report.state.timeline.getDisplayName());
             $(ui.elements.report.container).oDeskDataTable("generateReport");
@@ -60,7 +64,13 @@
             var ui = this;
             this.initComplete = false;
             this.report = new oDesk.Report(ui.parameters.timeline.type);
-
+            if(oDeskUtil.getParameterByName("test", null) == "test"){
+                oDesk.Services.getTaskSummary = function(report, success, failure){
+                    $.getJSON("js/taskSummary.json", function(data){
+                        oDesk.Services.addTaskDescriptions(report, data, success, failure);
+                    });
+                }
+            }
             $(ui.elements.company.switcher).unbind("click").bind("click", function(){
                 $(ui.elements.company.selector).slideToggle();
             });
@@ -80,12 +90,35 @@
 
              $(ui.elements.timerange.startDate)
                 .datePicker({startDate:'01/01/1996', clickInput:true, createButton:false})
-                .dpSetSelected(d1.asString());
+                .dpSetSelected(d1.asString()) 
+                .dpSetEndDate(d2.asString())
+                .bind(
+                        'dpClosed',
+                        function(e, selectedDates)
+                        {
+                            var d = selectedDates[0];
+                            if (d) {
+                                d = new Date(d);
+                                $(ui.elements.timerange.endDate).dpSetStartDate(d.addDays(1).asString());
+                            }
+                        }
+                    );
              $(ui.elements.timerange.endDate)
                 .datePicker({startDate:'01/01/1996', clickInput:true, createButton:false})
-                .dpSetSelected(d2.asString());
-
-
+                .dpSetSelected(d2.asString())
+                .dpSetStartDate(d1.asString())                
+                .bind(
+                        'dpClosed',
+                        function(e, selectedDates)
+                        {
+                            var d = selectedDates[0];
+                            if (d) {
+                                d = new Date(d);
+                                $(ui.elements.timerange.startDate).dpSetEndDate(d.addDays(-1).asString());
+                            }
+                        }
+                    );
+                    
              $(ui.elements.report.goButton).unbind("click").bind("click", function(){
                 ui.refreshReport();
              });
@@ -104,7 +137,8 @@
 
               $(ui.elements.report.container).oDeskDataTable({
                       report: ui.report,
-                      service: oDesk.Services.getTaskSummary
+                      service: oDesk.Services.getTaskSummary,
+                      groupRows: true
               });
 
               $("body").ajaxStart(function(){
