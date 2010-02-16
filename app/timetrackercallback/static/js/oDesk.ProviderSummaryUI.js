@@ -17,13 +17,8 @@
                 "selector": "#timereports_week_selector"
             },
             "report": {
-                "table": "#time-reports-grid",
-                "goButton": "#go_run_report",
-                "grandTotal": { 
-                    "days": ".total.day span",
-                    "hours": "#grand_total_hours",
-                    "charges": "#grand_total_charges"
-                } 
+                container: "#reports-grid",
+                "goButton": "#go_run_report"
             }  
         };
         this.parameters = {
@@ -38,7 +33,7 @@
               $(this.elements.team.name).text(this.report.state.team.name);
               $(this.elements.week.tableCaption).text(
                   this.report.state.timeline.getDisplayNameWithAbbreviations());       
-              $(this.elements.report.table).oDeskTimeReports("generateReport");                                             
+              $(this.elements.report.container).oDeskDataTable("generateReport");                                             
         };
     
          function setSelectedDate(d){   
@@ -89,21 +84,9 @@
                   $(this).oDeskSelectWidget("setDefaults"); 
                }).oDeskSelectWidget("populate");
 
-               $(ui.elements.report.table)
-                 .oDeskTimeReports({"report": ui.report, "service": oDesk.Services.getHours})
-                 .unbind("dataTablePopulated").bind("dataTablePopulated", function(e, results){
-                       var grandTotalHours = results ? results.grandTotalHours : 0;  
-                       var grandTotalCharges = results ? results.grandTotalCharges : 0;                       
-                       var dayTotals = results? results.dayTotals : [0,0,0,0,0,0,0];
-                       $(ui.elements.report.grandTotal.days).each(function(index, element){  
-                            var value = dayTotals[index] == 0 ? "" : oDeskUtil.floatToTime(dayTotals[index]);
-                            $(element).text(value); 
-                       });                      
-                       $(ui.elements.report.grandTotal.hours).text(
-                           oDeskUtil.floatToTime(grandTotalHours));
-                       $(ui.elements.report.grandTotal.charges).text(
-                           currencyFromNumber(grandTotalCharges)); 
-               });
+               $(ui.elements.report.container)
+                 .oDeskDataTable({"report": ui.report, "service": oDesk.Services.getHours});
+
                $("body").ajaxStart(function(){
                          loading_process("Loading...", false); 
                   });

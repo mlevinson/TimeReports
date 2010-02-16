@@ -37,7 +37,8 @@
                     var label = "Total ";
                     label += report.state.mustGetHours ? "Hours" : "Charges";
                     label += " for ";
-                    label += report.state.provider.name;
+                    label += report.state.provider.name;  
+                    label += ":";
                     return label;
                 }
           });

@@ -39,8 +39,9 @@
 
           var footerRows = [];
           footerRows.push({
+                sClass: "footer-label",
                 fnRender: function(results, col){
-                    if (results.provider){
+                    if (results.provider && results.provider.name){
                         return "Total for " + results.provider.name + ":";
                     }  else {
                         return "Total:";
