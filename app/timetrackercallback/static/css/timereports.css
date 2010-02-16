@@ -185,7 +185,9 @@ a:hover {color:#0033FF; text-decoration:underline; }
    #month_selector_list li { line-height: 24px; }
    #month_selector_list li.reset { margin-top: -100px; }
 
-
+#reports_time_range_selector{
+    position:static;
+}
 
 
 input.calendar{
