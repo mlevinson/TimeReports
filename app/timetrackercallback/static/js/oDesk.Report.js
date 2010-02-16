@@ -194,8 +194,7 @@ oDesk = function(){
         if(!this.state.company.id ||
             !this.state.timeline.startDate ||
             !this.state.timeline.endDate ) return null;
-        var tq = "SELECT provider_id, provider_name,\
-                  sum(hours), sum(charges), task WHERE worked_on >= '";
+        var tq = "SELECT provider_id, provider_name, sum(hours), sum(charges), task WHERE worked_on >= '";
         tq += this.state.timeline.startDate.toString("yyyy-MM-dd");
         tq += "' AND worked_on <= '";
         tq += this.state.timeline.endDate.toString("yyyy-MM-dd");

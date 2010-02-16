@@ -24,7 +24,8 @@
                         {"c":[   {"v":"belnac"},        {"v":"Miguel Guedes"},               {"v":"5.83"},    {"v":"105.83"},    {"v":"YouTube_Script"}    ]},
                         {"c":[   {"v":"lakshmivyas"},   {"v":"Lakshmi Vyasarajan"},          {"v":"9.00"},    {"v":"109.16"},    {"v":"YouTube_Doc"}          ]},
                         {"c":[   {"v":"belnac"},        {"v":"Miguel Guedes"},               {"v":"8.00"},    {"v":"104.83"},    {"v":"YouTube_Doc"}          ]},
-                        {"c":[   {"v":"mlevinson"},     {"v":"Michael Levinson"},            {"v":"13.34"},   {"v":"1013.34"},   {"v":"YouTube_Doc"}          ]}
+                        {"c":[   {"v":"mlevinson"},     {"v":"Michael Levinson"},            {"v":"13.34"},   {"v":"1013.34"},   {"v":"YouTube_Doc"}          ]},
+                        {"c":[   {"v":"belnac"},        {"v":"Miguel Guedes"},               {"v":"8.00"},    {"v":"104.83"},    {"v":"YouTube_Design"}          ]}                        
                    ]
             }
 }

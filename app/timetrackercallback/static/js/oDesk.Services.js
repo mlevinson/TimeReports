@@ -131,18 +131,18 @@
     }
 
     function addTaskDescriptions(report, data, success, failure){
-        
-        var records = [];  
-        
-        if(!data || !data.table || !data.table.rows || data.table.rows == ""){ 
+
+        var records = [];
+
+        if(!data || !data.table || !data.table.rows || data.table.rows == ""){
             if($.isFunction(success)){
-                success(records, "Succcess");                
+                success(records, "Succcess");
             }
 
             return;
         }
 
-        var taskCodes = [];        
+        var taskCodes = [];
         $.each(data.table.rows, function(i, row){
             var record = new oDesk.TaskHoursRecord(row);
             records.push(record);
@@ -150,35 +150,41 @@
                 taskCodes.push(record.taskCode);
             }
         })
-        
-        _ajax(report.getTasksQuery(taskCodes), function(tasksData, status, request){
-            if(!tasksData || !tasksData.tasks || !tasksData.tasks.task || !tasksData.tasks.task.length){
-                if($.isFunction(success)){
-                    success(records, "Succcess");                
-                }
-                return;
-            }  
-            var taskRecords = {};
-            $.each(tasksData.tasks.task, function(i, task){
-                taskRecords[task.code] = task;
-            });          
-            
-            $.each(records, function(i, record){                    
-               var task = taskRecords[record.taskCode];
-               record.taskDescription = task.description;
-               record.taskUrl = task.url;               
-            });
-            
-            records.sort();
-            
-            if($.isFunction(success)){
-                success(records, "Succcess");                
-            }
-            
-        }, failure);
-        
-    } 
-    
+
+        records.sort();
+         if($.isFunction(success)){success(records, "Succcess");}
+         // TODO: Not getting the task codes because the API does not work
+         // Must fix once the API issues get resolved.
+         
+         
+        // _ajax(report.getTasksQuery(taskCodes), function(tasksData, status, request){
+        //          if(!tasksData || !tasksData.tasks || !tasksData.tasks.task || !tasksData.tasks.task.length){
+        //              if($.isFunction(success)){
+        //                  success(records, "Succcess");
+        //              }
+        //              return;
+        //          }
+        //          var taskRecords = {};
+        //          $.each(tasksData.tasks.task, function(i, task){
+        //              taskRecords[task.code] = task;
+        //          });
+        //
+        //          $.each(records, function(i, record){
+        //             var task = taskRecords[record.taskCode];
+        //             record.taskDescription = task.description;
+        //             record.taskUrl = task.url;
+        //          });
+        //
+        //          records.sort();
+        //
+        //          if($.isFunction(success)){
+        //              success(records, "Succcess");
+        //          }
+        //
+        //      }, failure);
+
+    }
+
     oDesk.Services.addTaskDescriptions = addTaskDescriptions;
 
     oDesk.Services.getTaskSummary = function(report, success, failure){

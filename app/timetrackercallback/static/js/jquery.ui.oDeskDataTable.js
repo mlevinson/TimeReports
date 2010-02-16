@@ -57,7 +57,7 @@ $.widget("ui.oDeskDataTable",{
          $(this.options.table).children("tbody").append(noRowsHtml);
      },
      clearData: function(){
-        this.createTable();  
+        this.createTable();
         this.createHeader();
         this.createBody();
      },
@@ -340,12 +340,7 @@ $.widget("ui.oDeskDataTable",{
 
       function defineGroups(rows, columns){
           var grouper = this;
-          var previousRow = null;
           $.each(rows, function(r, row){
-              if(!previousRow) {
-                   previousRow = row;
-                   return;
-              }
               $.each(columns, function(c, col){
                  if(!col.canGroup) return;
                  var value = grouper.getValue(row, col, c);
@@ -355,14 +350,13 @@ $.widget("ui.oDeskDataTable",{
                  var group = grouper.currentColumnGroup(c);
                  if(group && group.value != value){
                      grouper.endGroup(group, r - 1);
-                 } else if (!group && grouper.getValue(previousRow, col, c) == value){
-                     grouper.beginGroup(c, r - 1, value);
+                     grouper.beginGroup(c, r, value);
+                 } else if (!group){
+                     grouper.beginGroup(c, r, value);
                  }
               });
-              previousRow = row;
           });
           grouper.endAll(rows.length - 1);
-
       };
 
       function columnGroup(columnIndex, rowIndex, value){
