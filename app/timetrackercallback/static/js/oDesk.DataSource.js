@@ -1,7 +1,6 @@
 (function($){
 
     oDesk.DataSource = function(){
-
         field = function(name, dataType, value){
             this.name = name;
             this.dataType = dataType || "string";
@@ -123,11 +122,47 @@
             return url;
         };
 
+        constructField = function(name, type){
+            var f = this.Field;
+            if(type == "number") f = this.NumberField;
+            else if(type == "date") f = this.DateField;
+            return new f(name);
+        };
+
+        read = function(data){ 
+            var datasource = this;
+            var records = [];
+            var fields = [];
+            if( !data.table ||
+                !data.table.cols ||
+                !data.table.cols.length ||
+                !data.table.rows ||
+                data.table.rows == "" ||
+                !data.table.rows.length) return records;
+
+            $.each(data.table.cols, function(i, col){
+                fields.push(datasource.constructField(col.label, col.type));
+            });
+
+            $.each(data.table.rows, function(i, row){
+                var record = {};
+                $.each(row.c, function(colIndex, col){
+                    var field = fields[colIndex].clone();
+                    record[field.name] = field;
+                    field.set(col.v);
+                });
+                records.push(record);
+            });
+            return records;
+        };
+
         return {
             Field: field,
             DateField: dateField,
             NumberField: numberField,
-            Query: query
+            Query: query,
+            read: read,
+            constructField: constructField
         };
 
     }();

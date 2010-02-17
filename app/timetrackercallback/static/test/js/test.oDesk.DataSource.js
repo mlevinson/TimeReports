@@ -76,7 +76,7 @@
             var value = new Date();
             var new_value = new Date();
             new_value.zeroTime();
-            var format = dateField.format;
+            var format = oDesk.DataSource.DateField.format;
             new_value.setDate(new_value.getDate() + 5);
             var f = new oDesk.DataSource.DateField(name, value);
             equals(f.value, value, "value is good");
@@ -86,7 +86,7 @@
 
         test("Can Get Day Of Week", function(){
             var aMonday = "20100201";
-            var format = dateField.format;
+            var format = oDesk.DataSource.DateField.format;
             var value = Date.fromString(aMonday, format);
             var f = new oDesk.DataSource.DateField("test_date_field", value);
             equals(f.dayOfWeek(), 0, "Day Of Week OK");
@@ -98,7 +98,7 @@
         test("Can Create with String Value", function(){
                var aMonday = "20100201";
                var f = new oDesk.DataSource.DateField("test_date_field", aMonday);
-               equals(f.value.asString(dateField.format), aMonday);
+               equals(f.value.asString(oDesk.DataSource.DateField.format), aMonday);
          });
 
         module("Number Field");
@@ -209,7 +209,7 @@
                 timelineEndDate: "2010-02-28"
             };
             var url = "http://www.odesk.com/gds/timereports/v1/companies/{companyId}";
-            var expected_url = "http://www.odesk.com/gds/timereports/v1/companies/teammichael%3Ateammichael.json?tq=SELECT%20worked_on%2Cprovider_id%2Cprovider_name%2Csum%28hours%29%2Csum%28charges%29%20WHERE%20worked_on%20%3E%3D%20%272010-02-01%27%20AND%20worked_on%20%3C%3D%20%272010-02-28%27%20ORDER%20BY%20provider_id%2Cworked_on";
+            var expected_url = "http://www.odesk.com/gds/timereports/v1/companies/teammichael%3Ateammichael?tq=SELECT%20worked_on%2Cprovider_id%2Cprovider_name%2Csum%28hours%29%2Csum%28charges%29%20WHERE%20worked_on%20%3E%3D%20%272010-02-01%27%20AND%20worked_on%20%3C%3D%20%272010-02-28%27%20ORDER%20BY%20provider_id%2Cworked_on";
             var teamFragment = "/teams/{teamId}";
             var query = new oDesk.DataSource.Query(params);
             query.setUrlTemplate(url);
@@ -218,6 +218,19 @@
             query.addCondition("<=", "worked_on", "{timelineEndDate}");
             query.addSortStatement(["provider_id", "worked_on"]);
             equals(query.toString(), expected_url);
+        });
+
+        module("Records")
+
+        test("Can Read Google DataSource Result Set", function(){
+            var dataset = getTestGDSDataSet();
+            var format = oDesk.DataSource.DateField.format;
+            var records = oDesk.DataSource.read(dataset);
+            equals(records.length, dataset.table.rows.length);
+            $.each(dataset.table.cols, function(i, col){
+                ok(records[0][col.label], col.label + " Exists.");
+            });
+            equals(records[3].worked_on.value.asString(format), dataset.table.rows[3].c[0].v);
         });
 
         if ( typeof fireunit === "object" ) {
