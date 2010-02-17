@@ -89,16 +89,16 @@
             var format = dateField.format;
             var value = Date.fromString(aMonday, format);
             var f = new oDesk.DataSource.DateField("test_date_field", value);
-            equals(0, f.dayOfWeek(), "Day Of Week OK");
+            equals(f.dayOfWeek(), 0, "Day Of Week OK");
             value.addDays(5);
             f.set(value);
-            equals(5, f.dayOfWeek(), "Day Of Week Still OK");
+            equals(f.dayOfWeek(), 5, "Day Of Week Still OK");
         });
 
         test("Can Create with String Value", function(){
                var aMonday = "20100201";
                var f = new oDesk.DataSource.DateField("test_date_field", aMonday);
-               equals(aMonday, f.value.asString(dateField.format));
+               equals(f.value.asString(dateField.format), aMonday);
          });
 
         module("Number Field");
@@ -129,15 +129,96 @@
             var name = "test_number_field";
             var value = 10.5;
             var f = new oDesk.DataSource.NumberField(name, value);
-            equals("10:30", f.toHours());
+            equals(f.toHours(), "10:30");
          });
 
-         test("Can Get Money", function(){
-             var name = "test_number_field";
-             var value = 10.5;
-             var f = new oDesk.DataSource.NumberField(name, value);
-             equals("$10.50", f.toMoney());
-          });
+        test("Can Get Money", function(){
+            var name = "test_number_field";
+            var value = 10.5;
+            var f = new oDesk.DataSource.NumberField(name, value);
+            equals(f.toMoney(), "$10.50");
+         });
+
+        module("Query");
+
+        test("Can substitute url", function(){
+            var params = {
+                companyId: "teammichael:teammichael"
+            };
+            var url = "http://www.odesk.com/api/hr/v2/companies/{companyId}/teams.json";
+            var expected_url = "http://www.odesk.com/api/hr/v2/companies/teammichael%3Ateammichael/teams.json";
+            var query = new oDesk.DataSource.Query(params);
+            query.setUrlTemplate(url);
+            equals(query.toString(), expected_url);
+        });
+
+        test("Can add url fragments", function(){
+            var params = {
+                companyId: "teammichael:teammichael",
+            };
+            var teamId = "teammichael:ML Development";
+            var url = "http://www.odesk.com/gds/timereports/v1/companies/{companyId}";
+            var expected_url = "http://www.odesk.com/gds/timereports/v1/companies/teammichael%3Ateammichael.json";
+            var expected_url_with_team = "http://www.odesk.com/gds/timereports/v1/companies/teammichael%3Ateammichael/teams/teammichael%3AML%20Development.json";
+            var teamFragment = "/teams/{teamId}";
+            var query = new oDesk.DataSource.Query(params);
+            query.setUrlTemplate(url);
+            query.addUrlFragment(teamFragment);
+            query.addUrlFragment(".json");
+            equals(query.toString(), expected_url);
+            query.params.teamId = teamId;
+            equals(query.toString(), expected_url_with_team);
+        });
+
+        test("Can add select statement", function(){
+            var params = {
+                companyId: "teammichael:teammichael"
+            };
+            var url = "http://www.odesk.com/gds/timereports/v1/companies/{companyId}";
+            var expected_url = "http://www.odesk.com/gds/timereports/v1/companies/teammichael%3Ateammichael.json?tq=SELECT%20worked_on%2Cprovider_id%2Cprovider_name%2Csum%28hours%29%2Csum%28charges%29";
+            var teamFragment = "/teams/{teamId}";
+            var query = new oDesk.DataSource.Query(params);
+            query.setUrlTemplate(url);
+            query.addUrlFragment(".json");
+            query.addSelectStatement(["worked_on", "provider_id", "provider_name", "sum(hours)", "sum(charges)"]);
+            equals(query.toString(), expected_url);
+        });
+
+        test("Can add condition", function(){
+            var params = {
+                companyId: "teammichael:teammichael",
+                timelineStartDate: "2010-02-01",
+                timelineEndDate: "2010-02-28"
+            };
+            var url = "http://www.odesk.com/gds/timereports/v1/companies/{companyId}";
+            var expected_url = "http://www.odesk.com/gds/timereports/v1/companies/teammichael%3Ateammichael.json?tq=SELECT%20worked_on%2Cprovider_id%2Cprovider_name%2Csum%28hours%29%2Csum%28charges%29%20WHERE%20worked_on%20%3E%3D%20%272010-02-01%27%20AND%20worked_on%20%3C%3D%20%272010-02-28%27";
+            var teamFragment = "/teams/{teamId}";
+            var query = new oDesk.DataSource.Query(params);
+            query.setUrlTemplate(url);
+            query.addUrlFragment(".json");
+            query.addSelectStatement(["worked_on", "provider_id", "provider_name", "sum(hours)", "sum(charges)"]);
+            query.addCondition(">=", "worked_on", "{timelineStartDate}");
+            query.addCondition("<=", "worked_on", "{timelineEndDate}");
+            equals(query.toString(), expected_url);
+        });
+
+        test("Can add Sorting", function(){
+            var params = {
+                companyId: "teammichael:teammichael",
+                timelineStartDate: "2010-02-01",
+                timelineEndDate: "2010-02-28"
+            };
+            var url = "http://www.odesk.com/gds/timereports/v1/companies/{companyId}";
+            var expected_url = "http://www.odesk.com/gds/timereports/v1/companies/teammichael%3Ateammichael.json?tq=SELECT%20worked_on%2Cprovider_id%2Cprovider_name%2Csum%28hours%29%2Csum%28charges%29%20WHERE%20worked_on%20%3E%3D%20%272010-02-01%27%20AND%20worked_on%20%3C%3D%20%272010-02-28%27%20ORDER%20BY%20provider_id%2Cworked_on";
+            var teamFragment = "/teams/{teamId}";
+            var query = new oDesk.DataSource.Query(params);
+            query.setUrlTemplate(url);
+            query.addSelectStatement(["worked_on", "provider_id", "provider_name", "sum(hours)", "sum(charges)"]);
+            query.addCondition(">=", "worked_on", "{timelineStartDate}");
+            query.addCondition("<=", "worked_on", "{timelineEndDate}");
+            query.addSortStatement(["provider_id", "worked_on"]);
+            equals(query.toString(), expected_url);
+        });
 
         if ( typeof fireunit === "object" ) {
                 QUnit.log = fireunit.ok;

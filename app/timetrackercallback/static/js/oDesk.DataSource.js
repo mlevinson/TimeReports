@@ -50,23 +50,84 @@
 
         numberField = function(name, value){
             field.prototype.constructor.call(this, name, "number", value);
-        }
+        };
         numberField.prototype = new field();
         numberField.prototype.constructor = numberField;
         numberField.prototype.set = function(value){
             this.value = parseFloat(value);
-        }
+        };
         numberField.prototype.toHours = function(){
             return oDeskUtil.floatToTime(this.value);
-        }
+        };
         numberField.prototype.toMoney = function(){
             return currencyFromNumber(this.value);
+        };
+
+        query = function(params){
+            this.params = params;
+            this.urlTemplate = null;
+            this.urlFragments = [];
+            this.selectStatement = null;
+            this.conditions = [];
+            this.orderStatement = null;
+
+        };
+
+        query.prototype.setUrlTemplate = function(urlTemplate){
+            this.urlTemplate = urlTemplate;
+        };
+
+        query.prototype.addUrlFragment = function(fragment){
+            this.urlFragments.push(fragment);
+        };
+
+        query.prototype.addSelectStatement = function(names){
+            if(!names || !names.length) return;
+            this.selectStatement = "SELECT ";
+            this.selectStatement += names.join(",");
         }
+
+        query.prototype.addCondition = function(operator, name, value){
+            this.conditions.push(name + " " + operator + " '" + value + "'");
+        }
+
+        query.prototype.addSortStatement = function(names){
+            this.orderStatement = " ORDER BY ";
+            this.orderStatement += names.join(",");
+        }
+
+        query.prototype.toString = function(){
+            var params = {};
+            $.each(this.params, function(key, value){
+                   params[key] = escape(value);
+                });
+            var url = oDeskUtil.substitute(this.urlTemplate, params);
+            $.each(this.urlFragments, function(i, fragmentTemplate){
+               var fragment = oDeskUtil.substitute(fragmentTemplate, params);
+               if(fragment.indexOf("{") == -1){
+                   url += fragment;
+               }
+            });
+            if(this.selectStatement){
+                var tq = this.selectStatement;
+                if(this.conditions.length){
+                    tq += " WHERE ";
+                    tq += oDeskUtil.substitute(this.conditions.join(" AND "), params);
+                }
+                if(this.orderStatement){
+                    tq += this.orderStatement;
+                }
+                url += "?tq=";
+                url += escape(tq);
+            }
+            return url;
+        };
 
         return {
             Field: field,
             DateField: dateField,
-            NumberField: numberField
+            NumberField: numberField,
+            Query: query
         };
 
     }();
