@@ -154,7 +154,7 @@
 
         test("Can add url fragments", function(){
             var params = {
-                companyId: "teammichael:teammichael",
+                companyId: "teammichael:teammichael"
             };
             var teamId = "teammichael:ML Development";
             var url = "http://www.odesk.com/gds/timereports/v1/companies/{companyId}";
@@ -220,7 +220,7 @@
             equals(query.toString(), expected_url);
         });
 
-        module("Records")
+        module("Resultset");
 
         test("Can Read Google DataSource Result Set", function(){
             var dataset = getTestGDSDataSet();
@@ -231,6 +231,38 @@
                 ok(records[0][col.label], col.label + " Exists.");
             });
             equals(records[3].worked_on.value.asString(format), dataset.table.rows[3].c[0].v);
+        });
+
+        test("Can Get Unique Column Values", function(){
+            var dataset = getTestGDSDataSet();
+            var format = oDesk.DataSource.DateField.format;
+            var results = new oDesk.DataSource.ResultSet(dataset);
+            var expected = ["belnac", "lakshmivyas", "mlevinson"];
+            var uniqueValues = results.getUniqueValues("provider_id");
+            $.each(expected, function(i, providerId){
+               equals(uniqueValues[i], providerId);
+            });
+
+        });
+
+        test("Can Get Row Pivoted By Weekdays", function(){
+
+            var dataset = getTestGDSDataSet();
+            var format = oDesk.DataSource.DateField.format;
+            var results = new oDesk.DataSource.ResultSet(dataset);
+            results.pivotWeekDays({
+                labelFunction: function(record){return record.provider_id.value;},
+                valueFunction: function(record){return record.hours.value;}
+            });
+            
+            var expected = getGDSPivotedByWeekDaysOnProviderId();
+            
+            $.each(expected, function(i, row){
+               $.each(row, function(j, val){
+                  equals(results.rows[i][j].value, val); 
+               }); 
+            });
+
         });
 
         if ( typeof fireunit === "object" ) {

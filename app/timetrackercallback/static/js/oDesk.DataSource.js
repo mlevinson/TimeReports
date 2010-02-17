@@ -13,11 +13,11 @@
             cloned.dataType = this.dataType;
             cloned.value = this.value;
             return cloned;
-        }
+        };
 
         field.prototype.set = function(value){
             this.value = value;
-        }
+        };
 
         dateField = function(name, value){
             field.prototype.constructor.call(this, name, "date", value);
@@ -31,7 +31,7 @@
             } else{
                 this.value = value;
             }
-        }
+        };
 
         dateField.prototype.setString = function(value, format){
             if(!value) {
@@ -40,7 +40,7 @@
                 var f = format || dateField.format;
                 this.value = Date.fromString(value, f);
             }
-        }
+        };
 
         dateField.prototype.dayOfWeek = function(){
             return oDeskUtil.getDayNumber(this.value);
@@ -84,16 +84,16 @@
             if(!names || !names.length) return;
             this.selectStatement = "SELECT ";
             this.selectStatement += names.join(",");
-        }
+        };
 
         query.prototype.addCondition = function(operator, name, value){
             this.conditions.push(name + " " + operator + " '" + value + "'");
-        }
+        };
 
         query.prototype.addSortStatement = function(names){
             this.orderStatement = " ORDER BY ";
             this.orderStatement += names.join(",");
-        }
+        };
 
         query.prototype.toString = function(){
             var params = {};
@@ -122,17 +122,28 @@
             return url;
         };
 
-        constructField = function(name, type){
-            var f = this.Field;
-            if(type == "number") f = this.NumberField;
-            else if(type == "date") f = this.DateField;
+        function constructField(name, type){
+            var f = field;
+            if(type == "number") f = numberField;
+            else if(type == "date") f = dateField;
             return new f(name);
         };
 
-        read = function(data){ 
+        function readStructure(data){
+            var fields = [];
+            if( !data.table ||
+                !data.table.cols ||
+                !data.table.cols.length) return fields;
+            $.each(data.table.cols, function(i, col){
+                fields.push(constructField(col.label, col.type));
+            });
+            return fields;
+        }
+
+        function read(data, fields){
             var datasource = this;
             var records = [];
-            var fields = [];
+
             if( !data.table ||
                 !data.table.cols ||
                 !data.table.cols.length ||
@@ -140,9 +151,9 @@
                 data.table.rows == "" ||
                 !data.table.rows.length) return records;
 
-            $.each(data.table.cols, function(i, col){
-                fields.push(datasource.constructField(col.label, col.type));
-            });
+            if(!fields){
+                fields = readStructure(data);
+            }
 
             $.each(data.table.rows, function(i, row){
                 var record = {};
@@ -156,13 +167,75 @@
             return records;
         };
 
+        resultset = function(data){
+            this.fields = readStructure(data);
+            this.records = read(data, this.fields); 
+            this.rows = [];
+        };
+
+        resultset.prototype.getUniqueValues = function(columnName){
+            var uniqueList = [];
+            $.each(this.records, function(i, record){
+             var f = null;
+             if($.isFunction(columnName)){
+                 f = columnName(record);
+             } else {
+                 f = record[columnName].value;
+             }
+             if($.inArray(f, uniqueList) == -1){
+                uniqueList.push(f);
+             }
+            });
+            uniqueList.sort();
+            return uniqueList;
+        };
+
+        resultset.prototype.pivotWeekDays = function(s){
+
+            var defaults = {
+                labelFunction:null,
+                valueFunction:null,
+                dateField:"worked_on"
+            };
+
+            var spec = $.extend({}, defaults, s);
+            var l = constructField("label");
+            var f = constructField("value", "number");
+            f.set(0);
+            var uniques = this.getUniqueValues(spec.labelFunction);
+            this.rows = [];
+            var resultset = this;                  
+            $.each(uniques, function(i, unique){
+                var row = [];  
+                var label = l.clone();
+                label.set(unique);
+                row.push(label);
+                for ( c = 0; c < 8; c++){
+                    row.push(f.clone());
+                }
+                resultset.rows.push(row);
+            });
+
+
+            $.each(this.records, function(i, record){
+                var label = spec.labelFunction(record);
+                var row = resultset.rows[$.inArray(label, uniques)];
+                var weekDay = record[spec.dateField].dayOfWeek();
+                row[weekDay + 1].value += spec.valueFunction(record);
+            });
+
+
+
+        };
+
         return {
             Field: field,
             DateField: dateField,
             NumberField: numberField,
             Query: query,
             read: read,
-            constructField: constructField
+            constructField: constructField,
+            ResultSet: resultset
         };
 
     }();
