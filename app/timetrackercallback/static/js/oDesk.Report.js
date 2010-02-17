@@ -123,11 +123,9 @@ oDesk = function(){
         this.timeline = new oDeskTime(sTimeType);
     };
 
-    services = function(){
-
-    };
-
-    services.prototype.dummyService = function(){};
+    services = function(){};   
+    
+    datasource = function(){};
 
     report = function(sTimeType){
         this.state = new reportState(sTimeType);
@@ -272,6 +270,7 @@ oDesk = function(){
             "Team": oDeskObject,
             "Company": oDeskObject,
             "Provider": oDeskObject,
+            "DataSource": datasource,
             "Report": report,
             "Services": services,
             "Timeline":oDeskTime,
