@@ -1,8 +1,8 @@
 oDesk = function(){
-    oDeskObject = function(){
-        this.reference = null;
-        this.name = null;
-        this.id = null;
+    oDeskObject = function(id, name, reference){
+        this.reference = reference || null;
+        this.name = name || null;
+        this.id = id || null;
     };
 
     oDeskObject.prototype.toString = function(){

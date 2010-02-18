@@ -1,22 +1,23 @@
 (function($){
     oDesk.Report.prototype.columnSpec = function(){
-        var cols = [{sTitle:"Provider"}];
+        var cols = [
+                    {sTitle:"Provider", fnRender: function(data){return data.aData[data.iDataColumn].value;}}];
         var report = this;
         $.each(oDeskUtil.dayNames, function(i, day){
            cols.push({
                sTitle: day,
-               fnRender: report.dtFormatHours,
+               fnRender: oDesk.Report.formatHoursField,
                sClass: "numeric"
            });
         });
         cols.push({
           sTitle: "Total Hours",
-          fnRender:report.dtFormatHours,
+          fnRender:oDesk.Report.formatHoursField,
           sClass:"numeric total"
         });
         cols.push({
           sTitle: "Total Charges",
-          fnRender:report.dtFormatCharges,
+          fnRender:oDesk.Report.formatChargesField,
           sClass:"numeric total"
         });
 
@@ -26,7 +27,7 @@
     oDesk.Report.prototype.footerSpec = function(){
           var report = this;
           function dayTotalRenderer(results, col){
-                return report.formatHours(results.dayTotals[col-1]);
+                return oDesk.Report.formatHours(results.columnTotals.hours[col-1].value);
           }
 
           var footerRows = [];
@@ -46,7 +47,7 @@
           footerRows.push(
               {
                   fnRender: function(results, col){
-                      return report.formatHours(results.grandTotalHours, true);
+                      return  oDesk.Report.formatHours(results.grandTotals.hours.value, true);
                   },
                   sClass: "numeric grand-total"
               }
@@ -54,7 +55,7 @@
            footerRows.push(
               {
                   fnRender: function(results, col){
-                      return report.formatCharges(results.grandTotalCharges, true);
+                      return oDesk.Report.formatCharges(results.grandTotals.charges.value, true);
                   },
                   sClass: "numeric grand-total"
               }
@@ -65,42 +66,32 @@
 
 
     oDesk.Report.prototype.transformData = function(data){
-          if(!data) return null;
-          var grandTotalHours = 0, grandTotalCharges = 0, dayTotals = [0, 0, 0, 0, 0, 0, 0];
-          var rows = [], records = [], providers = [];
-          if(data.table){
-              $.each(data.table.rows, function(i, record){
-                  if(record=="") return false;
-                  var oDeskRecord = new oDesk.HoursRecord(record);
-                  records.push(oDeskRecord);
-                  var providerName = oDeskRecord.provider.getDisplayName();
-                  if($.inArray(providerName, providers) == -1){
-                      providers.push(providerName);
-                  }
-              });
-              providers.sort();
-              $.each(providers, function(i, providerName){
-                  rows.push([providerName, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-              });
+          var results = new oDesk.DataSource.ResultSet(data);
+          results.pivotWeekDays({
+              labelFunction: function(record){
+                  var provider = new oDesk.Provider(record.provider_id.value, record.provider_name.value);
+                  return provider.getDisplayName();
+               },
+               valueFunction: function(record){
+                   return record.hours.value;
+               }
+          });
 
-              $.each(records, function(i, record){
-                   var providerName = record.provider.getDisplayName();
-                   var row = rows[$.inArray(providerName, providers)];
-                   var recordWeekDay = record.recordDayOfWeek();
-                   var currentVal = parseFloat(row[recordWeekDay + 1]);
-                   row[recordWeekDay + 1] = currentVal + record.hours;
-                   dayTotals[recordWeekDay] += record.hours;
-                   row[8] += record.hours;
-                   row[9] += record.charges;
-                   grandTotalHours +=  record.hours;
-                   grandTotalCharges +=  record.charges;
-              });
-          }
-          return {
-                "rows": rows,
-                "grandTotalHours": grandTotalHours,
-                "grandTotalCharges": grandTotalCharges,
-                "dayTotals": dayTotals
-          };
+          results.calculateTotals({
+              totals : [
+                  {
+                      name: "hours",
+                      label: "Total Hours",
+                      valueFunction: function(record){return record.hours.value;}
+                  },
+                  {
+                      name: "charges",
+                      label: "Total $",
+                      valueFunction: function(record){return record.charges.value;}
+                  }
+              ]
+          });
+
+          return results;
     };
 })(jQuery);
