@@ -288,9 +288,11 @@
                     row.push(totalField);
                     rowTotals[totalField.name] = totalField;
                 });
-                var colIndex = 0;
+                var colIndex = -1;
                 $.each(row, function(j, field){
-                    if (field.name == "value" && field.record) {
+                    if (field.name == "value") {
+                      colIndex ++;
+                      if(!field.record) return;
                       $.each(totals, function(totalIndex, totalField){
                           var val = spec.totals[totalIndex].valueFunction(field.record);
                           rowTotals[totalField.name].value += val;
@@ -303,7 +305,6 @@
                               });
                           }
                       });
-                      colIndex ++;
                     }
                 });
             });
