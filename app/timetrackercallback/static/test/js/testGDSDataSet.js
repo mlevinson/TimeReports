@@ -40,30 +40,52 @@ function getTestGDSDataSet(){
                             }
     };
 }
-
+function getGDSPivotedByWeekDaysOnProviderIdGroupTotalsByTeam(){
+    var totals = {
+        team: {
+             oDesk: {
+                 hours: [22.34, 19.33, 10.0, 0, 0, 0, 0],
+                 charges: [322.34, 1219.33, 106.83, 0, 0, 0, 0]
+             },
+             Product: {
+                 hours: [0, 0, 17.00, 28.35, 15.83, 0, 0],
+                 charges: [0, 0, 213.99, 1228.35, 315.83, 0, 0]
+             }
+        }
+    };
+    return totals;
+}
 
 function getGDSPivotedByWeekDaysOnProviderId(){
 
-    var rows = 
+    var rows =
             [
                 ["belnac",               5.83,          0.83,     8.00,     6.17,     3.33,     0,     0  ],
                 ["lakshmivyas",          8.17,          12.17,    9.00,     8.84,     8.67,     0,     0  ],
                 ["mlevinson",             8.34,          6.33,     10.00,    13.34,    3.83,     0,     0  ]
 
             ];
-     return rows;       
+     return rows;
 
-}   
+}
 
 function getGDSPivotedByWeekDaysOnProviderIdWithTotals(){
 
-    var rows = 
+    var rows =
             [
                 ["belnac",               5.83,          0.83,     8.00,     6.17,     3.33,     0,     0,   24.16,   520.99   ],
                 ["lakshmivyas",          8.17,          12.17,    9.00,     8.84,     8.67,     0,     0,   46.85,   1447.01       ],
-                ["mlevinson",             8.34,          6.33,     10.00,    13.34,    3.83,     0,     0,  41.84,   1438.67       ]
+                ["mlevinson",            8.34,          6.33,     10.00,    13.34,    3.83,     0,     0,  41.84,   1438.67       ]
 
             ];
-     return rows;       
+     return rows;
 
+}
+
+
+function getGDSPivotedByWeekDaysOnProviderIdColumnTotals(){
+    return  {
+        hours: [22.34, 19.33, 27.00, 28.35, 15.83, 0, 0],
+        charges: [322.34, 1219.33, 320.82, 1228.35, 315.83]
+    };
 }

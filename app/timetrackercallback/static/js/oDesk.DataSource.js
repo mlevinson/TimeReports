@@ -3,6 +3,7 @@
     oDesk.DataSource = function(){
         field = function(name, dataType, value){
             this.name = name;
+            this.label = name;
             this.dataType = dataType || "string";
             this.set(value || null);
         };
@@ -12,6 +13,7 @@
             cloned.name = this.name;
             cloned.dataType = this.dataType;
             cloned.value = this.value;
+            cloned.label = this.label;
             return cloned;
         };
 
@@ -171,6 +173,8 @@
             this.fields = readStructure(data);
             this.records = read(data, this.fields);
             this.rows = [];
+            this.columnTotals = {};
+            this.grandTotals = {};
         };
 
         resultset.prototype.getUniqueValues = function(columnName){
@@ -229,32 +233,75 @@
 
         resultset.prototype.calculateTotals = function(spec){
             if(!this.rows || !this.rows.length) return;
+            var results = this;
+            var totalColumns = this.rows[0].length;
             var totals = [];
-            $.each(spec, function(i, totalSpec){
-                $.each(totalSpec, function(name, totalFunction){
-                    totals.push(constructField(name, "number"));
-                });
-
+            $.each(spec.totals, function(i, totalSpec){
+                var f = constructField(totalSpec.name, "number");
+                f.label = totalSpec.label;
+                f.set(0);
+                totals.push(f);
+                var columnTotals = [];
+                results.columnTotals[totalSpec.name] = columnTotals;
+                results.grandTotals[totalSpec.name] = f.clone();
+                for(col = 0; col < totalColumns; col ++){
+                    columnTotals.push(f.clone());
+                }
             });
             var totalCount = totals.length;
+            var calculateGroupTotals = false;
+            var groupValues = {};
+            var groupTotals = {};
+            if(spec.groupTotals && spec.groupTotals.length){
+                calculateGroupTotals = true;
+                $.each(spec.groupTotals, function(i, groupTotalSpec){
+                    groupTotals[groupTotalSpec.name] = {};
+                    var uniqueGroupValues = results.getUniqueValues(groupTotalSpec.groupFunction);
+                    groupValues[groupTotalSpec.name] = uniqueGroupValues;
+                    $.each(uniqueGroupValues, function(g, v){
+                        groupTotals[groupTotalSpec.name][v] = {};
+                        var f = constructField(groupTotalSpec.name, "number");
+                        f.set(0);
+                        $.each(spec.totals, function(i, totalSpec){
+                            var totals = [];
+                            for(col = 0; col < totalColumns + totalCount; col ++){
+                                totals.push(f.clone());
+                            }
+                            groupTotals[groupTotalSpec.name][v][totalSpec.name] = totals;
+                        });
+                    });
+                });
+            }
+
+
             var rowTotals = {};
             $.each(this.rows, function(rowIndex, row){
                 $.each(totals, function(ti, tf){
                     var totalField = tf.clone();
-                    totalField.set(0);
                     row.push(totalField);
                     rowTotals[totalField.name] = totalField;
                 });
+                var colIndex = 0;
                 $.each(row, function(j, field){
                     if (field.name == "value" && field.record) {
                       $.each(totals, function(totalIndex, totalField){
-                          var totalSpec = spec[totalIndex];
-                          var totalFunction = totalSpec[totalField.name];
-                          rowTotals[totalField.name].value += totalFunction(field.record);
+                          var val = spec.totals[totalIndex].valueFunction(field.record);
+                          rowTotals[totalField.name].value += val;
+                          results.columnTotals[totalField.name][colIndex].value += val;
+                          results.grandTotals[totalField.name].value += val;
+                          if(calculateGroupTotals){
+                              $.each(spec.groupTotals, function(g, groupTotalSpec){
+                                  var groupValue = groupTotalSpec.groupFunction(field.record);
+                                  groupTotals[groupTotalSpec.name][groupValue][totalField.name][colIndex].value += val;
+                              });
+                          }
                       });
+                      colIndex ++;
                     }
                 });
             });
+
+            this.groupTotals = groupTotals;
         };
 
         return {
