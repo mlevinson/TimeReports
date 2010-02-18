@@ -238,7 +238,8 @@
             });
         };
 
-        resultset.prototype.calculateTotals = function(spec){
+        resultset.prototype.calculateTotals = function(spec){  
+            // TODO: Too much complexity - must refactor to make it manageable.
             if(!this.rows || !this.rows.length) return;
             var results = this;
             var totalColumns = this.rows[0].length;
