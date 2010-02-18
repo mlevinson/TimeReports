@@ -74,29 +74,6 @@ oDesk = function(){
         return this.getDisplayName(true);
     };
 
-
-    reportState = function(sTimeType){
-        this.company = new oDeskObject();
-        this.team = new oDeskObject();
-        this.provider = new oDeskObject();
-        this.timeline = new oDeskTime(sTimeType);
-    };
-
-    reportState.prototype.makeParams = function(){
-        var params = {};
-        $.each(this, function(key, value){
-            if (typeof(value.makeParams) == "function"){
-                var subparams = value.makeParams(key);
-                $.each(subparams, function(k, v){
-                    params[k] = v;
-                });
-            } else {
-                params[key] = value;
-            }
-        });
-        return params;
-    }
-
     services = function(){};
 
     datasource = function(){};

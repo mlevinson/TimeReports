@@ -199,6 +199,7 @@
             query.addSelectStatement(["worked_on", "provider_id", "provider_name", "sum(hours)", "sum(charges)"]);
             query.addCondition(">=", "worked_on", "{timelineStartDate}");
             query.addCondition("<=", "worked_on", "{timelineEndDate}");
+            query.addCondition("<=", "provider_id", "{providerId}");
             equals(query.toString(), expected_url);
         });
 

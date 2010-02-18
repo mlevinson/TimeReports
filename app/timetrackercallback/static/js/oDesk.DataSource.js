@@ -111,9 +111,16 @@
             });
             if(this.selectStatement){
                 var tq = this.selectStatement;
-                if(this.conditions.length){
+                var conditions = [];
+                $.each(this.conditions, function(i, condition){
+                    var condition = oDeskUtil.substitute(condition, params);
+                    if(condition.indexOf("{") == -1){
+                       conditions.push(condition);
+                    }
+                });
+                if(conditions.length){
                     tq += " WHERE ";
-                    tq += oDeskUtil.substitute(this.conditions.join(" AND "), params);
+                    tq += conditions.join(" AND ");
                 }
                 if(this.orderStatement){
                     tq += this.orderStatement;
