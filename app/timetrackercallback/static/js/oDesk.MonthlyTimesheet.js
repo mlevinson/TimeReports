@@ -110,7 +110,7 @@
         }
 
         var results = new oDesk.DataSource.ResultSet(data);
-        results.pivotWeekDays({labelFunction: labelFunction, valueFunction: valueFunction});
+        results.pivotWeekDays({uniques: weeks.labels, labelFunction: labelFunction, valueFunction: valueFunction});
 
         results.calculateTotals({
             totals : [

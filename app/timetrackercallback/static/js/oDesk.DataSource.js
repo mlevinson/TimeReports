@@ -204,6 +204,7 @@
         resultset.prototype.pivotWeekDays = function(s){
 
             var defaults = {
+                uniques: null,
                 labelFunction:null,
                 valueFunction:null,
                 dateField:"worked_on"
@@ -213,7 +214,7 @@
             var l = constructField("label");
             var f = constructField("value", "number");
             f.set(0);
-            var uniques = this.getUniqueValues(spec.labelFunction);
+            var uniques = spec.uniques || this.getUniqueValues(spec.labelFunction);
             this.rows = [];
             var resultset = this;
             $.each(uniques, function(i, unique){
