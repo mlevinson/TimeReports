@@ -181,7 +181,7 @@
             this.records = read(data, this.fields);
             this.rows = [];
             this.columnTotals = {};
-            this.grandTotals = {};
+            this.groupTotals = {};
         };
 
         resultset.prototype.getUniqueValues = function(columnName){
@@ -199,6 +199,20 @@
             });
             uniqueList.sort();
             return uniqueList;
+        };
+
+        resultset.prototype.createRows = function(s){
+           var results = this;
+           $.each(this.records, function(r, record){
+               var row = [];
+               $.each(s.columns, function(i, column){
+                   var f = constructField(column.name, column.type);
+                   f.set(column.valueFunction(record));
+                   f.record = record;
+                   row.push(f);
+               });
+               results.rows.push(row);
+           });
         };
 
         resultset.prototype.pivotWeekDays = function(s){
@@ -239,11 +253,61 @@
             });
         };
 
-        resultset.prototype.calculateTotals = function(spec){  
+        resultset.prototype.addTotalColumn = function(name, valueFunction){
+            if(!this.rows || !this.rows.length) return;
+            var results = this;
+            $.each(this.rows, function(rowIndex, row){
+                var total = 0;
+                $.each(row, function(colIndex, field){
+                    total += valueFunction(field);
+                });
+                var f = constructField(name, "number");
+                f.set(total);
+                row.push(f);
+            });
+        }
+
+        resultset.prototype.getColumnTotals = function(rowFilter){
+            if(!this.rows || !this.rows.length) return [];
+            var results = this;
+            columnTotals = [];
+            var totalColumns = this.rows[0].length;
+            for(col = 0; col < totalColumns; col ++){
+                var f = constructField("columnTotal", "number");
+                f.set(0);
+                columnTotals.push(f);
+                if(results.rows[0][col].dataType != "number") continue;
+                $.each(results.rows, function(rowIndex, row){
+                     if(rowFilter && !rowFilter(row, row[col])) return;
+                     f.value += row[col].value;
+                });
+            }
+            return columnTotals;
+        }
+        resultset.prototype.calculateColumnTotals = function(){
+            this.columnTotals = this.getColumnTotals();
+        }
+
+        resultset.prototype.calculateGroupTotals = function(groupFunction){
+            var results = this;
+            var uniqueGroupValues = results.getUniqueValues(groupFunction);
+            $.each(uniqueGroupValues, function(groupIndex, group){
+                this.groupTotals[group] = results.getColumnTotals(function(row, field){
+                    return groupFuncion(field.record) == group;
+                });
+            });
+        }
+
+        resultset.prototype.calculateTotals = function(spec){
             // TODO: Too much complexity - must refactor to make it manageable.
             if(!this.rows || !this.rows.length) return;
             var results = this;
-            var totalColumns = this.rows[0].length;
+            var totalColumns = 0;
+            $.each(this.rows[0], function(i, field){
+                if(field.dataType == "number"){
+                    totalColumns ++;
+                }
+            });
             var totals = [];
             $.each(spec.totals, function(i, totalSpec){
                 var f = constructField(totalSpec.name, "number");
@@ -273,7 +337,11 @@
                         f.set(0);
                         $.each(spec.totals, function(i, totalSpec){
                             var totals = [];
-                            for(col = 0; col < totalColumns + totalCount; col ++){
+                            var columnCount = totalColumns;
+                            if(spec.addRowTotals){
+                                columnCount += totalCount;
+                            }
+                            for(col = 0; col < columnCount; col ++){
                                 totals.push(f.clone());
                             }
                             groupTotals[groupTotalSpec.name][v][totalSpec.name] = totals;
@@ -287,12 +355,11 @@
             $.each(this.rows, function(rowIndex, row){
                 $.each(totals, function(ti, tf){
                     var totalField = tf.clone();
-                    row.push(totalField);
                     rowTotals[totalField.name] = totalField;
                 });
                 var colIndex = -1;
                 $.each(row, function(j, field){
-                    if (field.name == "value") {
+                    if (field.dataType == "number") {
                       colIndex ++;
                       if(!field.record) return;
                       $.each(totals, function(totalIndex, totalField){
@@ -308,6 +375,9 @@
                           }
                       });
                     }
+                });
+                $.each(totals, function(ti, tf){
+                    row.push(rowTotals[tf.name]);
                 });
             });
 

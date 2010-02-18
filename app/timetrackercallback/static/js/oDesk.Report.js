@@ -7,8 +7,8 @@ oDesk.urls = {
      getProviderHours: "http://www.odesk.com/gds/timereports/v1/providers/{providerId}",
      getAgencyHours:
        "http://www.odesk.com/gds/timereports/v1/companies/{companyId}/agencies/{companyId}",
-     getTasks:"https://www.odesk.com/api/otask/v1/tasks/companies/{companyId}/teams/{teamId}/tasks/{tasks}.json",
-}
+     getTasks:"https://www.odesk.com/api/otask/v1/tasks/companies/{companyId}/teams/{teamId}/tasks/{tasks}.json"
+};
 
 oDesk.Report = function(sTimeType){
       reportState = function(sTimeType){
@@ -35,7 +35,7 @@ oDesk.Report = function(sTimeType){
                  }
              });
              return params;
-         }
+         };
 
 
       urlTemplates = {
@@ -122,7 +122,7 @@ oDesk.Report.prototype.getProviderHoursQuery = function(){
 
     var query = new oDesk.DataSource.Query(this.state.makeParams());
     query.setUrlTemplate(oDesk.urls.getProviderHours);
-    query.addSelectStatement(["worked_on", "sum(hours)", "sum(earnings), team_name, team_id"]);
+    query.addSelectStatement(["worked_on", "sum(hours)", "sum(earnings)", "team_name", "team_id"]);
     query.addCondition(">=", "worked_on", "{timelineStartDate}");
     query.addCondition("<=", "worked_on", "{timelineEndDate}");
     query.addSortStatement(["team_name", "worked_on"]);
@@ -138,11 +138,11 @@ oDesk.Report.prototype.getTaskHoursQuery = function(){
     var query = new oDesk.DataSource.Query(this.state.makeParams());
     query.setUrlTemplate(oDesk.urls.getHours);
     query.addUrlFragment(oDesk.urls.getHoursTeamFragment);
-    query.addSelectStatement(["provider_id", "provider_name", "sum(hours)", "sum(charges)", "task"]);
+    query.addSelectStatement(["task", "provider_name", "provider_id", "sum(hours)", "sum(charges)", "task"]);
     query.addCondition(">=", "worked_on", "{timelineStartDate}");
     query.addCondition("<=", "worked_on", "{timelineEndDate}");
     query.addCondition("=", "provider_id", "{providerId}");
-    query.addSortStatement(["task", "provider_id"]);
+    query.addSortStatement(["task", "provider_name"]);
     return query.toString();
 };
 

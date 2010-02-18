@@ -6,29 +6,29 @@
             sTitle:"Task",
             width:"360px",
             canGroup: true,
-            groupValue: function(record){
-              return record.taskDescription;
+            groupValue: function(field){
+              return field.value;
             },
             fnRender: function(data){
-              var record = data.aData[data.iDataColumn];
-              if (record.taskUrl && record.taskUrl != ""){
-                  return '<a href="' + record.taskUrl + '">' + record.taskDescription + '</a>';
+              var record = data.aData[data.iDataColumn].record;
+              if (record.taskUrl && record.taskUrl.value && record.taskUrl.value != ""){
+                  return '<a href="' + record.taskUrl.value + '">' + record.taskDescription.value + '</a>';
               } else {
-                  return record.taskDescription;
+                  return record.taskDescription.value;
               }
 
             }
         });
-        cols.push({sTitle:"User", width:"218px"});
+        cols.push({sTitle:"User", width:"218px", fnRender: function(data){return data.aData[data.iDataColumn].value;}});
         cols.push({
           sTitle: "Total Hours",
-          fnRender:report.dtFormatHours,
+          fnRender:oDesk.Report.formatHoursField,
           sClass:"numeric total",
           width:"90px"
         });
         cols.push({
           sTitle: "Total $",
-          fnRender:report.dtFormatCharges,
+          fnRender:oDesk.Report.formatChargesField,
           sClass:"numeric total",
           width:"90px"
 
@@ -49,15 +49,15 @@
                   {
                       sClass: "numeric grand-total",
                       fnRender: function(results, group){
-                         var total = results.totals[group.value];
-                         return report.formatHours(total.hours, true);
+                         var total = results.groupTotals.task[group.value];
+                         return report.formatHours(total.hours.value, true);
                       }
                   },
                   {
                       sClass: "numeric grand-total",
                       fnRender: function(results, group){
-                         var total = results.totals[group.value];
-                         return report.formatCharges(total.charges, true);
+                         var total = results.groupTotals.task[group.value];
+                         return report.formatCharges(total.charges.value, true);
                       }
                   }
               ]
@@ -77,7 +77,7 @@
           footerRows.push(
               {
                   fnRender: function(results, col){
-                      return report.formatHours(results.grandTotalHours, true);
+                      return report.formatHours(results.grandTotals.hours.value, true);
                   },
                   sClass: "numeric grand-total"
               }
@@ -85,7 +85,7 @@
            footerRows.push(
               {
                   fnRender: function(results, col){
-                      return report.formatCharges(results.grandTotalCharges, true);
+                      return report.formatCharges(results.grandTotals.charges.value, true);
                   },
                   sClass: "numeric grand-total"
               }
@@ -93,40 +93,40 @@
            return footerRows;
       };
 
-    oDesk.Report.prototype.transformData = function(records){
-          var rows = [];
-          var totals = {};
-          var grandTotalHours = 0;
-          var grandTotalCharges = 0;
-          var currentTotalHours = 0;
-          var currentTotalCharges = 0;
-          var currentTask = null;
+    oDesk.Report.prototype.transformData = function(results){
 
 
-          function taskDone(){
-              if(currentTask != null){
-                  totals[currentTask] = {hours:currentTotalHours, charges:currentTotalCharges};
-                  grandTotalHours += currentTotalHours;
-                  grandTotalCharges += currentTotalCharges;
-              }
-          }
+        results.createRows({
+         columns: [
+            {name:"task", type:"string", valueFunction: function(record){return record.taskDescription.value;}},
+            {name:"provider", type:"string", valueFunction: function(record){return record.provider_name.value;}},
+            {name:"hours", type:"string", valueFunction: function(record){return record.hours.value;}},
+            {name:"charges", type:"string", valueFunction: function(record){return record.charges.value;}},
+         ]
+        });
 
-          $.each(records, function(i, record){
-              if(currentTask != record.taskDescription){
-                  taskDone();
-                  currentTask = record.taskDescription;
-                  currentTotalCharges =  currentTotalHours = 0;
-              }
-              rows.push([record, record.provider.name, record.hours, record.charges]);
-              currentTotalHours += record.hours;
-              currentTotalCharges += record.charges;
-          });
-          taskDone();
-          return {
-              rows: rows,
-              totals: totals,
-              grandTotalCharges: grandTotalCharges,
-              grandTotalHours: grandTotalHours
-          };
+        results.calculateTotals({
+            addRowTotals: true,
+            groupTotals: [
+                {
+                    name: "task",
+                    groupFunction: function(record){return record.taskDescription.value;}
+                }
+            ],
+            totals : [
+                {
+                    name: "hours",
+                    label: "Total Hours",
+                    valueFunction: function(record){return record.hours.value;}
+                },
+                {
+                    name: "charges",
+                    label: "Total $",
+                    valueFunction: function(record){return record.charges.value;}
+                }
+            ]
+        });
+
+        return results;
     };
 })(jQuery);

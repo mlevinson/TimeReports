@@ -77,7 +77,8 @@
                }
           });
 
-          results.calculateTotals({
+          results.calculateTotals({ 
+              addRowTotals: true,
               totals : [
                   {
                       name: "hours",

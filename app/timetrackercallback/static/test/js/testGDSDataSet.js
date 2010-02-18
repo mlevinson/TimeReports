@@ -84,8 +84,5 @@ function getGDSPivotedByWeekDaysOnProviderIdWithTotals(){
 
 
 function getGDSPivotedByWeekDaysOnProviderIdColumnTotals(){
-    return  {
-        hours: [22.34, 19.33, 27.00, 28.35, 15.83, 0, 0],
-        charges: [322.34, 1219.33, 320.82, 1228.35, 315.83]
-    };
+    return  [0, 22.34, 19.33, 27.00, 28.35, 15.83, 0, 0, 112.85, 3406.67];
 }

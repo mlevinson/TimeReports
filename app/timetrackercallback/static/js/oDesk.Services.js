@@ -16,7 +16,7 @@
                  }
              }
          });
-    }
+    };
 
 
     oDesk.Services.getTeams = function(report, success, failure){
@@ -52,7 +52,7 @@
                  }
              }
          });
-    }
+    };
 
     function _ajax(query, success, failure){
         if(!query && $.isFunction(failure)){
@@ -74,15 +74,15 @@
                  }
              }
          });
-    }
+    };
 
     oDesk.Services.getHours = function(report, success, failure){
         _ajax(report.getHoursQuery(), success, failure);
-    }
+    };
 
     oDesk.Services.getProviderHours = function(report, success, failure){
         _ajax(report.getProviderHoursQuery(), success, failure);
-    }
+    };
 
     function filterAgencyHours(report, success, failure){
         var data = report.state.agency_hours_cache;
@@ -105,7 +105,7 @@
         if($.isFunction(success)){
             success(filtered, status);
         }
-    }
+    };
 
     oDesk.Services.getAgencyHours = function(report, success, failure){
        var cached_data = report.state.agency_hours_cache;
@@ -128,35 +128,27 @@
        } else if($.isFunction(success)){
           success(cached_data, cached_status);
        }
-    }
+    };
 
     function addTaskDescriptions(report, data, success, failure){
 
-        var records = [];
+        var results = new oDesk.DataSource.ResultSet(data);
 
-        if(!data || !data.table || !data.table.rows || data.table.rows == ""){
+        if(!results.records.length){
             if($.isFunction(success)){
-                success(records, "Succcess");
+                success(results, "Succcess");
             }
-
             return;
         }
-
-        var taskCodes = [];
-        $.each(data.table.rows, function(i, row){
-            var record = new oDesk.TaskHoursRecord(row);
-            records.push(record);
-            if($.inArray(record.taskCode, taskCodes) == -1){
-                taskCodes.push(record.taskCode);
-            }
-        })
-
-        records.sort();
-         if($.isFunction(success)){success(records, "Succcess");}
+        $.each(results.records, function(i, record){
+            record.taskDescription = record.task;
+            record.taskUrl = null;
+        });
+        if($.isFunction(success)){success(results, "Succcess");}
          // TODO: Not getting the task codes because the API does not work
          // Must fix once the API issues get resolved.
-         
-         
+
+
         // _ajax(report.getTasksQuery(taskCodes), function(tasksData, status, request){
         //          if(!tasksData || !tasksData.tasks || !tasksData.tasks.task || !tasksData.tasks.task.length){
         //              if($.isFunction(success)){
@@ -183,7 +175,7 @@
         //
         //      }, failure);
 
-    }
+    };
 
     oDesk.Services.addTaskDescriptions = addTaskDescriptions;
 
@@ -191,7 +183,7 @@
         _ajax(report.getTaskHoursQuery(), function(data, status, request){
             addTaskDescriptions(report, data, success, failure);
         }, failure);
-    }
+    };
 
     oDesk.Services.getProviders = function(report, success, failure){
 
@@ -218,5 +210,5 @@
                  }
              }
          });
-    }
+    };
 })(jQuery);

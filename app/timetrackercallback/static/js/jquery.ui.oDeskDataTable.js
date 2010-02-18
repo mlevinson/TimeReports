@@ -336,7 +336,7 @@ $.widget("ui.oDeskDataTable",{
                value = column.groupValue(value);
            }
            return value;
-      }
+      };
 
       function defineGroups(rows, columns){
           var grouper = this;

@@ -113,6 +113,7 @@
         results.pivotWeekDays({uniques: weeks.labels, labelFunction: labelFunction, valueFunction: valueFunction});
 
         results.calculateTotals({
+            addRowTotals:true,
             totals : [
                 {
                     name: report.state.mustGetHours ? "hours" : "charges",
