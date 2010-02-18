@@ -169,7 +169,7 @@
 
         resultset = function(data){
             this.fields = readStructure(data);
-            this.records = read(data, this.fields); 
+            this.records = read(data, this.fields);
             this.rows = [];
         };
 
@@ -204,13 +204,13 @@
             f.set(0);
             var uniques = this.getUniqueValues(spec.labelFunction);
             this.rows = [];
-            var resultset = this;                  
+            var resultset = this;
             $.each(uniques, function(i, unique){
-                var row = [];  
+                var row = [];
                 var label = l.clone();
                 label.set(unique);
                 row.push(label);
-                for ( c = 0; c < 8; c++){
+                for ( c = 0; c < 7; c++){
                     row.push(f.clone());
                 }
                 resultset.rows.push(row);
@@ -221,11 +221,40 @@
                 var label = spec.labelFunction(record);
                 var row = resultset.rows[$.inArray(label, uniques)];
                 var weekDay = record[spec.dateField].dayOfWeek();
-                row[weekDay + 1].value += spec.valueFunction(record);
+                var field = row[weekDay + 1];
+                field.value += spec.valueFunction(record);
+                field.record = record;
             });
+        };
 
+        resultset.prototype.calculateTotals = function(spec){
+            if(!this.rows || !this.rows.length) return;
+            var totals = [];
+            $.each(spec, function(i, totalSpec){
+                $.each(totalSpec, function(name, totalFunction){
+                    totals.push(constructField(name, "number"));
+                });
 
-
+            });
+            var totalCount = totals.length;
+            var rowTotals = {};
+            $.each(this.rows, function(rowIndex, row){
+                $.each(totals, function(ti, tf){
+                    var totalField = tf.clone();
+                    totalField.set(0);
+                    row.push(totalField);
+                    rowTotals[totalField.name] = totalField;
+                });
+                $.each(row, function(j, field){
+                    if (field.name == "value" && field.record) {
+                      $.each(totals, function(totalIndex, totalField){
+                          var totalSpec = spec[totalIndex];
+                          var totalFunction = totalSpec[totalField.name];
+                          rowTotals[totalField.name].value += totalFunction(field.record);
+                      });
+                    }
+                });
+            });
         };
 
         return {

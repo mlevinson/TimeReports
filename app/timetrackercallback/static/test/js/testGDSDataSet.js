@@ -53,4 +53,17 @@ function getGDSPivotedByWeekDaysOnProviderId(){
             ];
      return rows;       
 
+}   
+
+function getGDSPivotedByWeekDaysOnProviderIdWithTotals(){
+
+    var rows = 
+            [
+                ["belnac",               5.83,          0.83,     8.00,     6.17,     3.33,     0,     0,   24.16,   520.99   ],
+                ["lakshmivyas",          8.17,          12.17,    9.00,     8.84,     8.67,     0,     0,   46.85,   1447.01       ],
+                ["mlevinson",             8.34,          6.33,     10.00,    13.34,    3.83,     0,     0,  41.84,   1438.67       ]
+
+            ];
+     return rows;       
+
 }

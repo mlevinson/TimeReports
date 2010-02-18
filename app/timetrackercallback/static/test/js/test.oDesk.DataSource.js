@@ -254,16 +254,52 @@
                 labelFunction: function(record){return record.provider_id.value;},
                 valueFunction: function(record){return record.hours.value;}
             });
-            
+
             var expected = getGDSPivotedByWeekDaysOnProviderId();
-            
+
             $.each(expected, function(i, row){
                $.each(row, function(j, val){
-                  equals(results.rows[i][j].value, val); 
-               }); 
+                  equals(results.rows[i][j].value, val);
+               });
             });
 
         });
+        function numberEquals(actual, expected, text){
+            var actualNumber = parseFloat(actual).toFixed(2);
+            var expectedNumber = parseFloat(expected).toFixed(2);
+            equals(actualNumber, expectedNumber, text)
+        };
+        test("Can Calculate Totals", function(){
+
+            var dataset = getTestGDSDataSet();
+            var format = oDesk.DataSource.DateField.format;
+            var results = new oDesk.DataSource.ResultSet(dataset);
+            results.pivotWeekDays({
+                labelFunction: function(record){return record.provider_id.value;},
+                valueFunction: function(record){return record.hours.value;}
+            });
+            results.calculateTotals([
+                {hours: function(record){return record.hours.value;}},
+                {charges: function(record){return record.charges.value;}}
+            ]);
+            log(JSON.stringify(results.rows));
+            var expected = getGDSPivotedByWeekDaysOnProviderIdWithTotals();
+
+            $.each(expected, function(i, row){
+               equals(results.rows[i].length, row.length);
+               $.each(row, function(j, val){
+                   if(results.rows[i][j].dataType == "number"){
+                       numberEquals(results.rows[i][j].value, val);
+                   } else {
+                       equals(results.rows[i][j].value, val);
+                   }
+
+               });
+            });
+
+        });
+
+
 
         if ( typeof fireunit === "object" ) {
                 QUnit.log = fireunit.ok;
