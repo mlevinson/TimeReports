@@ -3,27 +3,27 @@
         var report = this;
         var cols = [];
         if (report.state.buyer){
-            cols.push({sTitle:"Provider", width:"218px"});
+            cols.push({sTitle:"Provider", width:"218px", fnRender: oDesk.Report.renderField});
         } else {
-            cols.push({sTitle:"Buyer", width:"218px"});
+            cols.push({sTitle:"Buyer", width:"218px", fnRender: oDesk.Report.renderField});
         }
         $.each(oDeskUtil.dayNames, function(i, day){
            cols.push({
                sTitle: day,
-               fnRender: report.dtFormatHours,
+               fnRender: oDesk.Report.formatHoursField,
                sClass: "numeric",
                width: "56px"
            });
         });
          cols.push({
               sTitle: "Total Hours",
-              fnRender:report.dtFormatHours,
+              fnRender: oDesk.Report.formatHoursField,
               sClass:"numeric total",
               width: "90px"
             });
         cols.push({
           sTitle: "Total $",
-          fnRender:report.dtFormatCharges,
+          fnRender: oDesk.Report.formatChargesField,
           sClass:"numeric total",
           width: "90px"
         });
@@ -32,135 +32,74 @@
 
     oDesk.Report.prototype.footerSpec = function(){
           var report = this;
-          function dayTotalRenderer(results, col){
-                return report.formatHours(results.dayTotals[col-1]);
+          function columnTotalRenderer(results, col){
+                return oDesk.Report.formatHours(results.columnTotals[col].value);
           }
 
           var footerRows = [];
           footerRows.push({
+                sClass: "footer-label",
                 fnRender: function(results, col){
-                    if (results.buyer){
-                        return "Total for " + results.buyer.name + ":";
+                    if (report.state.buyer){
+                        return "Total for " + report.state.buyer.name + ":";
                     }  else {
                         return "Total:";
                     }
-
                 }
           });
           for(d = 0; d < 7; d++) {
              footerRows.push({
-                 fnRender: dayTotalRenderer,
+                 fnRender: columnTotalRenderer,
                  sClass: "numeric total"
              });
           }
 
-          footerRows.push(
-              {
-                  fnRender: function(results, col){
-                      return report.formatHours(results.grandTotalHours, true);
-                  },
-                  sClass: "numeric grand-total"
+          footerRows.push({
+              sClass: "numeric grand-total",
+              fnRender: function(results, col){
+                  return oDesk.Report.formatHours(results.columnTotals[col].value, true);
               }
-           );
-           footerRows.push(
-              {
-                  fnRender: function(results, col){
-                      return report.formatCharges(results.grandTotalCharges, true);
-                  },
-                  sClass: "numeric grand-total"
+          });
+          footerRows.push({
+              sClass: "numeric grand-total",
+              fnRender: function(results, col){
+                  return oDesk.Report.formatCharges(results.columnTotals[col].value, true);
               }
-           );
-           return footerRows;
+          });
+
+          return footerRows;
       };
 
-    oDesk.Report.prototype.transformSummary = function(data){
-        if(!data) return null;
-          var grandTotalHours = 0, grandTotalCharges = 0, dayTotals = [0, 0, 0, 0, 0, 0, 0];
-          var rows = [], records = [], buyers = [];
-          if(data.table){
-              $.each(data.table.rows, function(i, record){
-                  if(record=="") return false;
-                  var oDeskRecord = new oDesk.ProviderHoursRecord(record);
-                  records.push(oDeskRecord);
-                  var buyerName = oDeskRecord.buyerCompany.name;
-                  if($.inArray(buyerName, buyers) == -1){
-                      buyers.push(buyerName);
-                  }
-              });
-              buyers.sort();
-              $.each(buyers, function(i, buyerName){
-                  rows.push([buyerName, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-              });
 
-              $.each(records, function(i, record){
-                   var buyerName = record.buyerCompany.name;
-                   var row = rows[$.inArray(buyerName, buyers)];
-                   var recordWeekDay = record.recordDayOfWeek();
-                   var currentVal = parseFloat(row[recordWeekDay + 1]);
-                   row[recordWeekDay + 1] = currentVal + record.hours;
-                   dayTotals[recordWeekDay] += record.hours;
-                   row[8] += record.hours;
-                   row[9] += record.charges;
-                   grandTotalHours +=  record.hours;
-                   grandTotalCharges +=  record.charges;
-              });
-          }
-          return {
-                "rows": rows,
-                "grandTotalHours": grandTotalHours,
-                "grandTotalCharges": grandTotalCharges,
-                "dayTotals": dayTotals
-          };
-    }
-
-    oDesk.Report.prototype.transformBuyer = function(data){
-         if(!data) return null;
-          var grandTotalHours = 0, grandTotalCharges = 0, dayTotals = [0, 0, 0, 0, 0, 0, 0];
-          var rows = [], records = [], providers = [];
-          if(data.table){
-              $.each(data.table.rows, function(i, record){
-                  if(record=="") return false;
-                  var oDeskRecord = new oDesk.ProviderHoursRecord(record);
-                  records.push(oDeskRecord);
-                  var providerName = oDeskRecord.provider.name;
-                  if($.inArray(providerName, providers) == -1){
-                      providers.push(providerName);
-                  }
-              });
-              providers.sort();
-              $.each(providers, function(i, providerName){
-                  rows.push([providerName, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-              });
-
-              $.each(records, function(i, record){
-                   var providerName = record.provider.name;
-                   var row = rows[$.inArray(providerName, providers)];
-                   var recordWeekDay = record.recordDayOfWeek();
-                   var currentVal = parseFloat(row[recordWeekDay + 1]);
-                   row[recordWeekDay + 1] = currentVal + record.hours;
-                   dayTotals[recordWeekDay] += record.hours;
-                   row[8] += record.hours;
-                   row[9] += record.charges;
-                   grandTotalHours +=  record.hours;
-                   grandTotalCharges +=  record.charges;
-              });
-          }
-          return {
-                "rows": rows,
-                "buyer": this.state.buyer,
-                "grandTotalHours": grandTotalHours,
-                "grandTotalCharges": grandTotalCharges,
-                "dayTotals": dayTotals
-          };
-    }
+      oDesk.Report.prototype.transformData = function(data){
+          var report = this;
+          var results = new oDesk.DataSource.ResultSet(data);
 
 
-    oDesk.Report.prototype.transformData = function(data){
-          if (this.state.buyer) {
-              return this.transformBuyer(data);
-          }else {
-              return this.transformSummary(data);
-          }
+          results.pivotWeekDays({
+               labels: [
+                   {
+                       name: report.state.provider.id ? "provider" : "buyer",
+                       labelFunction: function(record){
+                           return report.state.buyer?
+                                record.provider_name.value :
+                                record.team_name.value;
+                       }
+                   }
+               ],
+               values: {
+                   value: function(record){return record.hours.value;},
+                   earnings: function(record){return record.earnings.value;}
+               }
+          });
 
-    };
+
+          results.addTotalColumn("hours", {value:function(f){return f.dataType == "number"? f.value || 0 : 0;}});
+          results.addTotalColumn("earnings", {value:function(f){return f.dataType == "number"? f.earnings || 0 : 0;}});
+
+          results.calculateColumnTotals();
+
+          return results;
+      };
+
 })(jQuery);

@@ -144,6 +144,14 @@
             record.taskDescription = record.task;
             record.taskUrl = null;
         });
+        
+        results.records.sort(function(record1, record2){
+            if(record1.taskDescription.value == record2.taskDescription.value){
+                return record1.provider_name.value > record2.provider_name.value ? 1 : -1;
+            } else {
+                return record1.taskDescription.value > record2.taskDescription.value ? 1 : -1;                
+            }
+        });
         if($.isFunction(success)){success(results, "Succcess");}
          // TODO: Not getting the task codes because the API does not work
          // Must fix once the API issues get resolved.

@@ -26,8 +26,8 @@
 
     oDesk.Report.prototype.footerSpec = function(){
           var report = this;
-          function dayTotalRenderer(results, col){
-                return oDesk.Report.formatHours(results.columnTotals.hours[col-1].value);
+          function columnTotalRenderer(results, col){
+                return oDesk.Report.formatHours(results.columnTotals[col].value);
           }
 
           var footerRows = [];
@@ -39,28 +39,25 @@
           });
           for(d = 0; d < 7; d++) {
              footerRows.push({
-                 fnRender: dayTotalRenderer,
+                 fnRender: columnTotalRenderer,
                  sClass: "numeric total"
              });
           }
 
-          footerRows.push(
-              {
-                  fnRender: function(results, col){
-                      return  oDesk.Report.formatHours(results.grandTotals.hours.value, true);
-                  },
-                  sClass: "numeric grand-total"
+          footerRows.push({
+              sClass: "numeric grand-total",
+              fnRender: function(results, col){
+                  return oDesk.Report.formatHours(results.columnTotals[col].value, true);
               }
-           );
-           footerRows.push(
-              {
-                  fnRender: function(results, col){
-                      return oDesk.Report.formatCharges(results.grandTotals.charges.value, true);
-                  },
-                  sClass: "numeric grand-total"
+          });
+          footerRows.push({
+              sClass: "numeric grand-total",
+              fnRender: function(results, col){
+                  return oDesk.Report.formatCharges(results.columnTotals[col].value, true);
               }
-           );
-           return footerRows;
+          });
+
+          return footerRows;
       };
 
 
@@ -68,30 +65,25 @@
     oDesk.Report.prototype.transformData = function(data){
           var results = new oDesk.DataSource.ResultSet(data);
           results.pivotWeekDays({
-              labelFunction: function(record){
-                  var provider = new oDesk.Provider(record.provider_id.value, record.provider_name.value);
-                  return provider.getDisplayName();
-               },
-               valueFunction: function(record){
-                   return record.hours.value;
-               }
+              labels: [
+                  {
+                      name: "provider",
+                      labelFunction: function(record){
+                        var provider = new oDesk.Provider(record.provider_id.value, record.provider_name.value);
+                        return provider.getDisplayName();
+                      }
+                  }
+              ],
+              values: {
+                  value: function(record){return record.hours.value;},
+                  charges: function(record){return record.charges.value;}
+              }
           });
 
-          results.calculateTotals({ 
-              addRowTotals: true,
-              totals : [
-                  {
-                      name: "hours",
-                      label: "Total Hours",
-                      valueFunction: function(record){return record.hours.value;}
-                  },
-                  {
-                      name: "charges",
-                      label: "Total $",
-                      valueFunction: function(record){return record.charges.value;}
-                  }
-              ]
-          });
+          results.addTotalColumn("hours", {value:function(f){return f.dataType == "number"? f.value || 0 : 0;}});
+          results.addTotalColumn("charges", {value:function(f){return f.dataType == "number"? f.charges || 0 : 0;}});
+
+          results.calculateColumnTotals();
 
           return results;
     };

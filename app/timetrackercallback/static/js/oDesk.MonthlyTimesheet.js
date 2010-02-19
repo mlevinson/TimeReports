@@ -20,7 +20,7 @@
         cols.push({
           sTitle: "Total",
           fnRender:render,
-          sClass:"numeric total",
+          sClass:"numeric total"
         });
 
         return cols;
@@ -46,8 +46,8 @@
               {
                   fnRender: function(results, col){
                       var value = report.state.mustGetHours ?
-                                    report.formatHours(results.grandTotals.hours.value, true) :
-                                    report.formatCharges(results.grandTotals.charges.value, true);
+                                    report.formatHours(results.columnTotals[8].value, true) :
+                                    report.formatCharges(results.columnTotals[8].value, true);
                       return value;
                   },
                   sClass: "numeric grand-total"
@@ -82,11 +82,11 @@
             }
             weeks.labels.push(weekLabel);
             var startDateString = year + "/" + month + "/" + weekStartDateNumber;
-            weeks.startDates.push(Date.fromString(startDateString, "yyyy/mm/d"))
+            weeks.startDates.push(Date.fromString(startDateString, "yyyy/mm/d"));
             weekStartDateNumber = weekEndDay + 1;
         }
         return weeks;
-    }
+    };
 
     oDesk.Report.prototype.transformData = function(data){
         if(!data) return null;
@@ -110,21 +110,18 @@
         }
 
         var results = new oDesk.DataSource.ResultSet(data);
-        results.pivotWeekDays({uniques: weeks.labels, labelFunction: labelFunction, valueFunction: valueFunction});
 
-        results.calculateTotals({
-            addRowTotals:true,
-            totals : [
-                {
-                    name: report.state.mustGetHours ? "hours" : "charges",
-                    label: report.state.mustGetHours ? "Total Hours" : "Total Charges",
-                    valueFunction: valueFunction
-                }
-            ]
-        });
+        results.pivotWeekDays({
+            uniques: {week:weeks.labels},
+            labels:[{name:"week", labelFunction: labelFunction}],
+            values:{value:valueFunction}
+         });
+
+
+         results.addTotalColumn("hours", {value: function(f){return f.dataType =="number" ? f.value || 0 : 0;}});
+         results.calculateColumnTotals();
+
 
         return results;
-
-
     };
 })(jQuery);

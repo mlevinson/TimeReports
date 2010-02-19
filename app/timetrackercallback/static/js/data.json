@@ -11,10 +11,15 @@
                     "timezone_offset":"7200"},
                     "table":{
                         "cols":[
-                        {"type":"string", "label":"team_id"},
-                        {"type":"string","label":"provider_id"},
-                        {"type":"date","label":"worked_on"},{"type":"number","label":"hours"}],
-                    "rows":[                                                                                                                                                                                   
+                        {"type":"date","label":"worked_on"},
+                        {"type":"number","label":"hours"},
+                        {"type":"number","label":"earnings"},
+                        {"type":"string","label":"team_name"},
+                        {"type":"string","label":"team_id"},
+                        {"type":"string","label":"provider_name"},
+                        {"type":"string","label":"provider_id"}
+                        ],
+                    "rows":[
                         {"c":[        {"v":"20100201"},   {"v":"8.34"}  ,    {"v":"108.34"}  ,    {"v":"oDesk"},    {"v":"oDesk"},             {"v":"Michael Levinson"},         {"v":"mlevinson"},                                                          ]},
                         {"c":[        {"v":"20100201"},   {"v":"8.17"}  ,    {"v":"108.17"}  ,    {"v":"oDesk"},    {"v":"oDesk"},             {"v":"Lakshmi Vyasarajan"},       {"v":"lakshmivyas"},                                                      ]},
                         {"c":[        {"v":"20100201"},   {"v":"5.83"}  ,    {"v":"105.83"}  ,    {"v":"oDesk"},    {"v":"oDesk"},             {"v":"Miguel Guedes"},            {"v":"belnac"},                                                           ]},
@@ -30,6 +35,6 @@
                         {"c":[        {"v":"20100205"},   {"v":"3.83"}  ,    {"v":"103.83"}  ,    {"v":"Product"},    {"v":"oProduct"},          {"v":"Michael Levinson"},         {"v":"mlevinson"},                                                           ]},
                         {"c":[        {"v":"20100205"},   {"v":"8.67"}  ,    {"v":"108.67"}  ,    {"v":"Product"},    {"v":"oProduct"},          {"v":"Lakshmi Vyasarajan"},       {"v":"lakshmivyas"},                                                         ]},
                         {"c":[        {"v":"20100205"},   {"v":"3.33"}  ,    {"v":"103.33"}  ,    {"v":"Product"},    {"v":"oProduct"},          {"v":"Miguel Guedes"},            {"v":"belnac"},                                                              ]}
-                        ]                                                                                                                                                                                      
-                        }                                                                                                                                                               
+                        ]
+                        }
 }

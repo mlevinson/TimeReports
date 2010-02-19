@@ -10,11 +10,11 @@
               return field.value;
             },
             fnRender: function(data){
-              var record = data.aData[data.iDataColumn].record;
-              if (record.taskUrl && record.taskUrl.value && record.taskUrl.value != ""){
-                  return '<a href="' + record.taskUrl.value + '">' + record.taskDescription.value + '</a>';
+              var taskField = data.aData[data.iDataColumn];
+              if (taskField.url && taskField.url != ""){
+                  return '<a href="' + taskField.url + '">' + taskField.value + '</a>';
               } else {
-                  return record.taskDescription.value;
+                  return taskField.value;
               }
 
             }
@@ -49,15 +49,15 @@
                   {
                       sClass: "numeric grand-total",
                       fnRender: function(results, group){
-                         var total = results.groupTotals.task[group.value];
-                         return report.formatHours(total.hours.value, true);
+                         var total = results.groupTotals[group.value];
+                         return report.formatHours(total[2].value, true);
                       }
                   },
                   {
                       sClass: "numeric grand-total",
                       fnRender: function(results, group){
-                         var total = results.groupTotals.task[group.value];
-                         return report.formatCharges(total.charges.value, true);
+                         var total = results.groupTotals[group.value];
+                         return report.formatCharges(total[3].value, true);
                       }
                   }
               ]
@@ -77,7 +77,7 @@
           footerRows.push(
               {
                   fnRender: function(results, col){
-                      return report.formatHours(results.grandTotals.hours.value, true);
+                      return report.formatHours(results.columnTotals[2].value, true);
                   },
                   sClass: "numeric grand-total"
               }
@@ -85,7 +85,7 @@
            footerRows.push(
               {
                   fnRender: function(results, col){
-                      return report.formatCharges(results.grandTotals.charges.value, true);
+                      return report.formatCharges(results.columnTotals[3].value, true);
                   },
                   sClass: "numeric grand-total"
               }
@@ -94,39 +94,20 @@
       };
 
     oDesk.Report.prototype.transformData = function(results){
-
-
         results.createRows({
          columns: [
-            {name:"task", type:"string", valueFunction: function(record){return record.taskDescription.value;}},
-            {name:"provider", type:"string", valueFunction: function(record){return record.provider_name.value;}},
-            {name:"hours", type:"string", valueFunction: function(record){return record.hours.value;}},
-            {name:"charges", type:"string", valueFunction: function(record){return record.charges.value;}},
+            {name:"task", type:"string", valueFunctions:{
+                    value: function(record){return record.taskDescription.value;},
+                    url: function(record){return record.taskUrl? record.taskUrl.value : null;}
+                }},
+            {name:"provider", type:"string", valueFunctions:{value: function(record){return record.provider_name.value;}}},
+            {name:"hours", type:"number", valueFunctions:{value: function(record){return record.hours.value;}}},
+            {name:"charges", type:"number", valueFunctions:{value: function(record){return record.charges.value;}}}
          ]
         });
 
-        results.calculateTotals({
-            addRowTotals: true,
-            groupTotals: [
-                {
-                    name: "task",
-                    groupFunction: function(record){return record.taskDescription.value;}
-                }
-            ],
-            totals : [
-                {
-                    name: "hours",
-                    label: "Total Hours",
-                    valueFunction: function(record){return record.hours.value;}
-                },
-                {
-                    name: "charges",
-                    label: "Total $",
-                    valueFunction: function(record){return record.charges.value;}
-                }
-            ]
-        });
-
+        results.calculateColumnTotals();
+        results.calculateGroupTotals(0);
         return results;
     };
 })(jQuery);

@@ -184,7 +184,7 @@
             this.groupTotals = {};
         };
 
-        resultset.prototype.getUniqueValues = function(columnName){
+        resultset.prototype.getUniqueRecordValues = function(columnName){
             var uniqueList = [];
             $.each(this.records, function(i, record){
              var f = null;
@@ -201,14 +201,29 @@
             return uniqueList;
         };
 
+
+
+        resultset.prototype.getUniqueRowValues = function(columnIndex){
+            var uniqueList = [];
+            $.each(this.rows, function(i, row){
+             var value = row[columnIndex].value;
+             if($.inArray(value, uniqueList) == -1){
+                uniqueList.push(value);
+             }
+            });
+            uniqueList.sort();
+            return uniqueList;
+        };
+
         resultset.prototype.createRows = function(s){
            var results = this;
            $.each(this.records, function(r, record){
                var row = [];
                $.each(s.columns, function(i, column){
                    var f = constructField(column.name, column.type);
-                   f.set(column.valueFunction(record));
-                   f.record = record;
+                   $.each(column.valueFunctions, function(valueName, valueFunction){
+                       f[valueName] = valueFunction(record);
+                   });
                    row.push(f);
                });
                results.rows.push(row);
@@ -216,56 +231,109 @@
         };
 
         resultset.prototype.pivotWeekDays = function(s){
-
+            var resultset = this;
             var defaults = {
-                uniques: null,
-                labelFunction:null,
-                valueFunction:null,
+                uniques: {},
+                labels:null,
+                values:null,
                 dateField:"worked_on"
             };
 
             var spec = $.extend({}, defaults, s);
-            var l = constructField("label");
-            var f = constructField("value", "number");
-            f.set(0);
-            var uniques = spec.uniques || this.getUniqueValues(spec.labelFunction);
-            this.rows = [];
-            var resultset = this;
-            $.each(uniques, function(i, unique){
-                var row = [];
-                var label = l.clone();
-                label.set(unique);
-                row.push(label);
-                for ( c = 0; c < 7; c++){
-                    row.push(f.clone());
-                }
-                resultset.rows.push(row);
+            var uniques = spec.uniques;
+
+            resultset.rows = [];
+            var totalRows = 0;
+
+            // Get Unique Values for every label column
+            //
+            $.each(spec.labels, function(i, labelSpec){
+               if(!uniques[labelSpec.name]) {
+                   uniques[labelSpec.name] = resultset.getUniqueRecordValues(labelSpec.labelFunction);
+               }
+               if(!totalRows){
+                   totalRows = uniques[labelSpec.name].length;
+               } else {
+                   totalRows *= uniques[labelSpec.name].length;
+               }
+
             });
 
+            // Add empty rows
+            for(rowIndex = 0; rowIndex < totalRows; rowIndex++){
+                 resultset.rows.push([]);
+            }
 
+            // Populate Labels
+            var repeatCount = 1;
+             $.each(spec.labels, function(specIndex, labelSpec){
+                 var rowIndex = 0;
+                 var labelValues = uniques[labelSpec.name];
+                 repeatCount *= labelValues.length;
+                 var repeatFactor = totalRows/repeatCount;
+                 var labelIndex = -1;
+                 var repeats = 0;
+                 var f;
+                 for(rowIndex = 0; rowIndex < totalRows; rowIndex++){
+                    if(repeats == 0){
+                        labelIndex ++;
+                        if(labelIndex >= labelValues.length) labelIndex = 0;
+                        f = constructField(labelSpec.name, "string");
+                        f.set(labelValues[labelIndex]);
+                        repeats = repeatFactor;
+                    }
+                    resultset.rows[rowIndex].push(f.clone());
+                    repeats --;
+                 }
+             });
+
+            // Add Zero values for all week day columns
+            for(rowIndex = 0; rowIndex < totalRows; rowIndex++){
+                var row = resultset.rows[rowIndex];
+                for (c = 0; c < 7; c++){
+                   var f = constructField("value", "number");
+                    f.set(0);
+                    $.each(spec.values, function(valueName, valueFunction){
+                       f[valueName] = 0;
+                    });
+                    row.push(f);
+                }
+            }
+
+            // Populate values, aggregate if needed
+            //
             $.each(this.records, function(i, record){
-                var label = spec.labelFunction(record);
-                var row = resultset.rows[$.inArray(label, uniques)];
+                var rowIndex = 0;
+                $.each(spec.labels, function(specIndex, labelSpec){
+                    var labelValues = uniques[labelSpec.name];
+                    rowIndex += rowIndex;
+                    rowIndex += $.inArray(labelSpec.labelFunction(record), labelValues);
+                });
+                var row = resultset.rows[rowIndex];
                 var weekDay = record[spec.dateField].dayOfWeek();
-                var field = row[weekDay + 1];
-                field.value += spec.valueFunction(record);
-                field.record = record;
+                var field = row[weekDay + spec.labels.length];
+                $.each(spec.values, function(valueName, valueFunction){
+                   field[valueName] += valueFunction(record);
+                });
             });
         };
 
-        resultset.prototype.addTotalColumn = function(name, valueFunction){
+        resultset.prototype.addTotalColumn = function(name, valueSpec){
             if(!this.rows || !this.rows.length) return;
             var results = this;
             $.each(this.rows, function(rowIndex, row){
-                var total = 0;
-                $.each(row, function(colIndex, field){
-                    total += valueFunction(field);
-                });
                 var f = constructField(name, "number");
-                f.set(total);
-                row.push(f);
+                f.set(0);
+                $.each(valueSpec, function(valueName, valueFunction){
+                    var total = 0;
+                    $.each(row, function(colIndex, field){
+                        total += valueFunction(field);
+                    });
+                   f[valueName] = total;
+                });
+               row.push(f);
             });
-        }
+        };
 
         resultset.prototype.getColumnTotals = function(rowFilter){
             if(!this.rows || !this.rows.length) return [];
@@ -284,112 +352,20 @@
                 });
             }
             return columnTotals;
-        }
+        };
+
         resultset.prototype.calculateColumnTotals = function(){
             this.columnTotals = this.getColumnTotals();
-        }
+        };
 
-        resultset.prototype.calculateGroupTotals = function(groupFunction){
+        resultset.prototype.calculateGroupTotals = function(columnIndex){
             var results = this;
-            var uniqueGroupValues = results.getUniqueValues(groupFunction);
+            var uniqueGroupValues = results.getUniqueRowValues(columnIndex);
             $.each(uniqueGroupValues, function(groupIndex, group){
                 results.groupTotals[group] = results.getColumnTotals(function(row){
-                    var result = false;
-                    $.each(row, function(col, field){
-                        if (field.record){
-                            result = (groupFunction(field.record) == group);
-                            return false;
-                        }
-                    });
-                    return result;
+                    return (row[columnIndex].value == group);
                 });
             });
-        }
-
-        resultset.prototype.calculateTotals = function(spec){
-            // TODO: Too much complexity - must refactor to make it manageable.
-            if(!this.rows || !this.rows.length) return;
-            var results = this;
-            var totalColumns = 0;
-            $.each(this.rows[0], function(i, field){
-                if(field.dataType == "number"){
-                    totalColumns ++;
-                }
-            });
-            var totals = [];
-            $.each(spec.totals, function(i, totalSpec){
-                var f = constructField(totalSpec.name, "number");
-                f.label = totalSpec.label;
-                f.set(0);
-                totals.push(f);
-                var columnTotals = [];
-                results.columnTotals[totalSpec.name] = columnTotals;
-                results.grandTotals[totalSpec.name] = f.clone();
-                for(col = 0; col < totalColumns; col ++){
-                    columnTotals.push(f.clone());
-                }
-            });
-            var totalCount = totals.length;
-            var calculateGroupTotals = false;
-            var groupValues = {};
-            var groupTotals = {};
-            if(spec.groupTotals && spec.groupTotals.length){
-                calculateGroupTotals = true;
-                $.each(spec.groupTotals, function(i, groupTotalSpec){
-                    groupTotals[groupTotalSpec.name] = {};
-                    var uniqueGroupValues = results.getUniqueValues(groupTotalSpec.groupFunction);
-                    groupValues[groupTotalSpec.name] = uniqueGroupValues;
-                    $.each(uniqueGroupValues, function(g, v){
-                        groupTotals[groupTotalSpec.name][v] = {};
-                        var f = constructField(groupTotalSpec.name, "number");
-                        f.set(0);
-                        $.each(spec.totals, function(i, totalSpec){
-                            var totals = [];
-                            var columnCount = totalColumns;
-                            if(spec.addRowTotals){
-                                columnCount += totalCount;
-                            }
-                            for(col = 0; col < columnCount; col ++){
-                                totals.push(f.clone());
-                            }
-                            groupTotals[groupTotalSpec.name][v][totalSpec.name] = totals;
-                        });
-                    });
-                });
-            }
-
-
-            var rowTotals = {};
-            $.each(this.rows, function(rowIndex, row){
-                $.each(totals, function(ti, tf){
-                    var totalField = tf.clone();
-                    rowTotals[totalField.name] = totalField;
-                });
-                var colIndex = -1;
-                $.each(row, function(j, field){
-                    if (field.dataType == "number") {
-                      colIndex ++;
-                      if(!field.record) return;
-                      $.each(totals, function(totalIndex, totalField){
-                          var val = spec.totals[totalIndex].valueFunction(field.record);
-                          rowTotals[totalField.name].value += val;
-                          results.columnTotals[totalField.name][colIndex].value += val;
-                          results.grandTotals[totalField.name].value += val;
-                          if(calculateGroupTotals){
-                              $.each(spec.groupTotals, function(g, groupTotalSpec){
-                                  var groupValue = groupTotalSpec.groupFunction(field.record);
-                                  groupTotals[groupTotalSpec.name][groupValue][totalField.name][colIndex].value += val;
-                              });
-                          }
-                      });
-                    }
-                });
-                $.each(totals, function(ti, tf){
-                    row.push(rowTotals[tf.name]);
-                });
-            });
-
-            this.groupTotals = groupTotals;
         };
 
         return {

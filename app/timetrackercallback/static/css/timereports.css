@@ -70,6 +70,10 @@ a:hover {color:#0033FF; text-decoration:underline; }
 .table10 td.total{width:100px;}
 .table10 td.fixed.label{width: 218px;}
 
+.control_bar.white{
+    background-color:white;
+}
+
 #reports-grid{
     padding-top: 16px;
 }

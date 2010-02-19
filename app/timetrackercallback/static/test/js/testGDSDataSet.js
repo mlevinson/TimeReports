@@ -61,6 +61,23 @@ function getGDSPivotedByWeekDaysOnProviderId(){
 
 }
 
+function getGDSPivotedByWeekDaysOnProviderIdAndTeamName(){
+
+    var rows =
+            [
+                ["belnac",       "Product",     0,             0,        8.00,     6.17,     3.33,     0,     0  ],
+                ["belnac",       "oDesk",       5.83,          0.83,     0.00,     0,           0,     0,     0  ],
+                ["lakshmivyas",  "Product",     0,              0,       9.00,     8.84,     8.67,     0,     0  ],
+                ["lakshmivyas",  "oDesk",       8.17,          12.17,    0.00,      0,        0,     0,     0  ],
+                ["mlevinson",    "Product",    0,              0,        0.00,    13.34,     3.83,     0,     0  ],
+                ["mlevinson",    "oDesk",       8.34,          6.33,     10.00,      0,        0,     0,     0  ]
+
+
+            ];
+     return rows;
+
+}
+
 function getGDSPivotedByWeekDaysOnProviderIdWithTotals(){
 
     var rows =

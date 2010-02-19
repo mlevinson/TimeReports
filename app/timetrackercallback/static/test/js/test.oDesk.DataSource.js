@@ -239,7 +239,7 @@
             var format = oDesk.DataSource.DateField.format;
             var results = new oDesk.DataSource.ResultSet(dataset);
             var expected = ["belnac", "lakshmivyas", "mlevinson"];
-            var uniqueValues = results.getUniqueValues("provider_id");
+            var uniqueValues = results.getUniqueRecordValues("provider_id");
             $.each(expected, function(i, providerId){
                equals(uniqueValues[i], providerId);
             });
@@ -252,8 +252,13 @@
             var format = oDesk.DataSource.DateField.format;
             var results = new oDesk.DataSource.ResultSet(dataset);
             results.pivotWeekDays({
-                labelFunction: function(record){return record.provider_id.value;},
-                valueFunction: function(record){return record.hours.value;}
+                labels: [
+                    {
+                        name: "provider",
+                        labelFunction: function(record){return record.provider_id.value;}
+                    }
+                ],
+                values: {value: function(record){return record.hours.value;}}
             });
 
             var expected = getGDSPivotedByWeekDaysOnProviderId();
@@ -265,6 +270,41 @@
             });
 
         });
+
+
+        test("Can Get Row Pivoted By Weekdays with two label columns", function(){
+
+            var dataset = getTestGDSDataSet();
+            var format = oDesk.DataSource.DateField.format;
+            var results = new oDesk.DataSource.ResultSet(dataset);
+            results.pivotWeekDays({
+                labels: [
+                    {
+                        name: "provider",
+                        labelFunction: function(record){return record.provider_id.value;}
+                    },
+                    {
+                        name: "team",
+                        labelFunction: function(record){return record.team_name.value;}
+                    }
+                ],
+                values: {
+                    value: function(record){return record.hours.value;},
+                    charges: function(record){return record.charges.value;}
+                    }
+            });
+
+            var expected = getGDSPivotedByWeekDaysOnProviderIdAndTeamName();
+
+            $.each(expected, function(i, row){
+               $.each(row, function(j, val){
+                  equals(results.rows[i][j].value, val);
+               });
+            });
+
+        });
+
+
         function numberEquals(actual, expected, text){
             var actualNumber = parseFloat(actual).toFixed(2);
             var expectedNumber = parseFloat(expected).toFixed(2);
@@ -275,18 +315,25 @@
             var dataset = getTestGDSDataSet();
             var format = oDesk.DataSource.DateField.format;
             var results = new oDesk.DataSource.ResultSet(dataset);
+
             results.pivotWeekDays({
-                labelFunction: function(record){return record.provider_id.value;},
-                valueFunction: function(record){return record.hours.value;}
+                labels: [
+                    {
+                        name: "provider",
+                        labelFunction: function(record){return record.provider_id.value;}
+                    }
+                ],
+                values:
+                 {
+                     value: function(record){return record.hours.value;},
+                     charges: function(record){return record.charges.value;}
+                 }
             });
 
-            results.addTotalColumn("hours", function(f){
-                return f.record ? f.record.hours.value : 0;
-            });
 
-            results.addTotalColumn("charges", function(f){
-                return f.record ? f.record.charges.value : 0;
-            });
+            results.addTotalColumn("hours", {value: function(f){return f.dataType == "number" ? f.value || 0 : 0;}});
+            results.addTotalColumn("charges", {value: function(f){return f.charges || 0;}});
+
 
             var expected = getGDSPivotedByWeekDaysOnProviderIdWithTotals();
 
@@ -309,18 +356,23 @@
              var dataset = getTestGDSDataSet();
              var format = oDesk.DataSource.DateField.format;
              var results = new oDesk.DataSource.ResultSet(dataset);
+
              results.pivotWeekDays({
-               labelFunction: function(record){return record.provider_id.value;},
-               valueFunction: function(record){return record.hours.value;}
+                 labels: [
+                     {
+                         name: "provider",
+                         labelFunction: function(record){return record.provider_id.value;}
+                     }
+                 ],
+                 values:
+                     {
+                         value: function(record){return record.hours.value;},
+                         charges: function(record){return record.charges.value;}
+                     }
              });
 
-             results.addTotalColumn("hours", function(f){
-                 return f.record ? f.record.hours.value : 0;
-             });
-
-             results.addTotalColumn("charges", function(f){
-                 return f.record ? f.record.charges.value : 0;
-             });
+             results.addTotalColumn("hours", {value: function(f){return f.dataType == "number" ? f.value || 0 : 0;}});
+             results.addTotalColumn("charges", {value: function(f){return f.charges || 0;}});
 
              results.calculateColumnTotals();
 
@@ -337,23 +389,16 @@
               var dataset = getTestGDSDataSet();
               var format = oDesk.DataSource.DateField.format;
               var results = new oDesk.DataSource.ResultSet(dataset);
-               results.createRows({
+              results.createRows({
                    columns: [
-                      {name:"provider", type:"string", valueFunction: function(record){return record.provider_name.value;}},
-                      {name:"team", type:"string", valueFunction: function(record){return record.team_name.value;}}
+                      {name:"provider", type:"string", valueFunctions:{value: function(record){return record.provider_name.value;}}},
+                      {name:"team", type:"string", valueFunctions:{value: function(record){return record.team_name.value;}}},
+                      {name:"hours", type:"number", valueFunctions:{value: function(record){return record.hours.value;}}},
+                      {name:"charges", type:"number", valueFunctions:{value: function(record){return record.charges.value;}}}
                    ]
               });
 
-            results.addTotalColumn("hours", function(f){
-               return f.record && f.name == "team"? f.record.hours.value : 0;
-            });
-
-            results.addTotalColumn("charges", function(f){
-               return f.record  && f.name == "team"? f.record.charges.value : 0;
-            });
-              results.calculateGroupTotals(function(record){
-                  return record.team_name.value;
-              });
+              results.calculateGroupTotals(1);
               var expected = getGDSGroupTotalsByTeam();
 
               $.each(expected, function(groupName, totals){
