@@ -1,4 +1,25 @@
 (function($){
+
+    oDesk.Services.getAuthUser = function(report, success, failure){
+        $.ajax({
+             url: report.getAuthUserQuery(),
+             dataType: 'jsonp',
+             error: function(request, status, error){
+                 if($.isFunction(failure)){
+                     failure(status, error);
+                 }
+             },
+             success: function(data, status, request){
+                 report.state.authUser.name = data.auth_user.first_name + " "+ data.auth_user.last_name;
+                 report.state.authUser.id = data.auth_user.uid;
+                 if($.isFunction(success)){
+                     success(report.state.authUser);
+                 }
+             }
+         });
+    };
+
+
     oDesk.Services.getCompany = function(report, companyReference, success, failure){
         report.state.company.reference = companyReference;
 
@@ -13,7 +34,7 @@
              success: function(data, status, request){
                  report.state.company.name = data.company.name;
                  if($.isFunction(success)){
-                     success(report.state.company);
+                     success(data);
                  }
              }
          });

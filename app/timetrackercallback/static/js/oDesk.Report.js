@@ -1,10 +1,11 @@
 oDesk.urls = {
+     getAuthUser: "https://www.odesk.com/api/auth/v1/login.json",
      getCompany: "http://www.odesk.com/api/hr/v2/companies/{companyReference}.json",
      getTeams: "http://www.odesk.com/api/hr/v2/companies/{companyReference}/teams.json",
      getProviders: "http://www.odesk.com/api/hr/v2/teams/{teamReference}/users.json",
      getHours: "http://www.odesk.com/gds/timereports/v1/companies/{companyId}",
      getHoursTeamFragment: "/teams/{teamId}",
-     getProviderHours: "http://www.odesk.com/gds/timereports/v1/providers/{providerId}",
+     getProviderHours: "http://www.odesk.com/gds/timereports/v1/providers/{authUserId}",
      getAgencyHours:
        "http://www.odesk.com/gds/timereports/v1/companies/{companyId}/agencies/{companyId}",
      getTasks:"https://www.odesk.com/api/otask/v1/tasks/companies/{companyId}/teams/{teamId}/tasks/{tasks}.json"
@@ -12,6 +13,7 @@ oDesk.urls = {
 
 oDesk.Report = function(sTimeType){
       reportState = function(sTimeType){
+          this.authUser = new oDeskObject();
           this.company = new oDeskObject();
           this.team = new oDeskObject();
           this.provider = new oDeskObject();
@@ -39,6 +41,10 @@ oDesk.Report = function(sTimeType){
 
       this.state = new reportState(sTimeType);
 };
+
+oDesk.Report.prototype.getAuthUserQuery = function(){
+    return oDesk.urls.getAuthUser;
+}
 
 oDesk.Report.prototype.getCompanyQuery = function(){
     if(!this.state.company.reference) return null;
@@ -97,7 +103,7 @@ oDesk.Report.prototype.getHoursQuery = function(){
 
 
 oDesk.Report.prototype.getProviderHoursQuery = function(){
-    if(!this.state.provider.id
+    if(!this.state.authUser.id
         || !this.state.timeline.startDate || !this.state.timeline.endDate){
         return null;
     }

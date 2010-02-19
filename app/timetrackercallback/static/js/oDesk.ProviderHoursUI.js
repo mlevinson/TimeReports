@@ -2,9 +2,6 @@
     providerHours = function(){
         this.report = null;
         this.elements = {
-            "provider":{
-              "id": "#provider_id"
-            },
             "week":{
                 "tableCaption": "#time-week",
                 "selector": "#timereports_week_selector"
@@ -23,9 +20,9 @@
         };
 
         function refreshReport(){
+              var ui = this;
               $(this.elements.week.tableCaption).text(
                   this.report.state.timeline.getDisplayNameWithAbbreviations());
-              this.report.state.provider.id = $(this.elements.provider.id).val();
               $(this.elements.report.container).oDeskDataTable("generateReport");
         };
 
@@ -39,6 +36,12 @@
               this.initComplete = false;
               this.report = new oDesk.Report(ui.parameters.timeline.type);
 
+
+              oDesk.Services.getAuthUser(this.report, function(user){
+                ui.report.state.provider.id = user.id;
+                ui.report.state.provider.name = user.name;
+              });
+                
               $(ui.elements.report.goButton).unbind("click").bind("click", function(){
                  ui.refreshReport();
               });
@@ -60,7 +63,7 @@
                   });
                $("body").ajaxComplete(function(){
                    loading_process();
-                   if(!ui.initComplete && ui.report.state.company.id){
+                   if(!ui.initComplete && ui.report.state.authUser.id){
                        ui.refreshReport();
                        ui.initComplete = true;
                    }
