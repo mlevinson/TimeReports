@@ -40,18 +40,10 @@ function getTestGDSDataSet(){
                             }
     };
 }
-function getGDSPivotedByWeekDaysOnProviderIdGroupTotalsByTeam(){
+function getGDSGroupTotalsByTeam(){
     var totals = {
-        team: {
-             oDesk: {
-                 hours: [22.34, 19.33, 10.0, 0, 0, 0, 0],
-                 charges: [322.34, 1219.33, 106.83, 0, 0, 0, 0]
-             },
-             Product: {
-                 hours: [0, 0, 17.00, 28.35, 15.83, 0, 0],
-                 charges: [0, 0, 213.99, 1228.35, 315.83, 0, 0]
-             }
-        }
+             oDesk: [0, 0, 51.67, 1648.50],
+             Product:  [0, 0, 61.18, 1758.17]
     };
     return totals;
 }

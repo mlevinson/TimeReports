@@ -321,7 +321,7 @@
              results.addTotalColumn("charges", function(f){
                  return f.record ? f.record.charges.value : 0;
              });
-             
+
              results.calculateColumnTotals();
 
              var expected = getGDSPivotedByWeekDaysOnProviderIdColumnTotals();
@@ -330,89 +330,33 @@
                  numberEquals(results.columnTotals[i].value, val);
              });
          });
-        //
-        //       test("Can Calculate Grand Totals", function(){
-        //
-        //           var dataset = getTestGDSDataSet();
-        //           var format = oDesk.DataSource.DateField.format;
-        //           var results = new oDesk.DataSource.ResultSet(dataset);
-        //           results.pivotWeekDays({
-        //               labelFunction: function(record){return record.provider_id.value;},
-        //               valueFunction: function(record){return record.hours.value;}
-        //           });
-        //           results.calculateTotals({
-        //                   totals: [
-        //                       {
-        //                           name: "hours",
-        //                           label: "Total Hours",
-        //                           valueFunction: function(record){return record.hours.value;}
-        //                       },
-        //                       {
-        //                           name: "charges",
-        //                           label: "Total $",
-        //                           valueFunction: function(record){return record.charges.value;}
-        //                       }
-        //                   ]
-        //               }
-        //           );
-        //           var expectedColumnTotals = getGDSPivotedByWeekDaysOnProviderIdColumnTotals();
-        //           var expected = {};
-        //
-        //           $.each(expectedColumnTotals, function(name, columnTotals){
-        //               var grandTotal = 0;
-        //               $.each(columnTotals, function(i, val){
-        //                  grandTotal += val;
-        //               });
-        //               expected[name] = grandTotal;
-        //           });
-        //           $.each(expected, function(name, val){
-        //                numberEquals(results.grandTotals[name].value, val);
-        //           });
-        //       });
-        //
-        //        test("Can Calculate Group Totals", function(){
-        //
-        //               var dataset = getTestGDSDataSet();
-        //               var format = oDesk.DataSource.DateField.format;
-        //               var results = new oDesk.DataSource.ResultSet(dataset);
-        //               results.pivotWeekDays({
-        //                   labelFunction: function(record){return record.provider_id.value;},
-        //                   valueFunction: function(record){return record.hours.value;}
-        //               });
-        //               results.calculateTotals({
-        //                       groupTotals: [
-        //                           {
-        //                               name: "team",
-        //                               groupFunction: function(record){return record.team_name.value;}
-        //                           }
-        //                       ],
-        //                       totals: [
-        //                           {
-        //                               name: "hours",
-        //                               label: "Total Hours",
-        //                               valueFunction: function(record){return record.hours.value;}
-        //                           },
-        //                           {
-        //                               name: "charges",
-        //                               label: "Total $",
-        //                               valueFunction: function(record){return record.charges.value;}
-        //                           }
-        //                       ]
-        //                   }
-        //               );
-        //               var expected = getGDSPivotedByWeekDaysOnProviderIdGroupTotalsByTeam();
-        //
-        //               $.each(expected, function(groupName, groups){
-        //                    var actual = results.groupTotals[groupName];
-        //                    $.each(groups, function(groupValue, groupTotals){
-        //                        $.each(groupTotals, function(totalName, totals){
-        //                            $.each(totals, function(i, val){
-        //                                numberEquals(actual[groupValue][totalName][i].value, val);
-        //                            });
-        //                        });
-        //                    });
-        //               });
-        //           });
+
+
+         test("Can Calculate Group Totals", function(){
+
+              var dataset = getTestGDSDataSet();
+              var format = oDesk.DataSource.DateField.format;
+              var results = new oDesk.DataSource.ResultSet(dataset);
+               results.createRows({
+                   columns: [
+                      {name:"provider", type:"string", valueFunction: function(record){return record.provider_name.value;}},
+                      {name:"team", type:"string", valueFunction: function(record){return record.team_name.value;}},
+                      {name:"hours", type:"number", valueFunction: function(record){return record.hours.value;}},
+                      {name:"charges", type:"number", valueFunction: function(record){return record.charges.value;}},
+                   ]
+              });            
+              results.calculateGroupTotals(function(record){
+                  return record.team_name.value;
+              });
+              var expected = getGDSGroupTotalsByTeam();
+
+              $.each(expected, function(groupName, totals){
+                   var actual = results.groupTotals[groupName];
+                   $.each(totals, function(i, val){
+                      numberEquals(actual[i].value, val);
+                   });
+              });
+          });
 
         if ( typeof fireunit === "object" ) {
                 QUnit.log = fireunit.ok;

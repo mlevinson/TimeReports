@@ -278,8 +278,9 @@
                 columnTotals.push(f);
                 if(results.rows[0][col].dataType != "number") continue;
                 $.each(results.rows, function(rowIndex, row){
-                     if(rowFilter && !rowFilter(row, row[col])) return;
-                     f.value += row[col].value;
+                     if(!rowFilter || rowFilter(row, row[col])){
+                         f.value += row[col].value;
+                     }
                 });
             }
             return columnTotals;
@@ -292,8 +293,15 @@
             var results = this;
             var uniqueGroupValues = results.getUniqueValues(groupFunction);
             $.each(uniqueGroupValues, function(groupIndex, group){
-                this.groupTotals[group] = results.getColumnTotals(function(row, field){
-                    return groupFuncion(field.record) == group;
+                results.groupTotals[group] = results.getColumnTotals(function(row){
+                    var result = false;
+                    $.each(row, function(col, field){
+                        if (field.record){
+                            result = (groupFunction(field.record) == group);
+                            return false;
+                        }
+                    });
+                    return result;
                 });
             });
         }
