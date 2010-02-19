@@ -11,6 +11,7 @@
                  }
              },
              success: function(data, status, request){
+                 report.state.company.name = data.company.name;
                  if($.isFunction(success)){
                      success(report.state.company);
                  }
@@ -144,44 +145,51 @@
             record.taskDescription = record.task;
             record.taskUrl = null;
         });
-        
-        results.records.sort(function(record1, record2){
-            if(record1.taskDescription.value == record2.taskDescription.value){
-                return record1.provider_name.value > record2.provider_name.value ? 1 : -1;
-            } else {
-                return record1.taskDescription.value > record2.taskDescription.value ? 1 : -1;                
-            }
-        });
-        if($.isFunction(success)){success(results, "Succcess");}
-         // TODO: Not getting the task codes because the API does not work
-         // Must fix once the API issues get resolved.
 
+        var taskCodes = results.getUniqueRecordValues("task");
 
-        // _ajax(report.getTasksQuery(taskCodes), function(tasksData, status, request){
-        //          if(!tasksData || !tasksData.tasks || !tasksData.tasks.task || !tasksData.tasks.task.length){
-        //              if($.isFunction(success)){
-        //                  success(records, "Succcess");
-        //              }
-        //              return;
-        //          }
-        //          var taskRecords = {};
-        //          $.each(tasksData.tasks.task, function(i, task){
-        //              taskRecords[task.code] = task;
-        //          });
-        //
-        //          $.each(records, function(i, record){
-        //             var task = taskRecords[record.taskCode];
-        //             record.taskDescription = task.description;
-        //             record.taskUrl = task.url;
-        //          });
-        //
-        //          records.sort();
-        //
-        //          if($.isFunction(success)){
-        //              success(records, "Succcess");
-        //          }
-        //
-        //      }, failure);
+        _ajax(report.getTasksQuery(taskCodes), function(tasksData, status, request){
+             if(!tasksData || !tasksData.tasks || !tasksData.tasks.task){
+                 if($.isFunction(success)){
+                     success(results, "Succcess");
+                 }
+                 return;
+             }
+             var taskRecords = {};
+             if(!tasksData.tasks.task.length){
+                 taskRecords[tasksData.tasks.task.code] = tasksData.tasks.task;
+             } else {
+                 $.each(tasksData.tasks.task, function(i, task){
+                     taskRecords[task.code] = task;
+                 });
+             }
+
+             $.each(results.records, function(i, record){
+                var task = taskRecords[record.task.value];
+                if(task){
+                    var taskDescription = new oDesk.DataSource.Field("taskDescription");
+                    taskDescription.set(task.description);
+                    var taskUrl = new oDesk.DataSource.Field("taskUrl");
+                    taskUrl.set(task.url);
+
+                    record.taskDescription = taskDescription;
+                    record.taskUrl = taskUrl;
+                }
+             });
+
+             results.records.sort(function(record1, record2){
+                if(record1.taskDescription.value == record2.taskDescription.value){
+                    return record1.provider_name.value > record2.provider_name.value ? 1 : -1;
+                } else {
+                    return record1.taskDescription.value > record2.taskDescription.value ? 1 : -1;
+                }
+             });
+
+             if($.isFunction(success)){
+               success(results, "Succcess");
+             }
+
+             }, failure);
 
     };
 

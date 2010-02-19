@@ -35,10 +35,13 @@
 
 
         function setCompanyDefaults(){
+            var ui = this;
             oDesk.Services.getCompany(this.report,
                 oDeskUtil.getParameterByName(
                   this.parameters.company.name,
-                  this.parameters.company.defaultValue), null);
+                  this.parameters.company.defaultValue), function(){
+                      ui.bindTeams();
+                  });
             oDesk.Services.getTeams(this.report);
         };
 
@@ -58,6 +61,21 @@
             this.report.state.timeline = new oDesk.Timeline(
                  this.parameters.timeline.type, d1, d2);
         };
+
+
+        function bindTeams(){
+            var ui = this;
+
+            $(ui.elements.team.selector).oDeskSelectWidget({
+                report: ui.report,
+                all_option_text:ui.report.state.company.name,
+                stateVariable: ui.report.state.team,
+                service: oDesk.Services.getTeams
+              })
+              .unbind("populationComplete").bind("populationComplete", function(){
+                $(this).oDeskSelectWidget("setDefaults");
+              }).oDeskSelectWidget("populate");
+        }
 
 
         function init(){
@@ -90,7 +108,7 @@
 
              $(ui.elements.timerange.startDate)
                 .datePicker({startDate:'01/01/1996', clickInput:true, createButton:false})
-                .dpSetSelected(d1.asString()) 
+                .dpSetSelected(d1.asString())
                 .dpSetEndDate(d2.asString())
                 .bind(
                         'dpClosed',
@@ -106,7 +124,7 @@
              $(ui.elements.timerange.endDate)
                 .datePicker({startDate:'01/01/1996', clickInput:true, createButton:false})
                 .dpSetSelected(d2.asString())
-                .dpSetStartDate(d1.asString())                
+                .dpSetStartDate(d1.asString())
                 .bind(
                         'dpClosed',
                         function(e, selectedDates)
@@ -118,22 +136,11 @@
                             }
                         }
                     );
-                    
+
              $(ui.elements.report.goButton).unbind("click").bind("click", function(){
                 ui.refreshReport();
              });
              this.setCompanyDefaults();
-
-             $(ui.elements.team.selector).oDeskSelectWidget({
-                report: ui.report,
-                all_option_id: "all_teams",
-                all_option_text: "All Teams",
-                stateVariable: ui.report.state.team,
-                service: oDesk.Services.getTeams
-              })
-              .unbind("populationComplete").bind("populationComplete", function(){
-                $(this).oDeskSelectWidget("setDefaults");
-              }).oDeskSelectWidget("populate");
 
               $(ui.elements.report.container).oDeskDataTable({
                       report: ui.report,
@@ -157,6 +164,7 @@
              init:init,
              elements:elements,
              parameters:parameters,
+             bindTeams: bindTeams,
              refreshReport: refreshReport,
              setCompanyDefaults:setCompanyDefaults,
              setSelectedDateRange: setSelectedDateRange

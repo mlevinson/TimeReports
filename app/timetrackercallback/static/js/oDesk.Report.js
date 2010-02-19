@@ -37,20 +37,6 @@ oDesk.Report = function(sTimeType){
              return params;
          };
 
-
-      urlTemplates = {
-          "company": "http://www.odesk.com/api/hr/v2/companies/{company}.json",
-          "team": "http://www.odesk.com/api/hr/v2/companies/{company}/teams.json",
-          "provider": "http://www.odesk.com/api/hr/v2/teams/{team}/users.json",
-          "hours": "http://www.odesk.com/gds/timereports/v1/companies/",
-          "providerHours": "http://www.odesk.com/gds/timereports/v1/providers/{provider}",
-          "agencyHours":
-           "http://www.odesk.com/gds/timereports/v1/companies/{agency}/agencies/{agency}",
-          "tasks":"https://www.odesk.com/api/otask/v1/tasks/companies/{company}/tasks/{tasks}.json",
-          "all_tasks":"https://www.odesk.com/api/otask/v1/tasks/companies/{company}/tasks/full_list.json"
-      };
-
-
       this.state = new reportState(sTimeType);
 };
 
@@ -79,19 +65,15 @@ oDesk.Report.prototype.getProvidersQuery = function(){
 
 
 oDesk.Report.prototype.getTasksQuery = function(tasks){
-    // TODO: The specific tasks query does not work
-    // Using the full list for now.
-    // Also, currently not using the team. Must.
-    //
     if(!this.state.company.id) return null;
-    return oDeskUtil.substitute(
-        urlTemplates.all_tasks,
-        // urlTemplates.tasks,
-        {
-            company:this.state.company.id,
-            tasks: escape(tasks.join(";"))
-        }
-     );
+    var params = this.state.makeParams();
+    if(!this.state.team.id){
+        params.teamId = this.state.company.id;
+    }
+    params.tasks = tasks.join(";");
+    var query = new oDesk.DataSource.Query(params);
+    query.setUrlTemplate(oDesk.urls.getTasks);
+    return query.toString();
 
 };
 
@@ -158,7 +140,7 @@ oDesk.Report.prototype.getAgencyQuery = function(){
                               "sum(hours)", "sum(charges)",
                               "team_name", "team_id",
                               "provider_name", "provider_id"]);
-                              
+
     query.addCondition(">=", "worked_on", "{timelineStartDate}");
     query.addCondition("<=", "worked_on", "{timelineEndDate}");
     query.addSortStatement(["provider_id", "team_name", "worked_on"]);
