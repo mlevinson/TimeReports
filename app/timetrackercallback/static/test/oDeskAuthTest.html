@@ -1,0 +1,20 @@
+<html> 
+    <head>
+            <script type="text/javascript" src="http://www.odesk.com/js/jquery/jquery.pack.js"></script>
+            <script type="text/javascript" charset="utf-8">
+            $(function(){
+                $.ajax({
+                    url:"https://www.odesk.com/api/auth/v1/login.json",
+                    dataType:'jsonp',
+                    success: function(data){
+                        $("body").append(JSON.stringify(data));
+                    }
+                    });
+
+            });
+                
+            </script>
+    </head>
+    <body>
+    </body>
+</html>
