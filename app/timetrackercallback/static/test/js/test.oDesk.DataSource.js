@@ -340,11 +340,17 @@
                results.createRows({
                    columns: [
                       {name:"provider", type:"string", valueFunction: function(record){return record.provider_name.value;}},
-                      {name:"team", type:"string", valueFunction: function(record){return record.team_name.value;}},
-                      {name:"hours", type:"number", valueFunction: function(record){return record.hours.value;}},
-                      {name:"charges", type:"number", valueFunction: function(record){return record.charges.value;}},
+                      {name:"team", type:"string", valueFunction: function(record){return record.team_name.value;}}
                    ]
-              });            
+              });
+
+            results.addTotalColumn("hours", function(f){
+               return f.record && f.name == "team"? f.record.hours.value : 0;
+            });
+
+            results.addTotalColumn("charges", function(f){
+               return f.record  && f.name == "team"? f.record.charges.value : 0;
+            });
               results.calculateGroupTotals(function(record){
                   return record.team_name.value;
               });
