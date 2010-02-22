@@ -11,12 +11,16 @@
             },
             fnRender: function(data){
               var taskField = data.aData[data.iDataColumn];
+              var text = taskField.code;
+              if (taskField.value && taskField.value != "" && taskField.value != text){
+                  text += " - ";
+                  text += taskField.value;
+              }
               if (taskField.url && taskField.url != ""){
-                  return '<a href="' + taskField.url + '">' + taskField.value + '</a>';
-              } else {
-                  return taskField.value;
+                  text = '<a href="' + taskField.url + '">' + text + '</a>';
               }
 
+              return text;
             }
         });
         cols.push({sTitle:"User", width:"218px", fnRender: function(data){return data.aData[data.iDataColumn].value;}});
@@ -98,6 +102,7 @@
          columns: [
             {name:"task", type:"string", valueFunctions:{
                     value: function(record){return record.taskDescription.value;},
+                    code: function(record){return record.task.value;},
                     url: function(record){return record.taskUrl? record.taskUrl.value : null;}
                 }},
             {name:"provider", type:"string", valueFunctions:{value: function(record){return record.provider_name.value;}}},
