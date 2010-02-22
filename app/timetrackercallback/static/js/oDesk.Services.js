@@ -76,34 +76,13 @@
          });
     };
 
-    function _ajax(query, success, failure){
-        if(!query && $.isFunction(failure)){
-            failure("Not Connected.", "Query is null");
-            return null;
-        }
-        $.ajax({
-             url: query,
-             dataType: 'jsonp',
-             error: function(request, status, error){
-                 if($.isFunction(failure)){
-                     failure(status, error);
-                 }
-
-             },
-             success: function(data, status, request){
-                 if($.isFunction(success)){
-                     success(data, status);
-                 }
-             }
-         });
-    };
 
     oDesk.Services.getHours = function(report, success, failure){
-        _ajax(report.getHoursQuery(), success, failure);
+        oDeskUtil.ajax(report.getHoursQuery(), success, failure);
     };
 
     oDesk.Services.getProviderHours = function(report, success, failure){
-        _ajax(report.getProviderHoursQuery(), success, failure);
+        oDeskUtil.ajax(report.getProviderHoursQuery(), success, failure);
     };
 
     function filterAgencyHours(report, success, failure){
@@ -133,7 +112,7 @@
        var cached_data = report.state.agency_hours_cache;
        var cached_status = report.state.agency_hours_status_cache;
        if(cached_data == 'undefined' || !cached_data){
-           _ajax(report.getAgencyQuery(),
+           oDeskUtil.ajax(report.getAgencyQuery(),
                 function(data, status){
                     report.state.agency_hours_cache = data;
                     report.state.agency_hours_status_cache = status;
@@ -169,7 +148,7 @@
 
         var taskCodes = results.getUniqueRecordValues("task");
 
-        _ajax(report.getTasksQuery(taskCodes), function(tasksData, status, request){
+        oDeskUtil.ajax(report.getTasksQuery(taskCodes), function(tasksData, status, request){
              if(!tasksData || !tasksData.tasks || !tasksData.tasks.task){
                  if($.isFunction(success)){
                      success(results, "Succcess");
@@ -217,7 +196,7 @@
     oDesk.Services.addTaskDescriptions = addTaskDescriptions;
 
     oDesk.Services.getTaskSummary = function(report, success, failure){
-        _ajax(report.getTaskHoursQuery(), function(data, status, request){
+        oDeskUtil.ajax(report.getTaskHoursQuery(), function(data, status, request){
             addTaskDescriptions(report, data, success, failure);
         }, failure);
     };

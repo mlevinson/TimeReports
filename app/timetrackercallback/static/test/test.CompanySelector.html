@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="keywords" content="Offshore outsourcing, Freelancers, India, Russia, Ukraine, php Programmers, Coders, Developers, Writers, Web Designers, Website Design, Technical Writers">
+        <title>
+            TITLE HERE
+        </title>
+        <link rel="stylesheet" href="http://odesklabs.com/larryworld/prototypes/css/console/global/reset.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="http://odesklabs.com/larryworld/prototypes/css/console/global/oDeskGlobalLookFeel.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="http://odesklabs.com/larryworld/prototypes/css/console/global/formDefaults.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <script src="http://www.odesk.com/js/jquery/jquery.pack.js" type="text/javascript">
+        </script>
+        <script src="../js/jquery.formatCurrency.js" type="text/javascript"
+        charset="utf-8"></script>                                          
+            <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>                                                                                    
+        <script src="../js/date1.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../js/oDeskUtil.js" type="text/javascript" charset="utf-8"></script>     
+        
+        <script type="text/javascript" src="../js/oDesk.Core.js"></script>
+        <script type="text/javascript" src="../js/oDesk.AuthUser.js"></script>
+        <script type="text/javascript" src="../js/oDesk.DataSource.js"></script>
+        <script type="text/javascript" src="../js/oDesk.Services.js"></script>
+        <script type="text/javascript" src="../js/jquery.ui.oDeskCompanySelector.js"></script>
+    </head>
+    <body>  
+        <br/><br/><br/><br/><br/><br/><br/>
+        <div id="company_selector">
+
+        </div>
+
+    <script>
+        $(function(){
+            oDesk.Services.getAuthUserAndRoles(function(user){
+                $("#company_selector").oDeskCompanySelector({
+                    companies: user.getCompanies({roles: ["manager"]})
+                 });
+            });
+        });
+    </script>
+    </body>
+</html>

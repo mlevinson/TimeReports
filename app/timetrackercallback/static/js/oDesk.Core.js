@@ -75,21 +75,19 @@ oDesk = function(){
     };
 
     services = function(){};
-
     datasource = function(){};
-
-    report = function(sTimeType){
-        this.state = new reportState(sTimeType);
-    };
-  ;
+    report = function(sTimeType){};
+    
+    
 
     return {
-            "Team": oDeskObject,
-            "Company": oDeskObject,
-            "Provider": oDeskObject,
-            "DataSource": datasource,
-            "Report": report,
-            "Services": services,
-            "Timeline":oDeskTime,
+            oDeskObject: oDeskObject, 
+            Team: oDeskObject,
+            Company: oDeskObject,
+            Provider: oDeskObject,
+            DataSource: datasource,
+            Report: report,
+            Services: services,
+            Timeline:oDeskTime
           };
 }();
