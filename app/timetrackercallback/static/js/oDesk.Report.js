@@ -143,7 +143,7 @@ oDesk.Report.prototype.getAgencyQuery = function(){
     var query = new oDesk.DataSource.Query(this.state.makeParams());
     query.setUrlTemplate(oDesk.urls.getAgencyHours);
     query.addSelectStatement(["worked_on",
-                              "sum(hours)", "sum(charges)",
+                              "sum(hours)", "sum(earnings)",
                               "team_name", "team_id",
                               "provider_name", "provider_id"]);
 
