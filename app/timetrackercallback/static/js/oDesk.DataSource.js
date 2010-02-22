@@ -306,8 +306,13 @@
                 var rowIndex = 0;
                 $.each(spec.labels, function(specIndex, labelSpec){
                     var labelValues = uniques[labelSpec.name];
-                    rowIndex += rowIndex;
-                    rowIndex += $.inArray(labelSpec.labelFunction(record), labelValues);
+                    var index = $.inArray(labelSpec.labelFunction(record), labelValues);
+                    if(index > -1){
+                        rowIndex += rowIndex;
+                        rowIndex += index;
+                    } else {
+                        throw("Label not found.");
+                    }
                 });
                 var row = resultset.rows[rowIndex];
                 var weekDay = record[spec.dateField].dayOfWeek();

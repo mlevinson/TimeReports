@@ -120,7 +120,15 @@
               ui.report.state.mustGetHours = true;
               ui.bindCompany();
               ui.bindGoButton();
-              ui.setSelectedDate(Date.today());
+              ui.setSelectedDate(Date.today());  
+              
+              if(oDeskUtil.getParameterByName("test", null) == "test"){
+                oDesk.Services.getHours = function(report, success, failure){
+                   $.getJSON("js/j.json", function(data){ 
+                       success(data, "SUccess");
+                   });
+                }
+              }
               $(ui.elements.timeline.selector)
                 .ringceMonthSelector()
                 .unbind("monthSelected").bind("monthSelected", function(e, selectedDate){

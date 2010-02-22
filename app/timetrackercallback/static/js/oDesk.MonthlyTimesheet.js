@@ -68,7 +68,8 @@
         var weeks = {labels: [], startDates: []};
         var done = false;
         while(!done){
-            var start = monthName + " " + ("00" + weekStartDateNumber).slice(-2);
+            var startDateDD = ("00" + weekStartDateNumber).slice(-2);
+            var start = monthName + " " + startDateDD;
             var weekEndDay =  weekStartDateNumber + weekDays;
             weekDays = 6;
             if (weekEndDay >= daysInMonth){
@@ -81,8 +82,8 @@
               weekLabel += " - "  + end;
             }
             weeks.labels.push(weekLabel);
-            var startDateString = year + "/" + month + "/" + weekStartDateNumber;
-            weeks.startDates.push(Date.fromString(startDateString, "yyyy/mm/d"));
+            var startDateString = year + "/" + month + "/" + startDateDD;
+            weeks.startDates.push(Date.fromString(startDateString, "yyyy/mm/dd"));
             weekStartDateNumber = weekEndDay + 1;
         }
         return weeks;
