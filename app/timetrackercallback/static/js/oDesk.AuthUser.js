@@ -34,14 +34,55 @@
         }
     };
 
+    oDesk.AuthUser.Flavors = {
+        manager: {roles: ["admin", "manager"]},
+        recruiter: {permissions: ["manage_recruiting"]},
+        afiliate: {permissions: ["manage_affiliation"]},
+        hiring: {permissions: ["manage_employment"]},
+        team_admin: {role: ["admin"]},
+        company_admin: {role: ["admin"], appliesTo:{company:"self", team:"self"}},
+        member: {}
+    };
+
+    oDesk.AuthUser.prototype.processRule = function(company, appliesTo, ruleFunction){
+         var numberOfMatchingTeams = 0;
+         var numberOfTeams = 0;
+         company.team.walk(function(team){
+              numberOfTeams ++;
+              var teamMatches = ruleFunction(team);
+              if (teamMatches) numberOfMatchingTeams++;
+              if (company.team.id == team.id || appliesTo.team == "self"){
+                  if(team.hidden && teamMatches) { team.hidden = false;  }
+              } else {
+                  team.hidden = company.team.hidden;
+              }
+          });
+
+          if((appliesTo.company == "all" && numberOfMatchingTeams == numberOfTeams) ||
+             (appliesTo.company == "any" && numberOfMatchingTeams > 0)){
+                company.hidden = false;
+          } else if (appliesTo.company == "self"){
+              company.hidden = company.team.hidden;
+          }
+    }
 
     oDesk.AuthUser.prototype.getCompanies = function(f){
-
+        var authUser = this;
         var defaults = {
             roles: [],
-            permissions: []
+            permissions: [],
+            appliesTo: {
+                //  company: "any"      - Include the company if any of the teams match the criteria
+                //  company: "all"      - Include the company if all of the teams match the criteria
+                //  company: "self"     - Include the company if the {company team} matches the criteria
+                company: "any",
+                //  team:    "self"     - Include the team if it matches the criteria
+                //  team:    "company"  - Include the team if the {company team} matches the criteria
+                team: "self"
+            }
         };
         var filters = $.extend({}, defaults, f);
+        filters.appliesTo = $.extend({}, defaults.appliesTo, filters.appliesTo);
         var companies = [];
         var defaultHidden = filters.roles.length != 0 || filters.permissions.length != 0;
         $.each(this.companies, function(companyIndex, company){
@@ -51,26 +92,27 @@
            filteredCompany.team.walk(function(team){
                 team.hidden = defaultHidden;
            });
-           $.each(filters.roles, function(roleIndex, role){
-              filteredCompany.team.walk(function(team){
-                  if(team.hidden && $.inArray(role, team.roles) > -1) {
-                      team.hidden = false;
-                  }
-              });
-              if(filteredCompany.hidden && $.inArray(role, filteredCompany.roles) > -1) {
-                  filteredCompany.hidden = false;
-              }
+
+           authUser.processRule(filteredCompany, filters.appliesTo, function(team){
+                var teamMatches = false;
+                 $.each(filters.roles, function(roleIndex, role){
+                     if ($.inArray(role, team.roles) > -1){
+                         teamMatches = true;
+                         return false;
+                     }
+                 });
+                 return teamMatches;
            });
 
-           $.each(filters.permissions, function(permissionIndex, permission){
-              filteredCompany.team.walk(function(team){
-                  if(team.hidden && $.inArray(permission, team.permissions) > -1) {
-                      team.hidden = false;
-                  }
-              });
-              if(filteredCompany.hidden && $.inArray(permission, filteredCompany.permissions) > -1) {
-                  filteredCompany.hidden = false;
-              }
+           authUser.processRule(filteredCompany, filters.appliesTo, function(team){
+                var teamMatches = false;
+                 $.each(filters.permissions, function(permissionIndex, permission){
+                     if ($.inArray(permission, team.permissions) > -1){
+                           teamMatches = true;
+                           return false;
+                      }
+                 });
+                 return teamMatches;
            });
         });
         return companies;

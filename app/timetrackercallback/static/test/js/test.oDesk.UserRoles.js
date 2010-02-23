@@ -97,7 +97,7 @@
                  ok($.inArray(role.roleName, role.team.company.roles) != -1, "Role added to company");
                  $.each(role.permissions, function(permissionIndex, permission){
                      ok($.inArray(permission, role.team.company.permissions) != -1, "Permission added to company");
-                 })
+                 });
                  equals(role.team, thisRole.team);
                  ok($.inArray(role.roleName, role.team.roles) != -1, "Role added to team");
                  $.each(role.permissions, function(permissionIndex, permission){
@@ -195,7 +195,7 @@
                   ok($.inArray(role.roleName, role.team.company.roles) != -1, "Role added to company");
                   $.each(role.permissions, function(permissionIndex, permission){
                       ok($.inArray(permission, role.team.company.permissions) != -1, "Permission added to company");
-                  })
+                  });
                   ok($.inArray(role.roleName, role.team.roles) != -1, "Role added to team");
                   $.each(role.permissions, function(permissionIndex, permission){
                       ok($.inArray(permission, role.team.permissions) != -1, "Permission added to team");
@@ -297,6 +297,37 @@
 
               });
 
+
+              test("Can filter using Team Filter", function(){
+                   var data = getoDeskUserRoles();
+                   var authuser = new oDesk.AuthUser("lakshmivyas", "Lakshmi", "Vyasarajan");
+                   oDesk.Services.updateRoles(authuser, data);
+                   var companies = authuser.getCompanies();
+                   ok(!companies[0].team.hidden, "Team 1 is unfiltered.");
+                   ok(!companies[0].team.teams[0].hidden, "Team 2 is unfiltered.");
+                   ok(!companies[1].team.hidden, "Team 3 is unfiltered.");
+                   ok(!companies[1].team.teams[0].hidden, "Team 4 is unfiltered.");
+                   var companies = authuser.getCompanies({
+                       roles: ["manager"],
+                       appliesTo: {
+                           company: "self",
+                           team: "self"
+                       }
+                   });
+
+                   equals(companies[0].team.id, "teammichael:teammichael");
+                   equals(companies[0].team.teams[0].id, "teammichael:development");
+                   equals(companies[1].team.id, "odesk");
+                   equals(companies[1].team.teams[0].id, "odeskprod");
+
+                   ok(!companies[0].hidden, "Company 1 is unfiltered.");
+                   ok(companies[1].hidden, "Company 2 is filtered.");
+                   ok(!companies[0].team.hidden, "Team 1 is unfiltered.");
+                   ok(!companies[0].team.teams[0].hidden, "Team 2 is unfiltered.");
+                   ok(companies[1].team.hidden, "Team 3 is filtered.");
+                   ok(companies[1].team.teams[0].hidden, "Team 4 is filtered.");
+
+                });
 
     };
 
