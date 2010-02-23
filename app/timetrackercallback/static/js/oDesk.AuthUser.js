@@ -37,10 +37,10 @@
     oDesk.AuthUser.Flavors = {
         manager: {roles: ["admin", "manager"]},
         recruiter: {permissions: ["manage_recruiting"]},
-        afiliate: {permissions: ["manage_affiliation"]},
+        affiliate: {permissions: ["manage_affiliation"]},
         hiring: {permissions: ["manage_employment"]},
-        team_admin: {role: ["admin"]},
-        company_admin: {role: ["admin"], appliesTo:{company:"self", team:"self"}},
+        team_admin: {roles: ["admin"]},
+        company_admin: {roles: ["admin"], appliesTo:{company:"self", team:"self"}},
         member: {}
     };
 
@@ -64,17 +64,18 @@
           } else if (appliesTo.company == "self"){
               company.hidden = company.team.hidden;
           }
-    }
+    };
 
     oDesk.AuthUser.prototype.getCompanies = function(f){
         var authUser = this;
         var defaults = {
             roles: [],
             permissions: [],
+            companyReference: null,
             appliesTo: {
-                //  company: "any"      - Include the company if any of the teams match the criteria
-                //  company: "all"      - Include the company if all of the teams match the criteria
-                //  company: "self"     - Include the company if the {company team} matches the criteria
+                //  company: "any"            - Include the company if any of the teams match the criteria
+                //  company: "all"            - Include the company if all of the teams match the criteria
+                //  company: "self"           - Include the company if the {company team} matches the criteria
                 company: "any",
                 //  team:    "self"     - Include the team if it matches the criteria
                 //  team:    "company"  - Include the team if the {company team} matches the criteria
@@ -86,6 +87,7 @@
         var companies = [];
         var defaultHidden = filters.roles.length != 0 || filters.permissions.length != 0;
         $.each(this.companies, function(companyIndex, company){
+           if(filters.companyReference && filters.companyReference != company.reference) return;
            var filteredCompany = company.createCopy();
            companies.push(filteredCompany);
            filteredCompany.hidden = defaultHidden;
@@ -154,6 +156,19 @@
         return result;
     };
 
+
+    oDesk.AuthUser.prototype.getTeamByReference = function(teamReference){
+        var result = null;
+        $.each(this.companies, function(i, company){
+            var team = company.team.findTeamByReference(teamReference);
+            if(team){
+                result = team;
+                return false;
+            }
+        });
+        return result;
+    };
+
     oDesk.UserRole = function(authUser, team, roleName,  permissions){
         this.authUser = authUser;
         this.team = team;
@@ -199,6 +214,41 @@
         }
     };
 
+    oDesk.Team.prototype._walkTree = function(spec){
+        var childNodeCount = this.teams.length + 1;
+        $.each(this.teams, function(i, team){
+           if(!spec.nodeFilter(team)) childNodeCount--;
+        });
+        if(childNodeCount){
+           spec.nodeBegin(this, childNodeCount);
+           spec.visitNode(this);
+            $.each(this.teams, function(t, team){
+                if(spec.nodeFilter){
+                    team._walkTree(spec);
+                }
+            });
+            spec.nodeComplete(this);
+        }
+    };
+
+    oDesk.Team.prototype.walkTree = function(s){
+        var defaults = {
+            nodeFilter: function(node){return true;},
+            treeBegin: function(){},
+            visitNode: function(node){},
+            nodeBegin: function(node, numberOfChildren){},
+            nodeComplete: function(node){},
+            treeComplete: function(){}
+        };
+
+        var spec = $.extend({}, defaults, s);
+        if(spec.nodeFilter(this)){
+            spec.treeBegin();
+            this._walkTree(spec);
+            spec.treeComplete();
+        }
+    };
+
     oDesk.Team.prototype.walk = function(visitor){
         visitor(this);
         $.each(this.teams, function(t, team){
@@ -229,6 +279,19 @@
         var result = null;
         $.each(this.teams, function(i, team){
             var found = team.findTeam(teamId);
+            if(found)  {
+                result = found;
+                return false;
+            }
+        });
+        return result;
+    };
+
+    oDesk.Team.prototype.findTeamByReference = function(teamReference){
+        if (this.reference == teamReference) return this;
+        var result = null;
+        $.each(this.teams, function(i, team){
+            var found = team.findTeamByReference(teamReference);
             if(found)  {
                 result = found;
                 return false;
