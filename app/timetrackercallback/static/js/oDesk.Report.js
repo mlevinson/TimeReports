@@ -24,6 +24,7 @@
           reportState.prototype.makeParams = function(){
                  var params = {};
                  $.each(this, function(key, value){
+                     if(!value) return;
                      if (typeof(value.makeParams) == "function"){
                          var subparams = value.makeParams(key);
                          $.each(subparams, function(k, v){
