@@ -1,7 +1,6 @@
 (function($){
     oDesk.Report.prototype.columnSpec = function(){
-        var cols = [
-                    {sTitle:"Provider", fnRender: oDesk.Report.renderField}];
+        var cols = [{sTitle:"Provider", fnRender: oDesk.Report.renderField}];
         var report = this;
         $.each(oDeskUtil.dayNames, function(i, day){
            cols.push({

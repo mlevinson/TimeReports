@@ -3,30 +3,26 @@
         var report = this;
         var cols = [];
         if(report.state.provider.id){
-            cols.push({sTitle:"Buyer", width:"218px", fnRender: oDesk.Report.renderField});
+            cols.push({sTitle:"Buyer",fnRender: oDesk.Report.renderField});
         } else {
-            cols.push({sTitle:"Provider", width:"218px", fnRender: oDesk.Report.renderField});
+            cols.push({sTitle:"Provider", fnRender: oDesk.Report.renderField});
         }
         $.each(oDeskUtil.dayNames, function(i, day){
            cols.push({
                sTitle: day,
                fnRender:  oDesk.Report.formatHoursField,
-               sClass: "numeric",
-               width:"56px"
+               sClass: "numeric"
            });
         });
          cols.push({
               sTitle: "Total Hours",
               fnRender: oDesk.Report.formatHoursField,
-              sClass:"numeric total",
-              width:"90px"
+              sClass:"numeric total"
             });
         cols.push({
           sTitle: "Total $",
           fnRender: oDesk.Report.formatChargesField,
-          sClass:"numeric total",
-          width:"90px"
-
+          sClass:"numeric total"
         });
         return cols;
     };

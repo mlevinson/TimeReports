@@ -1,12 +1,17 @@
 (function($){
     taskSummaryReport = function(){
         oDesk.ReportPage.prototype.constructor.call(this);
+        this.companySelectorFlavor = "hiring";
         $.extend(this.elements, {
             timerange:{
                 tableCaption: "#time-range",
                 startDate: "#date_from",
                 endDate: "#date_to"
             }
+        });
+        $.extend(this.elements.report, {
+           placeholder: "#report_placeholder",
+           content: "#report_content"
         });
         this.parameters.timeline.type = "range";
     };
@@ -22,6 +27,8 @@
             );
         $(ui.elements.team.name).text(ui.report.state.team.name);
         $(ui.elements.timerange.tableCaption).text(this.report.state.timeline.getDisplayName());
+        $(ui.elements.report.placeholder).hide();
+        $(ui.elements.report.content).show();
         $(ui.elements.report.container).oDeskDataTable("generateReport");
     };
 
@@ -31,7 +38,7 @@
              this.parameters.timeline.type, d1, d2);
     };
 
-    taskSummaryReport.prototype.bindTimeSelector = function(){ 
+    taskSummaryReport.prototype.bindTimeSelector = function(){
         var ui = this;
         Date.format = "dd mmm yyyy";
         var d1 = Date.today();
@@ -66,10 +73,6 @@
     };
 
     taskSummaryReport.prototype.canRefreshReport = function(){
-        if(!this.initComplete && this.report.state.company.id){
-            this.initComplete = true;
-            return true;
-        }
         return false;
     };
 
@@ -81,7 +84,7 @@
             $(ui.elements.report.container)
                     .oDeskDataTable({report: ui.report, service: oDesk.Services.getTaskSummary, groupRows:true});
         });
-    };  
-    
+    };
+
     TaskSummaryReport = new taskSummaryReport();
 })(jQuery);

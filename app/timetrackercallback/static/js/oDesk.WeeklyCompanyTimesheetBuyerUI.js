@@ -13,7 +13,8 @@
             buyerList: "#buyer_list",
             buyerTemplate: "#buyer_list > li:first",
             table: " .tabular",
-            buyer_name: " .buyer_name"
+            buyer_name: " .buyer_name",
+            company_name: ".company-name"
         });
 
         this.template =
@@ -30,6 +31,8 @@
         var ui = this;
         $(this.elements.week.tableCaption).text(
             this.report.state.timeline.getDisplayNameWithAbbreviations());
+        $(this.elements.report.company_name).text(this.report.state.company.name);
+
         var ui = this;
         $(this.elements.report.buyerList + " li").remove();
         ui.report.state.buyer = null;
@@ -90,7 +93,10 @@
          var html = oDeskUtil.substitute(this.template, {"buyer_id":"summary", "buyer_name":"Summary"});
          var element = $(html).appendTo(this.elements.report.buyerList);
          var id = "#" + element.attr("id");
-         $(element).oDeskDataTable({"report": ui.report, "service": oDesk.Services.getAgencyHours});
+         $(element).oDeskDataTable({
+             "report": ui.report,
+             "service": oDesk.Services.getAgencyHours
+         }).oDeskDataTable("generateReport");
      }
 
     weeklyCompanyTimesheetBuyer.prototype.createTableForBuyer = function(index, buyerCompany){
@@ -98,7 +104,10 @@
         var html = oDeskUtil.substitute(this.template, {"buyer_id":buyerCompany.id, "buyer_name":buyerCompany.name});
         var element = $(html).appendTo(this.elements.report.buyerList);
         var id = "#" + element.attr("id");
-        $(element).oDeskDataTable({"report": ui.report, "service": oDesk.Services.getAgencyHours});
+        $(element).oDeskDataTable({
+            "report": ui.report,
+            "service": oDesk.Services.getAgencyHours
+        }).oDeskDataTable("generateReport");
     }
 
 
@@ -124,7 +133,7 @@
 
             }
         });
-    }; 
-    
+    };
+
     WeeklyCompanyTimesheetBuyer = new weeklyCompanyTimesheetBuyer();
 })(jQuery);

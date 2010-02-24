@@ -13,7 +13,8 @@
             providerList: "#provider_list",
             providerTemplate: "#provider_list > li:first",
             table: " .tabular",
-            provider_name: " .provider_name"
+            provider_name: " .provider_name",
+            company_name: ".company-name"
         });
 
         this.template =
@@ -30,6 +31,7 @@
         var ui = this;
         $(this.elements.week.tableCaption).text(
             this.report.state.timeline.getDisplayNameWithAbbreviations());
+        $(this.elements.report.company_name).text(this.report.state.company.name);
         var ui = this;
         $(this.elements.report.providerList + " li").remove();
         ui.report.state.provider.id = ui.report.state.provider.name = null;
@@ -90,7 +92,10 @@
          var html = oDeskUtil.substitute(this.template, {"provider_id":"summary", "provider_name":"Summary"});
          var element = $(html).appendTo(this.elements.report.providerList);
          var id = "#" + element.attr("id");
-         $(element).oDeskDataTable({"report": ui.report, "service": oDesk.Services.getAgencyHours});
+         $(element).oDeskDataTable({
+             "report": ui.report, 
+             "service": oDesk.Services.getAgencyHours
+         }).oDeskDataTable("generateReport");
      };
 
     weeklyCompanyTimesheetProvider.prototype.createTableForProvider = function(index, provider){
@@ -98,7 +103,10 @@
         var html = oDeskUtil.substitute(this.template, {"provider_id":provider.id, "provider_name":provider.name});
         var element = $(html).appendTo(this.elements.report.providerList);
         var id = "#" + element.attr("id");
-        $(element).oDeskDataTable({"report": ui.report, "service": oDesk.Services.getAgencyHours});
+        $(element).oDeskDataTable({
+            "report": ui.report, 
+            "service": oDesk.Services.getAgencyHours
+        }).oDeskDataTable("generateReport");
     };
 
 
@@ -124,7 +132,7 @@
 
             }
         });
-    };  
-    
+    };
+
     WeeklyCompanyTimesheetProvider = new weeklyCompanyTimesheetProvider();
 })(jQuery);

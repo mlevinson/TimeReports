@@ -1,7 +1,7 @@
 (function($) {
 $.widget("ui.oDeskDataTable",{
      _init: function(){
-        this.refresh();
+
      },
      refresh: function(){
         var el = this.element[0];

@@ -1,6 +1,7 @@
 (function($){
     weeklyCompanyTimesheet = function(){
         oDesk.ReportPage.prototype.constructor.call(this);
+        this.companySelectorFlavor = "hiring";
         $.extend(this.elements, {
             week:{
                 tableCaption: "#time-week",
@@ -44,7 +45,7 @@
                     .oDeskDataTable({report: ui.report, service: oDesk.Services.getHours});
             ui.setSelectedDate(Date.today());
         });
-    };     
-    
+    };
+
     WeeklyCompanyTimesheet = new weeklyCompanyTimesheet();
 })(jQuery);

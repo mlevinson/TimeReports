@@ -1,6 +1,7 @@
 (function($){
     monthlyProviderTimesheet = function(){
         oDesk.ReportPage.prototype.constructor.call(this);
+        this.companySelectorFlavor = "hiring";
         $.extend(this.elements, {
             provider : {
                 name : ".provider-name",
@@ -35,7 +36,7 @@
         this.report.state.timeline = new oDesk.Timeline(this.parameters.timeline.type, d);
     };
 
-    monthlyProviderTimesheet.prototype.teamChanged = function(company){  
+    monthlyProviderTimesheet.prototype.teamChanged = function(company){
         var ui = this;
         $(ui.elements.provider.selector).oDeskSelectWidget("populate");
     };
@@ -97,7 +98,7 @@
                     .oDeskDataTable({report: ui.report, service: oDesk.Services.getHours});
             ui.setSelectedDate(Date.today());
         });
-    };  
-    
+    };
+
     MonthlyProviderTimesheet = new monthlyProviderTimesheet();
 })(jQuery);

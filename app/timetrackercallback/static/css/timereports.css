@@ -58,9 +58,9 @@ body {font-family:Tahoma,sans-serif; font-size:10pt;}
 a {text-decoration:none; color:#0033FF;}
 a:hover {color:#0033FF; text-decoration:underline; }
 
-.table-caption{border-bottom: 1px solid black; margin-top: 16px;}
-.table-sub-caption{margin-top:8px;font-weight:normal;font-size:12px;font-style:italic;display:block;clear:both;}
-
+.table-caption{border-bottom: 1px solid black; margin-top: 24px;font-size: 14px;}
+.table-sub-caption{margin-top:8px;font-weight:normal;font-size:14px;display:block; clear:both;}
+.table-caption.monthly{margin-top:4px;}
 .tabular td.total{background-color:#ffffcc;font-weight:bold;}
 .tabular td.grand-total {background-color:#ffff66;font-weight:bold;}
 .tabular td.fixed.label{background-color:white;}
@@ -70,8 +70,31 @@ a:hover {color:#0033FF; text-decoration:underline; }
 .table10 td.total{width:100px;}
 .table10 td.fixed.label{width: 218px;}
 
+
+.tabular .numeric{
+    width: 56px;
+}
+
+
+.tabular .total{
+    width: 90px;
+}
+
+.tabular{
+    width: 100%;
+    table-layout:fixed;
+}
+
 .control_bar.white{
     background-color:white;
+}
+
+#report_placeholder{
+    font-size: 16px;
+    font-weight: bold;
+    text-align:center;
+    padding: 16px;
+    background-color: #ffffcc;
 }
 
 #reports-grid{
@@ -107,9 +130,6 @@ a:hover {color:#0033FF; text-decoration:underline; }
 
 
 
-#run_report{
-    float:right;
-}
 #hours-title{text-transform:capitalize;}
 #hours-small{text-transform:lowercase;}
 
@@ -127,9 +147,11 @@ a:hover {color:#0033FF; text-decoration:underline; }
 #timereports_team_selector,
 #timereports_provider_selector,
 #timereports_week_selector,
-#timereports_month_selector{display:block;float:left;}
+#timereports_month_selector{display:block;float:left;position:relative;top:-2px;}
 
-#timereports_week_selector,
+#timereports_week_selector{position:relative;top:2px;}
+
+
 #week_display{
     width: 240px;
 }
@@ -197,7 +219,9 @@ a:hover {color:#0033FF; text-decoration:underline; }
 }
 
 
-input.calendar{
+#reports_time_range_selector input.calendar{
+    position:relative;
+    top: 2px;
     border: 1px solid gray;
     width: 170px !important;
     text-align: center;

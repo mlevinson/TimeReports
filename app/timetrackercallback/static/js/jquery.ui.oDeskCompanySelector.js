@@ -161,7 +161,7 @@ $.widget("ui.oDeskCompanySelector",{
         } else {
             widget._selectionDisplay().text($(element).text());
         }
-        $(widget.element[0]).trigger('change', widget.options.selection);
+        $(widget.element[0]).trigger("change", widget.options.selection);
     },
     _selectionDisplay: function(){
         return $(this.options.selector).children("div." + this.options.selectionDisplayClass);

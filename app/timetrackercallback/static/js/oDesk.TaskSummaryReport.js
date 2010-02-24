@@ -4,7 +4,6 @@
         var cols = [];
         cols.push({
             sTitle:"Task",
-            width:"360px",
             canGroup: true,
             groupValue: function(field){
               return field.value;
@@ -23,18 +22,16 @@
               return text;
             }
         });
-        cols.push({sTitle:"User", width:"218px", fnRender: function(data){return data.aData[data.iDataColumn].value;}});
+        cols.push({sTitle:"User", fnRender: function(data){return data.aData[data.iDataColumn].value;}});
         cols.push({
           sTitle: "Total Hours",
           fnRender:oDesk.Report.formatHoursField,
-          sClass:"numeric total",
-          width:"90px"
+          sClass:"numeric total"
         });
         cols.push({
           sTitle: "Total $",
           fnRender:oDesk.Report.formatChargesField,
-          sClass:"numeric total",
-          width:"90px"
+          sClass:"numeric total"
 
         });
         return cols;

@@ -4,6 +4,9 @@
         this.canBindCompanySelector = false;
         this.canBindTeamSelector = false;
         $.extend(this.elements, {
+            provider: {
+              name: ".provider-name"
+            },
             week:{
                 tableCaption: "#time-week",
                 selector: "#timereports_week_selector"
@@ -18,6 +21,7 @@
         var ui = this;
         $(this.elements.week.tableCaption).text(
             this.report.state.timeline.getDisplayNameWithAbbreviations());
+        $(this.elements.provider.name).text(ui.report.state.provider.name);
         $(this.elements.report.container).oDeskDataTable("generateReport");
     };
 
@@ -39,7 +43,7 @@
         this.initialize(function(){
 
             ui.report.state.provider.id = ui.report.state.authUser.id;
-            ui.report.state.provider.name = ui.report.state.authUser.id;
+            ui.report.state.provider.name = ui.report.state.authUser.name;
             $(ui.elements.week.selector)
                 .weekSelector({weekStartDate: ui.report.state.timeline.startDate})
                 .unbind("dateSelected").bind("dateSelected", function(e, selectedDate){
@@ -50,6 +54,6 @@
             ui.setSelectedDate(Date.today());
         });
     };
-    
+
     MyWeeklyTimesheet = new myWeeklyTimesheet();
 })(jQuery);

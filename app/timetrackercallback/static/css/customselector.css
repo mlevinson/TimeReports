@@ -1,5 +1,6 @@
 .customSelector{
-    position: relative;
+    position: relative; 
+    margin-left: 4px;
 }
 
 .customSelector .display{

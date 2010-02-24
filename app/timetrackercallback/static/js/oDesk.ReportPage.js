@@ -2,7 +2,7 @@
 
     oDesk.ReportPage = function(){
         this.report = null;
-        this.companySelectorFlavor = "manager";
+        this.companySelectorFlavor = "member";
         this.canBindCompanySelector = true;
         this.canBindTeamSelector = true;
         this.companyReference = null;
