@@ -27,12 +27,14 @@ $.widget("ui.ringceMonthSelector",{
         var selectorHtml = "<div id=\"month_selector_container\" style=\"display:none\">\
                                 <ul id=\"month_selector_list\"></ul></div>";
         $(widget.element[0]).wrap("<div id=\"month_selector_wrapper\">");
+        $(widget.element[0]).addClass("month-selector");
         $(widget.element[0]).append(displayHtml);
         $("#month_selector_wrapper").append(selectorHtml);
         var listHtml = "";
         $.each(Date.CultureInfo.monthNames, function(monthIndex, month){
                     var column = parseInt(monthIndex / 4) + 1;
                     var className = "column" + column;
+                    className += (" month" + monthIndex);
                     if(monthIndex == 4 || monthIndex == 8){
                         className += " reset";
                     }
@@ -45,13 +47,15 @@ $.widget("ui.ringceMonthSelector",{
         $(document).click(function(event){
             if(!$(event.target).is("#selection_display")){
                 $("#month_selector_container").hide();
+                $(widget.element[0]).removeClass("popped");
             }
         });
         $("#month_selector_wrapper").click(function(event){
             event.stopPropagation();
         });
         $("#selection_display").unbind("click").bind("click", function(){
-           $("#month_selector_container").slideToggle();
+           $("#month_selector_container").toggle();
+            $(widget.element[0]).toggleClass("popped");
         });
 
         $("#one_year_back").unbind("click").bind("click", function(){
@@ -60,7 +64,13 @@ $.widget("ui.ringceMonthSelector",{
         });
 
         $("#one_year_forward").unbind("click").bind("click", function(){
-            date.moveToMonth(date.getMonth());
+            var d = date.clone();
+            d.moveToMonth(d.getMonth());
+            if(widget.options.disableFutureMonths && d > Date.today()){
+                event.stopPropagation();
+                return false;
+            }
+            date = d;
             widget.selectDate(date);
         });
 
@@ -69,24 +79,48 @@ $.widget("ui.ringceMonthSelector",{
             widget.selectDate(date);
         });
 
-        $("#one_month_forward").unbind("click").bind("click", function(){
-            date.moveToMonth(date.getMonth()+1);
-            widget.selectDate(date);
+        $("#one_month_forward").unbind("click").bind("click", function(event){
+              var d = date.clone();
+              d.moveToMonth(d.getMonth()+1);
+              if(widget.options.disableFutureMonths && d > Date.today()){
+                  event.stopPropagation();
+                  return false;
+              }
+              date = d;
+              widget.selectDate(date);
         });
 
-        $("#month_selector_list li span").unbind("click").bind("click", function(){
+        $("#month_selector_list li span").unbind("click").bind("click", function(event){
+            if(widget.options.disableFutureMonths && $(this).hasClass("future_month")){
+               event.stopPropagation();
+               return;
+            }
             $("#month_selector_container").hide();
+            $(widget.element[0]).removeClass("popped");
             var index = $("#month_selector_list li span").index(this);
             date.set({month:index});
             widget.selectDate(date);
         });
     },
     selectDate: function(d){
+          var today = Date.today();
           $("#month_display").text(d.toString("MMMM"));
           $("#year_display").text(d.toString("yyyy"));
           $("#month_selector_list li span").removeClass("selected");
+          $("#month_selector_list li span").removeClass("future_month");
+          $("#one_year_forward", "#one_month_forward").removeClass("gray");
           var index = d.getMonth();
+          this.options.selection = d;
           $("#month_selector_list li span").eq(index).addClass('selected');
+          if(this.options.disableFutureMonths && d.getYear() == today.getYear()){
+              index = today.getMonth();
+              $("#one_year_forward").addClass("gray");
+              if(index == d.getMonth()){
+                $("#one_month_forward").addClass("gray");
+              }
+              $("#month_selector_list li span:gt(" + index + ")").addClass('future_month');
+          }
+
           $(this.element[0]).trigger("monthSelected", d);
     }
 
@@ -94,7 +128,8 @@ $.widget("ui.ringceMonthSelector",{
 
 $.extend($.ui.ringceMonthSelector, {
    defaults: {
-       closeAfterSelect: true
+       closeAfterSelect: true,
+       disableFutureMonths: true
    }
  });
 })(jQuery);
