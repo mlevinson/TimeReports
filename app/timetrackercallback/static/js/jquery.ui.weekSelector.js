@@ -28,7 +28,8 @@ $.widget("ui.weekSelector",{
             $("#week_selector").datePicker({
                 startDate:"01/01/1996",
                 selectWeek:true,
-                createButton:false
+                createButton:false,
+                horizontalOffset: -12
             })
             .unbind("click").bind("click", function(){
                 $("#week_selector").dpDisplay();

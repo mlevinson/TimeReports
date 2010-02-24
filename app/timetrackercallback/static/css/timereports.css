@@ -59,7 +59,7 @@ a {text-decoration:none; color:#0033FF;}
 a:hover {color:#0033FF; text-decoration:underline; }
 
 .table-caption{border-bottom: 1px solid black; margin-top: 24px;font-size: 14px;}
-.table-sub-caption{margin-top:8px;font-weight:normal;font-size:14px;display:block; clear:both;}
+.table-sub-caption{margin-top:8px;font-weight:normal;font-size:12px;display:block; clear:both;}
 .table-caption.monthly{margin-top:4px;}
 .tabular td.total{background-color:#ffffcc;font-weight:bold;}
 .tabular td.grand-total {background-color:#ffff66;font-weight:bold;}
@@ -149,12 +149,7 @@ a:hover {color:#0033FF; text-decoration:underline; }
 #timereports_week_selector,
 #timereports_month_selector{display:block;float:left;position:relative;top:-2px;}
 
-#timereports_week_selector{position:relative;top:2px;}
-
-
-#week_display{
-    width: 240px;
-}
+#timereports_week_selector{position:relative;top:2px; min-width:200px; }
 
 .report_table_list li{
     list-style-type:none;
@@ -223,7 +218,7 @@ a:hover {color:#0033FF; text-decoration:underline; }
     position:relative;
     top: 2px;
     border: 1px solid gray;
-    width: 170px !important;
+    width: 200px !important;
     text-align: center;
 }
 /* ============================ */
