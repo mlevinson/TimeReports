@@ -13,8 +13,11 @@
 }
 
 
+
+
 .customSelector > .display,
 .customSelector > ul {
+    background-color:white;
     border-top: 1px solid #eee;
     border-left: 1px solid #eee;
     border-right: 1px solid #ccc;
@@ -23,7 +26,8 @@
     -webkit-border-radius: .4em;
 }
 
-.customSelector > ul {
+.customSelector > ul { 
+    margin-top:0;
     max-height: 200px;
     overflow: auto;
 }
@@ -91,7 +95,8 @@
 }
 
 .customSelector li.selected{
-   background-color: #D6DEEC;
+   background-color: #D6DFFF;
+
 }
 
 .customSelector li.selected:hover,

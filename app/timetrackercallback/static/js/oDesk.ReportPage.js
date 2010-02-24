@@ -2,6 +2,7 @@
 
     oDesk.ReportPage = function(){
         this.report = null;
+        this.companySelectorFlavor = "manager";
         this.canBindCompanySelector = true;
         this.canBindTeamSelector = true;
         this.companyReference = null;
@@ -106,7 +107,8 @@
 
         $(ui.elements.company.selector).oDeskCompanySelector({
             showTeams: false,
-            companies: ui.report.state.authUser.getCompanies(oDesk.AuthUser.Flavors["manager"]),
+            companies: ui.report.state.authUser.getCompanies(
+                    oDesk.AuthUser.Flavors[ui.companySelectorFlavor]),
             selection: {
                 selectedReference: ui.companyReference
             }

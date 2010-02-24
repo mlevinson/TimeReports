@@ -85,7 +85,7 @@ a:hover {color:#0033FF; text-decoration:underline; }
     margin: 16px 0;
 }
 #company_bar{
-    padding: 6px 8px !important;
+    padding: 6px 8px 12px !important;
     background-color: #D6DEEC;
     border: 1px solid #345B9E;
     -moz-border-radius: 4px;
