@@ -64,13 +64,14 @@ $.widget("ui.ringceMonthSelector",{
         });
 
         $("#one_year_forward").unbind("click").bind("click", function(){
+            if($(this).hasClass("gray")){
+                  event.stopPropagation();
+                  return false;
+            }
             var d = date.clone();
             d.moveToMonth(d.getMonth());
-            if(widget.options.disableFutureMonths && d > Date.today()){
-                event.stopPropagation();
-                return false;
-            }
-            date = d;
+            var today = Date.today();
+            date = d > today ? today : d;
             widget.selectDate(date);
         });
 
@@ -80,13 +81,14 @@ $.widget("ui.ringceMonthSelector",{
         });
 
         $("#one_month_forward").unbind("click").bind("click", function(event){
-              var d = date.clone();
-              d.moveToMonth(d.getMonth()+1);
-              if(widget.options.disableFutureMonths && d > Date.today()){
+              if($(this).hasClass("gray")){
                   event.stopPropagation();
                   return false;
               }
-              date = d;
+              var today = Date.today();
+              var d = date.clone();
+              d.moveToMonth(d.getMonth()+1);
+              date = d > today ? today : d;
               widget.selectDate(date);
         });
 
@@ -104,11 +106,14 @@ $.widget("ui.ringceMonthSelector",{
     },
     selectDate: function(d){
           var today = Date.today();
+          if(d > today){
+              d = today;
+          }
           $("#month_display").text(d.toString("MMMM"));
           $("#year_display").text(d.toString("yyyy"));
           $("#month_selector_list li span").removeClass("selected");
           $("#month_selector_list li span").removeClass("future_month");
-          $("#one_year_forward", "#one_month_forward").removeClass("gray");
+          $("#one_year_forward, #one_month_forward").removeClass("gray");
           var index = d.getMonth();
           this.options.selection = d;
           $("#month_selector_list li span").eq(index).addClass('selected');
