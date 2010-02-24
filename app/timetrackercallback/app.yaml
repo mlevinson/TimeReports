@@ -8,14 +8,21 @@ handlers:
   static_files: static/reports_home.html
   upload: static/reports_home.html
 
+- url: /reports_home.html
+  static_files: static/reports_home.html
+  upload: static/reports_home.html
+
+- url: /weekly_company_timesheet
+  static_files: static/weekly_company_timesheet.html
+  upload: static/weekly_company_timesheet.html
+
+- url: /weekly_company_timesheet.html
+  static_files: static/weekly_company_timesheet.html
+  upload: static/weekly_company_timesheet.html
 
 - url: /company_selector
   static_files: static/test/test.CompanySelector.html
   upload: static/test/test.CompanySelector.html
-
-- url: /reports_home.html
-  static_files: static/reports_home.html
-  upload: static/reports_home.html
 
 - url: /monthly
   static_files: static/timereports.html
@@ -24,14 +31,6 @@ handlers:
 - url: /timereports.html
   static_files: static/timereports.html
   upload: static/timereports.html
-
-- url: /weekly
-  static_files: static/weekly_report.html
-  upload: static/weekly_report.html
-
-- url: /weekly_report.html
-  static_files: static/weekly_report.html
-  upload: static/weekly_report.html
 
 - url: /provider_weekly
   static_files: static/provider_weekly_report.html

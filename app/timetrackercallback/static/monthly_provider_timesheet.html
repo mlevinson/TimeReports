@@ -7,6 +7,7 @@
         </title>
         <link rel="stylesheet" href="http://www.odesk.com/css/static/REL201002040104/nav.css" type="text/css" />
         <link rel="stylesheet" href="css/timereports.css" type="text/css" />
+        <link rel="stylesheet" href="css/customSelector.css" type="text/css" />
         <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/css_browser_selector.js">
 </script>
         <link rel="stylesheet" href="http://www.odesk.com/css/static/REL201002040104/odesk_console.css" type="text/css" />
@@ -54,12 +55,14 @@
         <script type="text/javascript" src="js/oDesk.DataSource.js"></script>
         <script type="text/javascript" src="js/oDesk.Report.js"></script>
         <script type="text/javascript" src="js/oDesk.Services.js"></script>
+        <script type="text/javascript" src="js/oDesk.AuthUser.js"></script>
         <script type="text/javascript" src="js/oDesk.Report.DataTable.js"></script>
-        <script type="text/javascript" src="js/oDesk.MonthlyTimesheet.js"></script>
+        <script type="text/javascript" src="js/jquery.ui.oDeskCompanySelector.js"></script>
+        <script type="text/javascript" src="js/oDesk.ReportPage.js"></script>
+        <script type="text/javascript" src="js/oDesk.MonthlyProviderTimesheet.js"></script>
         <script type="text/javascript" src="js/jquery.ui.oDeskDataTable.js"></script>
         <script src="js/jquery.ui.oDeskSelectWidget.js" type="text/javascript" charset="utf-8"></script>
-        <script src="js/jquery.ui.ringceMonthSelector.js" type="text/javascript" charset="utf-8"></script>
-        <script type="text/javascript" src="js/oDesk.MonthlyTimesheetUI.js"></script>
+        <script type="text/javascript" src="js/oDesk.MonthlyProviderTimesheetUI.js"></script>
 
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     </head>
@@ -250,22 +253,15 @@
                 <div id="lev2" class="menu">
                    <ul>
                     <li class="menuitem">
-                        <a class="nav-tooltip needsDecoration" href="reports_home.html">
+                        <a  id="reports_home" class="nav-tooltip needsDecoration" href="reports_home.html">
                             Reports Home</a></li>
                         </ul>
                 </div>
             </div>
             <div id="reports_header">
                 <div id="company_bar">
-                    <span class="label">Company:</span>&nbsp;
-                    <a id="company_switcher" href="#">
-                        <span class="company_name">Michael (teammichael)</span>
-                        <span class="icon arrow_down"></span>
-                    </a>
-                    <div id="company_selector" style="display:none">
-                        <input type="text" id="company_reference"/>
-                        <button id="switch_company">Go</button>
-                    </div>
+                    <span class="label">Company:</span>
+                    <div id="top_selector"></div>
                 </div>
                 <div id="pageTitle">
                     <h1>Monthly Provider Timesheet</h1>
@@ -317,8 +313,7 @@
            </div>
         </div>
         <script type="text/javascript">
-             oDeskUtil.decorateUrl(".needsDecoration", window);
-             monthlyTimeSheet.init();
+             (new monthlyProviderTimesheet()).init();
         </script>
     </body>
 </html>
