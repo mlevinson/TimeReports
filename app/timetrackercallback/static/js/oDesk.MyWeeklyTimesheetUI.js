@@ -50,4 +50,6 @@
             ui.setSelectedDate(Date.today());
         });
     };
+    
+    MyWeeklyTimesheet = new myWeeklyTimesheet();
 })(jQuery);

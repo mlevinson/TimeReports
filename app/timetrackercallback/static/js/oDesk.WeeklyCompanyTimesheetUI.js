@@ -44,5 +44,7 @@
                     .oDeskDataTable({report: ui.report, service: oDesk.Services.getHours});
             ui.setSelectedDate(Date.today());
         });
-    };
+    };     
+    
+    WeeklyCompanyTimesheet = new weeklyCompanyTimesheet();
 })(jQuery);

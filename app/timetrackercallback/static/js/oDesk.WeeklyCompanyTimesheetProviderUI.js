@@ -124,5 +124,7 @@
 
             }
         });
-    };
+    };  
+    
+    WeeklyCompanyTimesheetProvider = new weeklyCompanyTimesheetProvider();
 })(jQuery);

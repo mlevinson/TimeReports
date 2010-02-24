@@ -81,5 +81,7 @@
             $(ui.elements.report.container)
                     .oDeskDataTable({report: ui.report, service: oDesk.Services.getTaskSummary, groupRows:true});
         });
-    };
+    };  
+    
+    TaskSummaryReport = new taskSummaryReport();
 })(jQuery);

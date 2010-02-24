@@ -97,5 +97,7 @@
                     .oDeskDataTable({report: ui.report, service: oDesk.Services.getHours});
             ui.setSelectedDate(Date.today());
         });
-    };
+    };  
+    
+    MonthlyProviderTimesheet = new monthlyProviderTimesheet();
 })(jQuery);
