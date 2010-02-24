@@ -36,6 +36,7 @@
 .customSelector > .disabled{
     background-image:none;
     border:none;
+    cursor:default;
 }
 .customSelector > .disabled:hover{
     -moz-box-shadow:none;

@@ -54,10 +54,7 @@
                  teams = [];
                  var companyTeamObject = null;
                  $.each(data.teams, function(i, team){
-                    var teamObject = new oDesk.Team();
-                    teamObject.id = team.id;
-                    teamObject.reference = team.reference;
-                    teamObject.name = team.name;
+                    var teamObject = new oDesk.Team(team.id, team.name, team.reference, report.state.company);
                     if (team.reference == report.state.company.reference){
                         report.state.company.id = team.id;
                         companyTeamObject = teamObject;

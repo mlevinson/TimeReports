@@ -1,32 +1,31 @@
 (function($){
     providerSummary = function(){
         this.report = null;
+        this.companyReference = null;
         this.elements = {
-            "company" : {
-                "switcher":"#company_switcher",
-                "selector":"#company_selector",
-                "button":"#switch_company",
-                "textbox": "#company_reference"
+            company : {
+                selector:"#top_selector"
             },
-            "team" : {
-                "name" : ".team-name",
-                "selector": "#timereports_team_selector SELECT"
+            team : {
+                name : ".team-name",
+                selector: "#timereports_team_selector SELECT"
             },
-            "week":{
-                "tableCaption": "#time-week",
-                "selector": "#timereports_week_selector"
+            week:{
+                tableCaption: "#time-week",
+                selector: "#timereports_week_selector"
             },
-            "report": {
+            report: {
+                home: "#reports_home",
                 container: "#reports-grid",
-                "goButton": "#go_run_report"
+                goButton: "#go_run_report"
             }
         };
         this.parameters = {
-            "company" :{
-                "name": "company_ref",
-                "defaultValue": "49041"
+            company :{
+                name: "company_ref",
+                defaultValue: "49041"
             },
-            "timeline": {"type":"week"}
+            timeline: {type:"week"}
         };
 
         function refreshReport(){
@@ -40,24 +39,61 @@
              this.report.state.timeline = new oDesk.Timeline(this.parameters.timeline.type, d);
          };
 
-         function setCompanyDefaults(){
-              oDesk.Services.getCompany(this.report,
-                  oDeskUtil.getParameterByName(this.parameters.company.name,
-                      this.parameters.company.defaultValue), null);
+
+         function bindCompanySelector(){
+             var ui = this;
+             $(ui.elements.company.selector).unbind("change").bind("change", function(event, selection){
+                   ui.report.state.company = selection.item;
+                   ui.bindTeamSelector();
+                   ui.decorateReportsHome();
+             });
+             $(ui.elements.company.selector).oDeskCompanySelector({
+                    showTeams: false,
+                    companies: ui.report.state.authUser.getCompanies(oDesk.AuthUser.Flavors["manager"]),
+                    selection: {
+                        selectedReference: this.companyReference
+                    }
+              });
          };
+
+
+         function bindTeamSelector(){
+             var ui = this;
+
+             $(ui.elements.team.selector).oDeskSelectWidget({
+                 report: ui.report,
+                 all_option_id: "all_teams",
+                 all_option_text: "All Teams",
+                 stateVariable: ui.report.state.team,
+                 service: oDesk.Services.getTeams
+             })
+             .unbind("populationComplete").bind("populationComplete", function(){
+                 $(this).oDeskSelectWidget("setDefaults");
+              }).oDeskSelectWidget("populate");
+         };
+
+         function decorateReportsHome(){
+             var ui = this;
+             var url = $(ui.elements.report.home).attr("href");
+             var searchIndex = url.indexOf("?");
+             if(searchIndex != -1){
+                 url = url.substr(0, searchIndex);
+             }
+             url += "?company_ref=";
+             url += ui.report.state.company.reference;
+             $(ui.elements.report.home).attr("href", url);
+         }
 
          function init(){
               var ui = this;
               this.initComplete = false;
               this.report = new oDesk.Report(ui.parameters.timeline.type);
-              $(ui.elements.company.switcher).unbind("click").bind("click", function(){
-                   $(ui.elements.company.selector).slideToggle();
-              });
-              $(ui.elements.company.button).unbind("click").bind("click", function(){
-                  var new_url = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                  new_url += "?company_ref=";
-                  new_url += $(ui.elements.company.textbox).val();
-                  window.location.assign(new_url);
+              this.companyReference = oDeskUtil.getParameterByName(
+                                        this.parameters.company.name,
+                                        this.parameters.company.defaultValue);
+              oDesk.Services.getAuthUserAndRoles(function(user){
+                  ui.report.state.authUser = user;
+                  ui.bindCompanySelector();
               });
 
               $(ui.elements.report.goButton).unbind("click").bind("click", function(){
@@ -72,40 +108,30 @@
                  ui.setSelectedDate(selectedDate);
               });
 
-              this.setCompanyDefaults();
-              $(ui.elements.team.selector).oDeskSelectWidget({
-                  report: ui.report,
-                  all_option_id: "all_teams",
-                  all_option_text: "All Teams",
-                  stateVariable: ui.report.state.team,
-                  service: oDesk.Services.getTeams
-               })
-               .unbind("populationComplete").bind("populationComplete", function(){
-                  $(this).oDeskSelectWidget("setDefaults");
-               }).oDeskSelectWidget("populate");
+              $(ui.elements.report.container)
+                    .oDeskDataTable({"report": ui.report, "service": oDesk.Services.getHours});
 
-               $(ui.elements.report.container)
-                 .oDeskDataTable({"report": ui.report, "service": oDesk.Services.getHours});
+              $("body").ajaxStart(function(){
+                  loading_process("Loading...", false);
+              });
+              $("body").ajaxComplete(function(){
+                  loading_process();
+                  if(!ui.initComplete && ui.report.state.company.id){
+                      ui.refreshReport();
+                      ui.initComplete = true;
+                  }
+              });
+          };
 
-               $("body").ajaxStart(function(){
-                         loading_process("Loading...", false);
-                  });
-               $("body").ajaxComplete(function(){
-                   loading_process();
-                   if(!ui.initComplete && ui.report.state.company.id){
-                       ui.refreshReport();
-                       ui.initComplete = true;
-                   }
-               });
-           };
-
-           return {
-             "init":init,
-             "elements":elements,
-             "parameters":parameters,
-             "refreshReport": refreshReport,
-             "setSelectedDate": setSelectedDate,
-             "setCompanyDefaults": setCompanyDefaults
-           };
-    }();
+          return {
+              init:init,
+              elements:elements,
+              parameters:parameters,
+              refreshReport: refreshReport,
+              setSelectedDate: setSelectedDate,
+              bindCompanySelector: bindCompanySelector,
+              bindTeamSelector: bindTeamSelector,
+              decorateReportsHome: decorateReportsHome
+          };
+   }();
 })(jQuery);

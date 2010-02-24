@@ -28,7 +28,11 @@ $.widget("ui.oDeskCompanySelector",{
             nodeComplete: function(team){teamList += "</ul>";level--;},
             visitNode: function(team){
                 teamList += ('<li id="' + team.reference + '"');
-                teamList += ('class="team level_' + level + '">');
+                teamList += ('class="team level_' + level);
+                if (widget.options.selection.reference == team.reference) {
+                    teamList += (" " + widget.options.selectedListItemClass);
+                }
+                teamList += '">';
                 teamList +=  team.getDisplayName();
                 teamList += "</li>";
             },
@@ -40,10 +44,12 @@ $.widget("ui.oDeskCompanySelector",{
                 totalCompanies++;
                 if(widget.options.showCompanies){
                     list += '<li id="';
-                    list+= company.reference;
+                    list += company.reference;
                     list += '" class="company';
                     if (!widget.options.allowCompanySelection){
                         list += " noselect";
+                    } else if (widget.options.selection.reference == company.reference) {
+                        list += (" " + widget.options.selectedListItemClass);
                     }
                     list += '">';
                     list += company.name;
@@ -79,14 +85,13 @@ $.widget("ui.oDeskCompanySelector",{
         });
 
         var selectionSelectors = [];
-        if (widget.options.allowTeamSelection){
+        if (widget.options.showTeams && widget.options.allowTeamSelection){
             selectionSelectors.push("li.team");
         }
-        if (widget.options.allowCompanySelection){
+        if (widget.options.showCompanies && widget.options.allowCompanySelection){
             selectionSelectors.push("li.company");
         }
         var selectionSelectorString = selectionSelectors.join(",");
-        $(selectionSelectorString).eq(0).addClass(widget.options.selectedListItemClass);
         $(widget.options.selector).find(selectionSelectorString).unbind("click").bind("click", function(){
             widget._selectionListItems().removeClass(widget.options.selectedListItemClass);
             $(this).addClass(widget.options.selectedListItemClass);
@@ -178,7 +183,13 @@ $.extend($.ui.oDeskCompanySelector, {
        companies: [],
        allowCompanySelection: true,
        allowTeamSelection: true,
-       noItemsFoundText: "Nothing to select"
+       noItemsFoundText: "Nothing to select",
+       selection: {
+           item: null,
+           allOptionSelected: false,
+           isSelectionTeam: false,
+           selectedReference: null
+       }
    }
  });
 })(jQuery);

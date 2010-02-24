@@ -54,6 +54,10 @@
               $(this.elements.report.buyerList + " li").remove();
               ui.report.state.buyer = null;
               ui.report.state.filter_agency_hours = false;
+              if(oDeskUtil.getParameterByName("test", null) != "test"){
+                  ui.report.state.agency_hours_cache = null;
+                  ui.report.state.agency_hours_status_cache = null;
+              }
               oDesk.Services.getAgencyHours(ui.report, function(data, success){
                      ui.createSummaryTable();
                      ui.report.state.filter_agency_hours = true;

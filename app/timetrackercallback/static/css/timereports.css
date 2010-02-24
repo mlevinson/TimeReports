@@ -77,7 +77,7 @@ a:hover {color:#0033FF; text-decoration:underline; }
 #reports-grid{
     padding-top: 16px;
 }
- 
+
 .footer-label{font-weight:bold;}
 
 #grand-total{padding-left: 60px;font-weight:bold;}
@@ -105,9 +105,7 @@ a:hover {color:#0033FF; text-decoration:underline; }
     margin: 16px 0;
 }
 
-#company_selector{background-color:white; padding:8px; width: 240px; border:1px solid gray;}
 
-#company_selector input[type="text"]{width:200px;}
 
 #run_report{
     float:right;
@@ -144,6 +142,11 @@ a:hover {color:#0033FF; text-decoration:underline; }
     list-style-type:none;
     margin:0;
     padding:0;
+}
+
+#top_selector{
+    display:inline-block;
+    position:relative;
 }
 
 /* ========================= */

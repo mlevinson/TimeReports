@@ -50,10 +50,13 @@
               var ui = this;
               $(this.elements.week.tableCaption).text(
                   this.report.state.timeline.getDisplayNameWithAbbreviations());
-              var ui = this;
               $(this.elements.report.providerList + " li").remove();
               ui.report.state.provider.id = ui.report.state.provider.name = null;
               ui.report.state.filter_agency_hours = false;
+              if(oDeskUtil.getParameterByName("test", null) != "test"){
+                  ui.report.state.agency_hours_cache = null;
+                  ui.report.state.agency_hours_status_cache = null;
+              }
               oDesk.Services.getAgencyHours(ui.report, function(data, success){
                      ui.createSummaryTable();
                      ui.report.state.filter_agency_hours = true;
