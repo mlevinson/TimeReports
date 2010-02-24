@@ -72,16 +72,17 @@ $.widget("ui.oDeskCompanySelector",{
         if(widget._selectionListItems().length <= 1){
             widget._selectionDisplay().addClass("disabled");
         }
-        $(widget.options.selector).toggle(function(){
-              if(widget._selectionListItems().length > 1){
-                  // place the menu relative to the bottom
-                  var dropdownHeightOffset = $(this).height();
-                  $('ul',this).css('top',dropdownHeightOffset + 'px');
-                  $('ul',this).show();
-              }
-        }, function(){
-            $('ul',this).hide();
 
+        $(document).click(function(event){
+            if(!$(event.target).is("." + widget.options.containerClass)){
+                $(widget.options.selector).children("ul.company_list").hide();
+            }
+        });
+
+        $(widget.options.selector).unbind('click').bind('click', function(event){
+            if(widget._selectionListItems().length <= 1) return false;
+           $(widget.options.selector).children("ul.company_list").toggle();
+           event.stopPropagation();
         });
 
         var selectionSelectors = [];
