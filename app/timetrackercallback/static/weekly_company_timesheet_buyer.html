@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="http://www.odesk.com/css/static/REL201002040104/nav.css" type="text/css" />
         <link rel="stylesheet" href="css/timereports.css" type="text/css" />
         <link rel="stylesheet" href="css/datePicker.css" type="text/css" />
+        <link rel="stylesheet" href="css/customselector.css" type="text/css" />
         <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/css_browser_selector.js">
 </script>
         <link rel="stylesheet" href="http://www.odesk.com/css/static/REL201002040104/odesk_console.css" type="text/css" />
@@ -56,12 +57,15 @@
         <script type="text/javascript" src="js/oDesk.DataSource.js"></script>
         <script type="text/javascript" src="js/oDesk.Report.js"></script>
         <script type="text/javascript" src="js/oDesk.Services.js"></script>
+        <script type="text/javascript" src="js/oDesk.AuthUser.js"></script>
         <script type="text/javascript" src="js/oDesk.Report.DataTable.js"></script>
-        <script type="text/javascript" src="js/oDesk.AgencyBuyerReport.js"></script>
+        <script type="text/javascript" src="js/oDesk.WeeklyCompanyTimesheetBuyer.js"></script>
         <script type="text/javascript" src="js/jquery.ui.oDeskDataTable.js"></script>
+        <script type="text/javascript" src="js/jquery.ui.oDeskCompanySelector.js"></script>
         <script src="js/jquery.ui.oDeskSelectWidget.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/jquery.ui.weekSelector.js" type="text/javascript" charset="utf-8"></script>
-        <script type="text/javascript" src="js/oDesk.AgencyBuyerReportUI.js"></script>
+        <script type="text/javascript" src="js/oDesk.ReportPage.js"></script>
+        <script type="text/javascript" src="js/oDesk.WeeklyCompanyTimesheetBuyerUI.js"></script>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     </head>
     <body bgcolor="#FFFFFF">
@@ -251,7 +255,7 @@
                 <div id="lev2" class="menu">
                    <ul>
                        <li class="menuitem">
-                           <a class="nav-tooltip needsDecoration" href="reports_home.html">
+                           <a id="reports_home" class="nav-tooltip needsDecoration" href="reports_home.html">
                             Reports Home</a>
                         </li>
                     </ul>
@@ -259,15 +263,8 @@
             </div>
             <div id="reports_header">
                 <div id="company_bar">
-                    <span class="label">Company:</span>&nbsp;
-                    <a id="company_switcher" href="#">
-                        <span class="company_name">Michael (teammichael)</span>
-                        <span class="icon arrow_down"></span>
-                    </a>
-                    <div id="company_selector" style="display:none">
-                        <input type="text" id="company_reference"/>
-                        <button id="switch_company">Go</button>
-                    </div>
+                    <span class="label">Company:</span>
+                    <div id="top_selector"></div>
                 </div>
                 <div id="pageTitle">
                      <h1>Weekly Company Timesheet by Buyer</h1>
@@ -293,8 +290,7 @@
         </div>
     <script type="text/javascript">
        $(function(){
-           oDeskUtil.decorateUrl(".needsDecoration", window);
-            agencyBuyerReport.init();
+           (new weeklyCompanyTimesheetBuyer()).init();
         });
     </script>
     </body>

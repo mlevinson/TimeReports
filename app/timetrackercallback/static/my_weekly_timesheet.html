@@ -53,15 +53,17 @@
         <!--[if IE]><script type="text/javascript" src="js/jquery.bgiframe.pack.js"></script><![endif]-->
         <script type="text/javascript" src="js/jquery.datePicker.js"></script>
         <script type="text/javascript" src="js/oDesk.Core.js"></script>
-        <script type="text/javascript" src="js/oDesk.Report.js"></script>        
+        <script type="text/javascript" src="js/oDesk.Report.js"></script>
         <script type="text/javascript" src="js/oDesk.DataSource.js"></script>
         <script type="text/javascript" src="js/oDesk.Services.js"></script>
+        <script type="text/javascript" src="js/oDesk.AuthUser.js"></script>
         <script type="text/javascript" src="js/oDesk.Report.DataTable.js"></script>
-        <script type="text/javascript" src="js/oDesk.ProviderHours.js"></script>
+        <script type="text/javascript" src="js/oDesk.MyWeeklyTimesheet.js"></script>
         <script type="text/javascript" src="js/jquery.ui.oDeskDataTable.js"></script>
         <script src="js/jquery.ui.oDeskSelectWidget.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/jquery.ui.weekSelector.js" type="text/javascript" charset="utf-8"></script>
-        <script type="text/javascript" src="js/oDesk.ProviderHoursUI.js"></script>
+        <script type="text/javascript" src="js/oDesk.ReportPage.js"></script>
+        <script type="text/javascript" src="js/oDesk.MyWeeklyTimesheetUI.js"></script>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     </head>
     <body bgcolor="#FFFFFF">
@@ -251,24 +253,13 @@
                 <div id="lev2" class="menu">
                    <ul>
                        <li class="menuitem">
-                           <a class="nav-tooltip needsDecoration" href="reports_home.html">
+                           <a id="reports_home" class="nav-tooltip needsDecoration" href="reports_home.html">
                                Reports Home</a>
                         </li>
                     </ul>
                 </div>
             </div>
             <div id="reports_header">
-                <div id="company_bar">
-                    <span class="label">Company:</span>&nbsp;
-                    <a id="company_switcher" href="#">
-                        <span class="company_name">Michael (teammichael)</span>
-                        <span class="icon arrow_down"></span>
-                    </a>
-                    <div id="company_selector" style="display:none">
-                        <input type="text" id="company_reference"/>
-                        <button id="switch_company">Go</button>
-                    </div>
-                </div>
                 <div id="pageTitle">
                    <h1>My Weekly Timesheet</h1>
                </div>
@@ -288,8 +279,7 @@
         </div>
     <script type="text/javascript">
        $(function(){
-           oDeskUtil.decorateUrl(".needsDecoration", window);
-            providerHours.init();
+           (new myWeeklyTimesheet()).init();
         });
     </script>
     </body>

@@ -26,11 +26,7 @@ handlers:
 
 - url: /monthly_provider_timesheet.html
   static_files: static/monthly_provider_timesheet.html
-   upload: static/monthly_provider_timesheet.html
-
-- url: /company_selector
-  static_files: static/test/test.CompanySelector.html
-  upload: static/test/test.CompanySelector.html
+  upload: static/monthly_provider_timesheet.html
 
 - url: /task_summary_report.html
   static_files: static/task_summary_report.html
@@ -40,29 +36,29 @@ handlers:
   static_files: static/task_summary_report.html
   upload: static/task_summary_report.html
 
-- url: /provider_weekly
-  static_files: static/provider_weekly_report.html
-  upload: static/provider_weekly_report.html
+- url: /my_weekly_timesheet
+  static_files: static/my_weekly_timesheet.html
+  upload: static/my_weekly_timesheet.html
 
-- url: /provider_weekly_report.html
-  static_files: static/provider_weekly_report.html
-  upload: static/provider_weekly_report.html
+- url: /my_weekly_timesheet.html
+  static_files: static/my_weekly_timesheet.html
+  upload: static/my_weekly_timesheet.html
 
-- url: /agency_report.html
-  static_files: static/agency_report.html
-  upload: static/agency_report.html
+- url: /weekly_company_timesheet_provider.html
+  static_files: static/weekly_company_timesheet_provider.html
+  upload: static/weekly_company_timesheet_provider.html
 
-- url: /agency_report
-  static_files: static/agency_report.html
-  upload: static/agency_report.html
+- url: /weekly_company_timesheet_provider
+  static_files: static/weekly_company_timesheet_provider.html
+  upload: static/weekly_company_timesheet_provider.html
 
-- url: /agency_buyer_report.html
-  static_files: static/agency_buyer_report.html
-  upload: static/agency_buyer_report.html
+- url: /weekly_company_timesheet_buyer.html
+  static_files: static/weekly_company_timesheet_buyer.html
+  upload: static/weekly_company_timesheet_buyer.html
 
-- url: /agency_buyer_report
-  static_files: static/agency_buyer_report.html
-  upload: static/agency_buyer_report.html
+- url: /weekly_company_timesheet_buyer.html
+  static_files: static/weekly_company_timesheet_buyer.html
+  upload: static/weekly_company_timesheet_buyer.html
 
 - url: /css
   static_dir: static/css
@@ -72,3 +68,7 @@ handlers:
 
 - url: /js
   static_dir: static/js
+
+- url: /company_selector
+  static_files: static/test/test.CompanySelector.html
+  upload: static/test/test.CompanySelector.html
