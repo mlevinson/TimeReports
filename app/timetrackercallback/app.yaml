@@ -20,17 +20,25 @@ handlers:
   static_files: static/weekly_company_timesheet.html
   upload: static/weekly_company_timesheet.html
 
+- url: /monthly_provider_timesheet
+  static_files: static/monthly_provider_timesheet.html
+  upload: static/monthly_provider_timesheet.html
+
+- url: /monthly_provider_timesheet.html
+  static_files: static/monthly_provider_timesheet.html
+   upload: static/monthly_provider_timesheet.html
+
 - url: /company_selector
   static_files: static/test/test.CompanySelector.html
   upload: static/test/test.CompanySelector.html
 
-- url: /monthly
-  static_files: static/timereports.html
-  upload: static/timereports.html
+- url: /task_summary_report.html
+  static_files: static/task_summary_report.html
+  upload: static/task_summary_report.html
 
-- url: /timereports.html
-  static_files: static/timereports.html
-  upload: static/timereports.html
+- url: /task_summary_report
+  static_files: static/task_summary_report.html
+  upload: static/task_summary_report.html
 
 - url: /provider_weekly
   static_files: static/provider_weekly_report.html
@@ -55,14 +63,6 @@ handlers:
 - url: /agency_buyer_report
   static_files: static/agency_buyer_report.html
   upload: static/agency_buyer_report.html
-
-- url: /tasksummary.html
-  static_files: static/tasksummary.html
-  upload: static/tasksummary.html
-
-- url: /tasksummary
-  static_files: static/tasksummary.html
-  upload: static/tasksummary.html
 
 - url: /css
   static_dir: static/css

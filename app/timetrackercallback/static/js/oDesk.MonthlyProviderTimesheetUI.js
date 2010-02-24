@@ -2,10 +2,6 @@
     monthlyProviderTimesheet = function(){
         oDesk.ReportPage.prototype.constructor.call(this);
         $.extend(this.elements, {
-            team : {
-                name : ".team-name",
-                selector: "#timereports_team_selector SELECT"
-            },
             provider : {
                 name : ".provider-name",
                 selector: "#timereports_provider_selector SELECT"
@@ -39,30 +35,10 @@
         this.report.state.timeline = new oDesk.Timeline(this.parameters.timeline.type, d);
     };
 
-    monthlyProviderTimesheet.prototype.companyChanged = function(company){
+    monthlyProviderTimesheet.prototype.teamChanged = function(company){  
         var ui = this;
-        ui.report.state.company = company;
-        $(ui.elements.team.selector).oDeskSelectWidget("populate");
+        $(ui.elements.provider.selector).oDeskSelectWidget("populate");
     };
-
-    monthlyProviderTimesheet.prototype.bindTeamSelector = function(){
-        var ui = this;
-
-        $(ui.elements.team.selector).oDeskSelectWidget({
-            report: ui.report,
-            all_option_id: "all_teams",
-            all_option_text: "All Teams",
-            stateVariable: ui.report.state.team,
-            service: oDesk.Services.getTeams
-        })
-        .unbind("selectionChanged").bind("selectionChanged", function(){
-            $(ui.elements.provider.selector).oDeskSelectWidget("populate");
-        })
-        .unbind("populationComplete").bind("populationComplete", function(){
-            $(this).oDeskSelectWidget("setDefaults");
-        }).oDeskSelectWidget("populate");
-    };
-
 
     monthlyProviderTimesheet.prototype.bindProviderSelector = function(){
         var ui = this;
@@ -100,7 +76,6 @@
         ui.initComplete = false;
         this.initialize(function(){
             ui.report.state.mustGetHours = true;
-            ui.bindTeamSelector();
             ui.bindProviderSelector();
 
             $(ui.elements.timeline.selector)
