@@ -35,7 +35,7 @@ $.widget("ui.ringceMonthSelector",{
                     var column = parseInt(monthIndex / 4) + 1;
                     var className = "column" + column;
                     className += (" month" + monthIndex);
-                    if(monthIndex == 4 || monthIndex == 8){
+                    if(!(monthIndex % 3)){
                         className += " reset";
                     }
                     listHtml += "<li class=\"" + className + "\"><span>" + month + "</span></li>";
