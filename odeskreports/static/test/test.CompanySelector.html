@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+"http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="keywords" content="Offshore outsourcing, Freelancers, India, Russia, Ukraine, php Programmers, Coders, Developers, Writers, Web Designers, Website Design, Technical Writers">
+        <title>
+            Company Selector Test
+        </title>
+        <link rel="stylesheet" href="http://odesklabs.com/larryworld/prototypes/css/console/global/reset.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="http://odesklabs.com/larryworld/prototypes/css/console/global/oDeskGlobalLookFeel.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="../css/customselector.css" type="text/css" media="screen" title="no title" charset="utf-8">
+        <script src="http://www.odesk.com/js/jquery/jquery.pack.js" type="text/javascript">
+        </script>
+        <script src="../js/jquery.formatCurrency.js" type="text/javascript"
+        charset="utf-8"></script>
+            <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" src="../js/jquery.popupWindow.js"></script>
+        <script src="../js/date1.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../js/oDeskUtil.js" type="text/javascript" charset="utf-8"></script>
+
+        <script type="text/javascript" src="../js/oDesk.Core.js"></script>
+        <script type="text/javascript" src="../js/oDesk.AuthUser.js"></script>
+        <script type="text/javascript" src="../js/oDesk.DataSource.js"></script>
+        <script type="text/javascript" src="../js/oDesk.Services.js"></script>
+        <script type="text/javascript" src="../js/jquery.ui.oDeskCompanySelector.js"></script>
+
+
+        <style type="text/css" media="screen">
+             body{
+                 vertical-align:baseline;
+             }
+             .header{
+                 padding: 16px;
+                 border-bottom: 1px lightgray dotted;
+             }
+             h1{
+                 font-size: 24px;
+                 font-weight: lighter;
+             }
+             #wrapper{
+                width: 800px;
+                height: 796px;
+                margin: 32px auto;
+                border: 1px lightgray dotted;
+             }
+
+             .col1, .col2{
+                 float:left;
+                 width: 240px;
+                 height: 500px;
+                 padding: 32px;
+             }
+
+             .col2{
+                 padding-left: 100px;
+                 padding-top: 200px;
+                 border-left: 1px lightgray dotted;
+             }
+
+             #selector, #company_selector{
+                 margin-bottom: 32px;
+             }
+
+             #selector_options h3{
+                 margin: 8px 0;
+                 background-color: gray;
+                 color: white;
+                 padding: 4px;
+             }
+
+             #selector_options p{
+                 padding: 8px 4px;
+                 border-bottom: 1px lightgray dotted;
+                 line-height: 16px;
+             }
+
+             #selector_options li p:last-child{
+                 border-bottom:white;
+             }
+
+             #selector_options p label{
+                 display: inline-block;
+                 vertical-align: baseline;
+                 width: 200px;
+             }
+
+             #selector_options p.col3 label{
+                 width: 60px;
+             }
+
+             #selector_options p.col3 .c1{
+                 width: 120px;
+                 margin-right: 14px;
+                 border:1px solid lightgray;
+                 font-size: 12px;
+             }
+
+             a.button{
+                 display:block;
+                 float:left;
+                 margin-top: 32px;
+                 margin-right: 8px;
+                 text-decoration: none;
+                 color: white;
+                 background-color: black;
+                 padding: 4px;
+                 font-weight: bold;
+             }
+
+             a.button:hover{
+                 background-color:red;
+             }
+
+             #user_display{
+                 font-size: 12px;
+                 display:block;
+                 float:right;
+                 vertical-align:baseline;
+             }
+             .separate{display:none;}
+             h3.separate{margin-bottom: 8px; font-weight: normal;}
+        </style>
+    </head>
+    <body>
+    <div id="wrapper">
+       <div class="header">
+            <h1>Company &amp; Team Selector</h1>
+            <span id="user_display"></span>
+        </div>
+        <div id="selector_options" class="col1">
+            <ul>
+                <li>
+                    <ul>
+                        <li>
+                            <h3>Show:</h3>
+                        </li>
+                        <li>
+                            <p><label for="show_combo">Combo Selector</label>
+                                <input id="show_combo" name="selector_type" checked="1" type="radio"/></p>
+                            <p><label for="show_separate">Separate Selectors</label>
+                                <input id="show_separate" name="selector_type" type="radio"/></p>
+                       </li>
+                    </ul>
+                </li>
+                <li>
+                    <ul>
+                        <li>
+                            <h3>Flavors:</h3>
+                        </li>
+                        <li>
+                            <p><label for="flavor_manager">Manager</label>
+                            <input id="flavor_manager" name="flavor" value="manager" type="radio"/></p>
+                            <p><label for="flavor_recruiter">Recruiter</label>
+                            <input id="flavor_recruiter" name="flavor" value="recruiter" type="radio"/></p>
+                            <p><label for="flavor_affiliate">Affiliate Manager</label>
+                            <input id="flavor_affiliate" name="flavor" value="affiliate" type="radio"/></p>
+                            <p><label for="flavor_hiring">Hiring Manager</label>
+                            <input id="flavor_hiring" name="flavor" value="hiring" type="radio"/></p>
+                            <p><label for="flavor_team_admin">Team Admin</label>
+                            <input id="flavor_team_admin" name="flavor" value="team_admin" type="radio"/></p>
+                            <p><label for="flavor_company_admin">Company Admin</label>
+                            <input id="flavor_company_admin" name="flavor" value="company_admin" type="radio"/></p>
+                            <p><label for="flavor_member">Member</label>
+                            <input id="flavor_member" checked="1" name="flavor" value="member" type="radio"/></p>
+                       </li>
+                    </ul>
+                </li>
+                <li>
+                    <ul>
+                        <li>
+                            <h3>Style:</h3>
+                        </li>
+                        <li>
+                            <p><label for="style_options">Basic Select</label>
+                            <input id="style_options" name="style" type="radio"/></p>
+                            <p><label for="style_fancy">Fancy Big</label>
+                            <input id="style_fancy" checked="1" name="style" type="radio"/></p>
+                       </li>
+                    </ul>
+                </li>
+                <li>
+                    <ul>
+                        <li>
+                            <h3>All Option:</h3>
+                        </li>
+                        <li>
+                            <p class="col3"><label for="all_options_team">Team</label>
+                            <input class="c1" id="all_option_team_text" type="text" value="All Teams"/>
+                            <input class="c2" checked="1" id="all_option_team" type="checkbox"/></p>
+                            </p>
+                       </li>
+                    </ul>
+                </li>
+            </ul>
+            <a href="#" class="button" id="refresh">Refresh</a>
+            <a href="#" class="button" id="reset">Reset</a>
+        </div>
+        <div class="col2">
+            <h3 class="separate">Select Company:</h3>
+            <div class="separate" id="company_selector">
+            </div>
+            <h3 class="separate">Select Team:</h3>
+            <div id="selector">
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+        var authUser = null;
+        $(function(){
+            oDesk.Services.getAuthUserAndRoles(function(user){
+                authUser = user;
+                var companies = user.getCompanies();
+                $("#user_display").text(user.getDisplayName());
+                $("#selector").oDeskCompanySelector({
+                    companies: companies,
+                    allowCompanySelection: false
+                 });
+                 $("#company_selector").oDeskCompanySelector({
+                     companies: companies,
+                     showTeams: false
+                  })
+                  .unbind("change").bind("change", function(event, selection){
+                      refresh();
+                  });
+            });
+
+            function refresh(){
+                   var showCombo = $("#show_combo:checked").length > 0;
+                   var showSeparate = !showCombo;
+                   var selectedCompany = null;
+                   if(showSeparate){
+                        $(".separate").show();
+                        var selection = $("#company_selector").oDeskCompanySelector("option", "selection");
+                        selectedCompany = selection.item;
+                        if(!selectedCompany){
+                            var companies = authUser.getCompanies();
+                            selectedCompany = companies[0];
+                        }
+
+                   } else {
+                        selectedCompany = null;
+                        $(".separate").hide();
+                   }
+                   var flavor = $('input:radio[name=flavor]:checked').val();
+                   var filters = $.extend({}, oDesk.AuthUser.Flavors[flavor]);
+                   if(selectedCompany){
+                       filters.companyReference = selectedCompany.reference;
+                   }  else {
+                       filters.companyReference = null;
+                   }
+                   $("#selector").oDeskCompanySelector(
+                       "option", "companies", authUser.getCompanies(filters));
+                   $("#selector").oDeskCompanySelector(
+                           "option", "showAllTeams", $("#all_option_team:checked").length > 0);
+                   $("#selector").oDeskCompanySelector(
+                           "option", "allTeamsText", $("#all_option_team_text").val());
+                   $("#selector").oDeskCompanySelector("option", "showTeams", true);
+                   $("#selector").oDeskCompanySelector("option", "showCompanies", showCombo);
+                   $("#selector").oDeskCompanySelector("populateList");
+            };
+
+           $("#refresh").click(function(){
+               refresh();
+               return false;
+           });
+
+           $("#reset").click(function(){
+               $('#flavor_member').attr("checked", 1);
+               $('#show_combo').attr("checked", 1);
+               $('#style_fancy').attr("checked", 1);
+               $("#all_option_team").attr("checked", 1);
+               $("#all_option_team_text").val("All Teams");
+               return false;
+           });
+
+           $("#all_option_team").click(function(){
+               if($("#all_option_team:checked").length){
+                   $("#all_option_team_text").removeAttr("disabled");
+               } else {
+                   $("#all_option_team_text").attr("disabled", true);
+               }
+
+           });
+
+        });
+
+
+    </script>
+    </body>
+</html>

@@ -1,0 +1,114 @@
+.customSelector{
+    position: relative; 
+    margin-left: 4px;
+}
+
+.customSelector .display{
+    display: inline-block;
+    cursor: pointer;
+    padding: .3em 40px .4em 1em;
+    margin:0;
+    font-weight: bold;
+    cursor: pointer;
+    background: url(../images/multi_line_dropdown_bg.png) center right no-repeat transparent;
+}
+
+
+
+
+.customSelector > .display,
+.customSelector > ul {
+    background-color:white;
+    border-top: 1px solid #eee;
+    border-left: 1px solid #eee;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    -moz-border-radius: .4em;
+    -webkit-border-radius: .4em;
+}
+
+.customSelector > ul { 
+    margin-top:0;
+    max-height: 200px;
+    overflow: auto;
+}
+
+.customSelector > .display:hover {
+    -moz-box-shadow: 0px 0px 2px 1px #4F93FF;
+    -webkit-box-shadow: 0px 0px 3px #4F93FF;
+}
+
+.customSelector > .disabled{
+    background:none;
+    border:none;
+    cursor:default;
+}
+.customSelector > .disabled:hover{
+    -moz-box-shadow:none;
+    -webkit-box-shadow:none;
+}
+
+.customSelector > .display.line2 {
+    font-weight: normal;
+    font-size: .9em;
+    color: #666;
+}
+
+.customSelector > ul {
+    list-style-type: none;
+    background-color: #fff;
+    position: absolute;
+    z-index: 1000;
+    top: -10;
+    left: 0;
+    display: none;
+    border: 1px solid #ccc;
+    width: 300px;
+    -moz-box-shadow: 0px 0px 2px 1px #ccc;
+    -webkit-box-shadow: 0px 0px 3px #ccc;
+}
+
+.customSelector li {
+    font-weight: bold;
+    padding: 4px 8px;
+}
+
+
+.customSelector li.child {
+    padding-left: 20px;
+    font-weight: normal;
+}
+
+
+
+.customSelector li:hover,
+.customSelector li.hover {
+    background-color: #0033FF;
+    color: #fff;
+    cursor: pointer;
+}
+
+.customSelector li.noselect:hover,
+.customSelector li.noselect.hover{
+    background-color: white;
+    color: black;
+    cursor: default;
+}
+
+.customSelector li.selected{
+   background-color: #D6DFFF;
+
+}
+
+.customSelector li.selected:hover,
+.customSelector li.selected.hover{
+    background-color: #0033FF;
+    color: #fff;
+    cursor: pointer;
+}
+
+.customSelector .team_list li{
+    padding-left: 12px;
+    font-weight: normal;
+
+}

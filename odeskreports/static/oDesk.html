@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" class="www-content" lang="en">
+<head>
+    <script type="text/javascript"
+     src="http://www.odesk.com/js/jquery/jquery.pack.js"></script>
+     <script type="text/javascript">
+     $.ajax({
+            url: "http://www.odesk.com/api/templates/v1/header/head.xhtml",
+            dataType: "html",
+            async: false,
+            success: function(data){
+                $("head").prepend(data);
+             }
+        });
+     </script>
+</head>
+<body bgcolor="#FFFFFF">
+    <script type="text/javascript">
+    $.ajax({
+           url: "http://www.odesk.com/api/templates/v1/header/navigation.xhtml",
+           dataType: "html",
+           async: false,
+           success: function(data){
+               $("body").prepend(data);
+            }
+       });
+    </script>
+</body>
+</html>

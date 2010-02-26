@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" class="www-content" lang="en">
+<head>
+    <title>
+        {% block title %}
+        Outsource to Freelancers, IT Companies, Programmers, Web Designers
+        from India, Russia, USA, and more - oDesk
+        {% endblock %}
+    </title>
+    {% block oDeskHead %}
+        {{odeskhead|safe}}
+    {% endblock %}
+    <link rel="stylesheet" href="/css/timereports.css" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+   <script src="/js/oDeskUtil.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body bgcolor="#FFFFFF">
+    {% block oDeskNavigation %}
+        {{odesknav|safe}}
+    {% endblock %}
+    {% block pageTitleContainer %}
+    <div id="pageTitle">
+        <h1>{% block pageTitle %}Reports{% endblock %}</h1>
+    </div>
+    {% endblock %}
+    {% block content %}{% endblock %}
+    {% block afterContent %}{% endblock %}
+    </body>
+</html>

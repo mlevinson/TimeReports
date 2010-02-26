@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" class="www-content" lang="en">
+<head>
+    <title>
+        Outsource to Freelancers, IT Companies, Programmers, Web Designers
+        from India, Russia, USA, and more - oDesk
+    </title>
+    <script type="text/javascript"
+     src="http://www.odesk.com/js/jquery/jquery.pack.js"></script>
+     <script type="text/javascript">
+     $.ajax({
+            url: "http://www.odesk.com/api/templates/v1/header/head.xhtml",
+            dataType: "jsonp",
+            async: false,
+            success: function(data){
+                document.write(data);
+             }
+        });
+     </script>
+    <link rel="stylesheet" href="css/timereports.css" type="text/css" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+   <script src="js/oDeskUtil.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body bgcolor="#FFFFFF">
+    <div id="pageTitle">
+        <h1>Reports</h1>
+    </div>
+    <div id="mainBody" class="layout2">
+        <h2>Buyer Reports</h2>
+        <div id="col1">
+            <dl class="reportsList">
+                <dt class="tabularReport">
+                    <a href="weekly_company_timesheet.html">Weekly Company Timesheet</a>
+                </dt>
+                <dd>Summarizes work done by each provider during the course of a week.</dd>
+                <dt class="tabularReport">
+                    <a href="monthly_provider_timesheet.html">Monthly Provider Timesheet</a>
+                </dt>
+                <dd>Summarizes the work done by each provider during a calendar month.</dd>
+                <dt class="tabularReport">
+                    <a href="task_summary_report.html">Task Summary Report</a>
+                </dt>
+                <dd>
+                    Summarizes work done for each task by
+                    provider during the given time period.
+                </dd>
+            </dl>
+            <h2>Provider Reports</h2>
+            <dl class="reportsList">
+                <dt class="tabularReport">
+                    <a  href="my_weekly_timesheet.html">My Weekly Timesheet</a>
+                </dt>
+                <dd>
+                    Summarizes work done by you for
+                    each buyer during a given week.
+                </dd>
+            </dl>
+            <h2>Provider Company Reports</h2>
+            <dl class="reportsList">
+                <dt class="tabularReport">
+                    <a  href="weekly_company_timesheet_provider.html">
+                        Weekly Company Timesheet by Provider
+                    </a>
+                </dt>
+                <dd>
+                    Reports on time and earnings by your providers
+                    during a given week.
+                </dd>
+                <dt class="tabularReport">
+                    <a  href="weekly_company_timesheet_buyer.html">
+                        Weekly Company Timesheet by Buyer
+                    </a>
+                </dt>
+                <dd>
+                    Reports on time and earnings from buyers
+                    during a given week.
+               </dd>
+            </dl>
+        </div>
+    </div>
+    <script type="text/javascript" >
+
+    $(function(){
+
+        oDeskUtil.decorateUrl(".tabularReport > a", window);
+    });
+    </script>
+    </body>
+</html>

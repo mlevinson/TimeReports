@@ -1,0 +1,432 @@
+/* ======== */
+/* = Rest = */
+/* ======== */
+
+/* http://meyerweb.com/eric/tools/css/reset/ */
+/* v1.0 | 20080212 */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	vertical-align: baseline;
+	background: transparent;
+
+}
+body {
+	line-height: 1.3;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+/* remember to define focus styles! */
+:focus {
+	outline: 0;
+}
+/* remember to highlight inserts somehow! */
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+body {font-family:Tahoma,sans-serif; font-size:10pt;}
+a {text-decoration:none; color:#0033FF;}
+a:hover {color:#0033FF; text-decoration:underline; }
+
+.table-caption{border-bottom: 1px solid black; margin-top: 24px;font-size: 14px;}
+.table-sub-caption{margin-top:8px;font-weight:normal;font-size:12px;display:block; clear:both;}
+.table-caption.monthly{margin-top:4px;}
+.tabular td.total{background-color:#ffffcc;font-weight:bold;}
+.tabular td.grand-total {background-color:#ffff66;font-weight:bold;}
+.tabular td.fixed.label{background-color:white;}
+
+.table10 table{table-layout:fixed;}
+.table10 td.numeric{width:63px;}
+.table10 td.total{width:100px;}
+.table10 td.fixed.label{width: 218px;}
+
+
+.tabular .numeric{
+    width: 56px;
+}
+
+
+.tabular .total{
+    width: 90px;
+}
+
+.tabular{
+    width: 100%;
+    table-layout:fixed;
+}
+
+.control_bar.white{
+    background-color:white;
+}
+
+#report_placeholder{
+    font-size: 16px;
+    font-weight: bold;
+    text-align:center;
+    padding: 16px;
+    background-color: #ffffcc;
+}
+
+#reports-grid{
+    padding-top: 16px;
+}
+
+.footer-label{font-weight:bold;}
+
+#grand-total{padding-left: 60px;font-weight:bold;}
+#reports_header h1{
+    margin: 16px 0;
+}
+#company_bar{
+    padding: 6px 8px 12px !important;
+    background-color: #D6DEEC;
+    border: 1px solid #345B9E;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    font-family: Tahoma, sans-serif;
+    font-size: 14px;
+    height: 24px;
+    margin-top: 10px;
+    padding: 6px 12px;
+    position: relative;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+#mainBody h2{
+    margin: 16px 0;
+}
+
+
+
+#hours-title{text-transform:capitalize;}
+#hours-small{text-transform:lowercase;}
+
+#reports_list ul{
+    padding:0;
+    margin:0;
+}
+
+#reports_list li{
+    list-style-type: none;
+    margin-bottom: 16px;
+    border-bottom: 1px solid gray;
+}
+
+#timereports_team_selector,
+#timereports_provider_selector,
+#timereports_week_selector,
+#timereports_month_selector{display:block;float:left;position:relative;top:-2px;}
+
+#timereports_week_selector{position:relative;top:2px; min-width:200px; }
+
+.report_table_list li{
+    list-style-type:none;
+    padding:16px 0;
+}
+.report_table_list{
+    list-style-type:none;
+    margin:0;
+    padding:0;
+}
+
+#top_selector{
+    display:inline-block;
+    position:relative;
+}
+
+/* ========================= */
+/* = Month Selector Styles = */
+/* ========================= */
+    #one_year_forward.gray,
+    #one_month_forward.gray{
+        opacity: 0.3;
+    }
+    #month_selector_wrapper .month-selector{
+        border: 1px solid transparent;
+    }
+    #month_selector_wrapper .popped{
+        background-color: white;
+        border: 1px solid gray;
+        border-bottom-color:transparent;
+    }
+   #month_selector_list .future_month:hover,
+   #month_selector_list .future_month { color:#ccc;cursor:default;text-decoration:none;}
+   #month_selector_wrapper{width:240px;}
+   #month_year_display{line-height: 24px;width:238px; padding-left: 2px;}
+   #selection_display{display:inline-block;width: 168px;text-align:center;cursor:pointer;}
+   #month_selector_list{
+       width: 240px;
+       padding:0;
+       margin:0;
+       border: 1px solid gray;
+       border-bottom:0;
+       position:absolute;
+       z-index:1000;
+       background-color:white;
+   }
+   #month_selector_list li{
+       list-style-type:none;
+       width: 80px;
+       border-bottom: 1px solid gray;
+       font-size: 12px;
+   }
+   #month_selector_list li span{
+       display:block;
+       width: 80px;
+       cursor:pointer;
+       text-align:center;
+   }
+   #month_selector_list li span:hover{
+       text-decoration:underline;
+       color:#345B9E;
+   }
+   #month_selector_list li span.selected{background-color: #345B9E;color:white;}
+   #month_selector_list li{ float:left;}
+   #month_selector_list li { line-height: 24px; }
+
+#reports_time_range_selector{
+    position:static;
+}
+
+
+#reports_time_range_selector input.calendar{
+    position:relative;
+    top: 2px;
+    border: 1px solid gray;
+    width: 200px !important;
+    text-align: center;
+}
+/* ============================ */
+/* = From PageLayout.css labs = */
+/* ============================ */
+
+
+#pageTitle {
+	width:970px;
+	margin:auto;
+	padding:1em 0 0 0;
+}
+#pageTitle h1,
+#col1PageTitle {
+	font-size:1.6em;
+	color:#225A94;
+	margin-bottom:.6em;
+}
+#mainBody.layout1,
+#mainBody.layout2,
+#mainBody.layout3 {
+	width:970px;
+	margin:auto;
+}
+#mainBody.layout1 #col1 {
+	width:100%;
+}
+#mainBody.layout2 #col1 {
+	margin-right:245px;
+	width:725px;
+	float:left;
+}
+#mainBody.layout2 #col2 {
+	float:right;
+	width:224px;
+	margin-left:-224px;
+}
+#mainBody.layout3 #col1 {
+	width:725px;
+	float:right;
+}
+#mainBody.layout3 #col2 {
+	float:left;
+}
+
+/* =============== */
+/* = Reports.css = */
+/* =============== */
+
+/* ======================== Reports "Home" ==========================*/
+#mainBody.layout2 #col1 {
+	width: 520px;
+}
+#mainBody.layout2 #col2 {
+	width: 420px;
+}
+#savedReports {
+	margin-bottom: 1.2em;
+}
+#savedReports .noData {
+	text-align: center;
+}
+.sidebar.boxed .noData {
+	text-align: center;
+}
+.sidebar.boxed .horizontalLinks {
+	text-align: right;
+	margin-bottom: 2em;
+}
+.sidebar.boxed .headerBar {
+	font-size: 1em;
+}
+.reportsList dt {
+	font-weight: bold;
+	font-size: 1.1em;
+}
+.reportsList dd {
+	margin: 0 0 1em 24px;
+	color: #666;
+}
+.reportsList dt.tabularReport {
+	padding-left: 24px;
+	background: url('../images/table.png') 0 2px no-repeat;
+}
+.reportsList dt.piechartReport {
+	padding-left: 24px;
+	background: url('images/chart_pie.png') 0 2px no-repeat;
+}
+.reportsList dt.barchartReport {
+	padding-left: 24px;
+	background: url('images/chart_bar.png') 0 2px no-repeat;
+}
+.reportsList dt.taskCode {
+	padding-left: 24px;
+	background: url('images/tag_blue.png') 0 2px no-repeat;
+}
+/* ======================== Saved Reports module ==========================*/
+.removeMe {
+	font-weight: normal;
+	float: right;
+	color: #ccc;
+}
+/* ======================== Report "Configurator" ==========================*/
+#configurator {
+	background-color: #eee;
+	margin-bottom: 1em;
+	/*-moz-border-radius: .6em;*/
+}
+#configurator {
+	padding: 2em;
+}
+#customRange {
+	margin-top: 1em;
+	display: none;
+}
+#submitArea {
+	margin: 3em 0 0 180px;
+}
+/* ======================== Report Detail ==========================*/
+	#report #printTitle {
+		display: none; /* we'll turn it back on for print */
+	}
+	#report table#configuration {
+		border: 1px solid #ccc;
+		margin-bottom: 1em;
+		width: 100%;
+	}
+
+	#report table#configuration td {
+		padding: .6em 1em;
+		border-right: 1px solid #ccc;
+	}
+
+	/* control Bar */
+	#report .controlBar {
+		margin-bottom: 1em;
+	}
+
+
+	/* Tables */
+	#report table.tabularData  td.elapsed, #report .tabularData  td.percentage, #report .tabularData  td.charge {
+		text-align: right;
+	}
+
+	#report table.tabularData {
+		margin-bottom: 2em;
+	}
+
+	#report table.tabularData td,
+	#report table.tabularData th {
+		padding-right: 1em;
+		padding-left: 1em;
+	}
+
+	#report td.emptyCell {
+		background-color: #fff;
+	}
+
+	#report td.zero {
+		color: #ccc;
+	}
+
+	#report table.tabularData th.weekdayLabel,
+	#report table.tabularData th.hoursLabel,
+	#report table.tabularData th.offlineLabel,
+	#report table.tabularData th.chargesLabel {
+		text-align: right;
+	}
+
+	#report table.tabularData caption {
+		text-align: left;
+		font-weight: bold;
+		margin-bottom: .4em;
+		font-size: 1.1em;
+	}
+
+	#report table.tabularData colgroup.weeks {
+		border-right: 1px solid #ccc;
+		text-align: left;
+		background-color: #eee;
+	}
+
+	#report table.tabularData colgroup.totals {
+		border-left: 1px solid #ccc;
+		background-color: #FFFFCC;
+	}
+
+	#report table.tabularData colgroup.totals td {
+		font-weight: bold;
+	}
+
+	#report table.tabularData td.grandTotal {
+		background-color: #FFFF66;
+		font-weight: bold;
+	}
+/* ======================== Visualization Overrides ==================================*/
+.google-visualization-table-th {
+	color: #666;
+
+}
+/* ======================== Modals ==================================*/
+#saveThisReport .content {
+	margin: 2em;
+}
