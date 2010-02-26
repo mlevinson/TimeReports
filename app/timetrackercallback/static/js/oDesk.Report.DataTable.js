@@ -1,5 +1,7 @@
 oDesk.Report.renderField = function(data){
-    return data.aData[data.iDataColumn].value;
+    var val = data.aData[data.iDataColumn].value;
+    if (val == null) return "";
+    return val;
 };
 
 oDesk.Report.prototype.dtFormatHours = function(data){

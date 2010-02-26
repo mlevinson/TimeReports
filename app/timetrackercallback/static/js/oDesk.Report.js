@@ -112,7 +112,7 @@
 
         var query = new oDesk.DataSource.Query(this.state.makeParams());
         query.setUrlTemplate(oDesk.urls.getProviderHours);
-        query.addSelectStatement(["worked_on", "sum(hours)", "sum(earnings)", "team_name", "team_id"]);
+        query.addSelectStatement(["worked_on", "sum(hours)", "sum(earnings)", "team_name", "team_id", "agency_name", "agency_id"]);
         query.addCondition(">=", "worked_on", "{timelineStartDate}");
         query.addCondition("<=", "worked_on", "{timelineEndDate}");
         query.addSortStatement(["team_name", "worked_on"]);
@@ -147,11 +147,11 @@
         query.addSelectStatement(["worked_on",
                                   "sum(hours)", "sum(earnings)",
                                   "team_name", "team_id",
-                                  "provider_name", "provider_id"]);
+                                  "provider_name", "provider_id", "agency_name", "agency_id"]);
 
         query.addCondition(">=", "worked_on", "{timelineStartDate}");
         query.addCondition("<=", "worked_on", "{timelineEndDate}");
         query.addSortStatement(["provider_id", "team_name", "worked_on"]);
         return query.toString();
-    };         
+    };
 })(jQuery);

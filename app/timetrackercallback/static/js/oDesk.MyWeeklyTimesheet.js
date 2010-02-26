@@ -3,10 +3,21 @@
         var report = this;
         var cols = [];
         if(report.state.provider.id){
-            cols.push({sTitle:"Buyer",fnRender: oDesk.Report.renderField});
+            cols.push({
+                sTitle:"Buyer",
+                canGroup: report.state.showAgencyName,
+                groupValue: function(field){return field.value;},
+                fnRender: oDesk.Report.renderField});
         } else {
             cols.push({sTitle:"Provider", fnRender: oDesk.Report.renderField});
         }
+        if (report.state.showAgencyName){
+            cols.push({
+                sTitle: "Agency",
+                fnRender: oDesk.Report.renderField
+            });
+        }
+
         $.each(oDeskUtil.dayNames, function(i, day){
            cols.push({
                sTitle: day,
@@ -36,6 +47,7 @@
           var footerRows = [];
           footerRows.push({
                 sClass: "footer-label",
+                colspan:  report.state.showAgencyName ? 2 : 1,
                 fnRender: function(results, col){
                     if (report.state.provider.name){
                         return "Total for " + report.state.provider.name + ":";
@@ -71,22 +83,31 @@
     oDesk.Report.prototype.transformData = function(data){
         var report = this;
         var results = new oDesk.DataSource.ResultSet(data);
+        report.state.showAgencyName = false;
 
+        var labels = [{
+             name: report.state.provider.id ? "provider" : "buyer",
+             labelFunction: function(record){
+                 if (report.state.provider.id) {
+                     return record.team_name.value;
+                 } else {
+                     var provider = new oDesk.Provider(record.provider_id.value, record.provider_name.value);
+                     return provider.getDisplayName();
+                 }
+             }
+        }];
+
+        var agencies = results.getUniqueRecordValues("agency_name");
+        if (agencies.length > 1){
+            labels.push({
+                name: "agency",
+                labelFunction: function(record){return record.agency_name.value;}
+            });
+            report.state.showAgencyName = true;
+        }
 
         results.pivotWeekDays({
-             labels: [
-                 {
-                     name: report.state.provider.id ? "provider" : "buyer",
-                     labelFunction: function(record){
-                         if (report.state.provider.id) {
-                             return record.team_name.value;
-                         } else {
-                             var provider = new oDesk.Provider(record.provider_id.value, record.provider_name.value);
-                             return provider.getDisplayName();
-                         }
-                     }
-                 }
-             ],
+             labels: labels,
              values: {
                  value: function(record){return record.hours.value;},
                  earnings: function(record){return record.earnings.value;}

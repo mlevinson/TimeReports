@@ -203,23 +203,25 @@ $.widget("ui.oDeskDataTable",{
           var widget = this;
           var tr = $("<tr></tr>").appendTo(widget.options.table.children("tfoot"));
           widget.options.footerColumns = widget.options.report.footerSpec();
+          var columnOffset = 0;
           $.each(widget.options.footerColumns, function(c, col){
-               var td = "<td";
-               if(col.sClass){
-                   td += " class=\"";
-                   td += col.sClass;
-                   td += "\"";
-               }
-               if(col.colspan){
-                   td += " colspan=\"";
-                   td += col.colspan;
-                   td += "\"";
-               }
-               td += ">";
-               td += col.fnRender(results, c);
-               td += "</td>";
-               $(tr).append(td);
-           });
+              var td = "<td";
+              if(col.sClass){
+                  td += " class=\"";
+                  td += col.sClass;
+                  td += "\"";
+              }
+              if(col.colspan){
+                  td += " colspan=\"";
+                  td += col.colspan;
+                  td += "\"";
+                  columnOffset += (parseInt(col.colspan) - 1);
+              }
+              td += ">";
+              td += col.fnRender(results, c + columnOffset);
+              td += "</td>";
+              $(tr).append(td);
+          });
      },
      processResults: function(results){
          var widget = this;
@@ -344,9 +346,6 @@ $.widget("ui.oDeskDataTable",{
               $.each(columns, function(c, col){
                  if(!col.canGroup) return;
                  var value = grouper.getValue(row, col, c);
-                 if($.isFunction(col.groupValue)){
-                     value = col.groupValue(row[c]);
-                 }
                  var group = grouper.currentColumnGroup(c);
                  if(group && group.value != value){
                      grouper.endGroup(group, r - 1);
