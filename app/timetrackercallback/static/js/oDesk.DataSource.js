@@ -190,7 +190,10 @@
              var f = null;
              if($.isFunction(columnName)){
                  f = columnName(record);
-             } else {
+             } else if (record[columnName] == undefined){
+                 return false;
+             }
+             else {
                  f = record[columnName].value;
              }
              if($.inArray(f, uniqueList) == -1){
@@ -206,6 +209,7 @@
         resultset.prototype.getUniqueRowValues = function(columnIndex){
             var uniqueList = [];
             $.each(this.rows, function(i, row){
+             if(columnIndex >= row.length) return false;
              var value = row[columnIndex].value;
              if($.inArray(value, uniqueList) == -1){
                 uniqueList.push(value);
