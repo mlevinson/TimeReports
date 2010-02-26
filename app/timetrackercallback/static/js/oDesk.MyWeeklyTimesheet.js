@@ -13,7 +13,7 @@
         }
         if (report.state.showAgencyName){
             cols.push({
-                sTitle: "Agency",
+                sTitle: "Provider Company",
                 fnRender: oDesk.Report.renderField
             });
         }
