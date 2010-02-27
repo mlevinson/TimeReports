@@ -148,9 +148,12 @@ a:hover {color:#0033FF; text-decoration:underline; }
 #timereports_provider_selector,
 #timereports_week_selector,
 #timereports_month_selector{display:block;float:left;position:relative;top:-2px;}
-
 #timereports_week_selector{position:relative;top:2px; min-width:200px; }
 
+#timereports_range_selector{
+    display:block;float:left;position:relative;top:0px;
+}
+.helpTip{colorfloat:right;;}
 .report_table_list li{
     list-style-type:none;
     padding:16px 0;
@@ -165,6 +168,26 @@ a:hover {color:#0033FF; text-decoration:underline; }
     display:inline-block;
     position:relative;
 }
+
+.control label{
+    margin: 0 2px;
+}
+.control button,
+.control select,
+.control input,
+.control label{
+    position: relative;
+    top: 2px;
+}
+
+#timereports_range_selector input.calendar{
+    position:relative;
+    top: 2px;
+    border: 1px solid gray;
+    width: 144px !important;
+    text-align: center;
+}
+
 
 /* ========================= */
 /* = Month Selector Styles = */
@@ -216,18 +239,6 @@ a:hover {color:#0033FF; text-decoration:underline; }
    #month_selector_list li{ float:left;}
    #month_selector_list li { line-height: 24px; }
 
-#reports_time_range_selector{
-    position:static;
-}
-
-
-#reports_time_range_selector input.calendar{
-    position:relative;
-    top: 2px;
-    border: 1px solid gray;
-    width: 200px !important;
-    text-align: center;
-}
 /* ============================ */
 /* = From PageLayout.css labs = */
 /* ============================ */

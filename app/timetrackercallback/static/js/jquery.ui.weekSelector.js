@@ -43,6 +43,7 @@ $.widget("ui.weekSelector",{
                 $(widget.element[0]).trigger("dateSelected", selectedDate);
              })
              .dpSetSelected(widget.options.weekStartDate.toString("dd/MM/yyyy"));
+             $("div.dp-popup").addClass("dp-week");
     }
 });
 

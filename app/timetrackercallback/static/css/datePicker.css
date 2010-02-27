@@ -4,22 +4,27 @@ table.jCalendar {
 	border: 1px solid #000;
 	background: #fff;
     border-collapse: separate;
-    border-spacing: 2px;  
+    border-spacing: 2px;
     margin:0 auto;
 }
 table.jCalendar th {
 	background: #333;
 	color: #fff;
 	font-weight: bold;
-	padding: 3px 7px;
+	padding: 3px 3px;
 }
 
 table.jCalendar td {
 	background: #fffffd;
 	color: #000;
-	padding: 3px 7px;
+	padding: 3px 3px;
 	text-align: center;
 }
+.dp-week table.jCalendar th,
+.dp-week table.jCalendar td{
+	padding: 3px 7px;
+}
+
 table.jCalendar td.other-month {
 	background: #ddd;
 	color: #aaa;
@@ -66,9 +71,13 @@ div.dp-popup {
 	font-size: 10px;
 	font-family: arial, sans-serif;
 	padding: 2px;
-	width: 200px;
-	line-height: 1.2em;  
+	width: 144px;
+	line-height: 1.2em;
 	border: 1px solid #000;
+}
+
+div.dp-popup.dp-week{
+    width: 200px;
 }
 div#dp-popup {
 	position: absolute;

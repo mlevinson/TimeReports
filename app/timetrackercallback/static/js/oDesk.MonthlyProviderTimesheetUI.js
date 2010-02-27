@@ -3,10 +3,6 @@
         oDesk.ReportPage.prototype.constructor.call(this);
         this.companySelectorFlavor = "hiring";
         $.extend(this.elements, {
-            provider : {
-                name : ".provider-name",
-                selector: "#timereports_provider_selector SELECT"
-            },
             timeline:{
                 tableCaption: "#time-month-name",
                 selector: "#month_year_display"
@@ -36,34 +32,6 @@
         this.report.state.timeline = new oDesk.Timeline(this.parameters.timeline.type, d);
     };
 
-    monthlyProviderTimesheet.prototype.teamChanged = function(company){
-        var ui = this;
-        $(ui.elements.provider.selector).oDeskSelectWidget("populate");
-    };
-
-    monthlyProviderTimesheet.prototype.bindProviderSelector = function(){
-        var ui = this;
-         $(ui.elements.provider.selector).oDeskSelectWidget({
-                report: ui.report,
-                all_option_id: "all_providers",
-                all_option_text: "All providers",
-                stateVariable: ui.report.state.provider,
-                service: oDesk.Services.getProviders,
-                useDisplayName: true
-            })
-            .unbind("populationComplete").bind("populationComplete", function(){
-                var selectedProviderId = ui.report.state.provider.id;
-                var selectedProviderOption = ui.elements.provider.selector + " #" + selectedProviderId;
-                if(!selectedProviderId || !$(selectedProviderOption).length){
-                    $(this).oDeskSelectWidget("setDefaults");
-                } else {
-                    $(selectedProviderOption).each(function(){
-                        this.selected = true;
-                    });
-                }
-             }).oDeskSelectWidget("populate");
-    };
-
     monthlyProviderTimesheet.prototype.canRefreshReport = function(){
         if(!this.initComplete && this.report.state.company.id){
             this.initComplete = true;
@@ -72,31 +40,44 @@
         return false;
     };
 
+    monthlyProviderTimesheet.prototype.setDefaults = function(){
+        this.report.state.mustGetHours = true;
+        this.setSelectedDate(Date.today());
+    };
+
+    monthlyProviderTimesheet.prototype.completeInitialization = function(){
+        var ui = this;
+        $(ui.elements.timeline.selector)
+            .ringceMonthSelector()
+            .unbind("monthSelected").bind("monthSelected", function(e, selectedDate){
+                ui.setSelectedDate(selectedDate);
+        });
+
+        $(ui.elements.report.displayType).unbind("click").bind("click", function(){
+            if($(this).hasClass("selected")) return false;
+            $(ui.elements.report.displayType).toggleClass("selected");
+            ui.report.state.mustGetHours = $(ui.elements.report.displayTypeHours).hasClass("selected");
+            $(ui.elements.report.hoursOrCharges).text(ui.report.state.mustGetHours?"Hours":"Charges");
+            ui.refreshReport();
+            return false;
+        });
+
+        $(ui.elements.report.container)
+                .oDeskDataTable({report: ui.report, service: oDesk.Services.getHours});
+    };
+
     monthlyProviderTimesheet.prototype.init = function(){
         var ui = this;
         ui.initComplete = false;
+        this.providerSelectorOptions = {
+            useDisplayName:true,
+            includeAllOption: true,
+            all_option_id: "all_providers",
+            all_option_text: "All providers",
+        };
+        this.canBindProviderSelector = true;
         this.initialize(function(){
-            ui.report.state.mustGetHours = true;
-            ui.bindProviderSelector();
 
-            $(ui.elements.timeline.selector)
-                .ringceMonthSelector()
-                .unbind("monthSelected").bind("monthSelected", function(e, selectedDate){
-                    ui.setSelectedDate(selectedDate);
-            });
-
-            $(ui.elements.report.displayType).unbind("click").bind("click", function(){
-                if($(this).hasClass("selected")) return false;
-                $(ui.elements.report.displayType).toggleClass("selected");
-                ui.report.state.mustGetHours = $(ui.elements.report.displayTypeHours).hasClass("selected");
-                $(ui.elements.report.hoursOrCharges).text(ui.report.state.mustGetHours?"Hours":"Charges");
-                ui.refreshReport();
-                return false;
-            });
-
-            $(ui.elements.report.container)
-                    .oDeskDataTable({report: ui.report, service: oDesk.Services.getHours});
-            ui.setSelectedDate(Date.today());
         });
     };
 

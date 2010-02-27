@@ -30,6 +30,14 @@ oDesk = function(){
     oDeskTime = function(sTimeType, start, end){
         var dt = start ? start.clone() : Date.today();
         this.timeType = sTimeType;
+        this.setStartDate(start);
+        if (this.timeType == "range"){
+            this.setEndDate(end ? end.clone() : Date.today());
+        }
+    };
+
+    oDeskTime.prototype.setStartDate = function(date){
+        var dt = date ? date.clone() : Date.today();
         if(this.timeType == "month"){
             this.startDate = dt;
             this.startDate.moveToFirstDayOfMonth();
@@ -44,10 +52,30 @@ oDesk = function(){
              this.endDate.addDays(6);
         } else if (this.timeType == "range"){
             this.startDate = dt;
-            this.endDate = end ? end.clone() : Date.today();
+            if(!this.endDate || (this.endDate < this.startDate)){
+                this.endDate = this.startDate.clone();
+            }
         } else {
-            this.startDate = this.endDate = Date.today();
+            this.startDate = dt;
+            this.endDate = dt.clone();
         }
+    };
+
+    oDeskTime.prototype.setEndDate = function(date){
+
+        if(this.timeType == "range"){
+            var dt = date ? date.clone() : Date.today();
+            this.endDate = dt;
+            if(this.startDate > this.endDate){
+                this.startDate = this.endDate;
+            }
+        }  else {
+            this.setStartDate(date);
+        }
+    };
+
+    oDeskTime.prototype.validateAndFix = function(){
+          this.setStartDate(this.startDate);
     };
 
     oDeskTime.prototype.makeParams = function(prefix){
@@ -59,15 +87,18 @@ oDesk = function(){
 
     oDeskTime.prototype.getDisplayName = function(abbr){
       var monthString = abbr? "MMM" : "MMMM";
-
+      var name = "";
       if(this.timeType == "month"){
-          return this.startDate.toString(monthString + " yyyy");
+          name = this.startDate.toString(monthString + " yyyy");
       } else if(this.timeType == "week" || this.timeType == "range"){
-          return this.startDate.toString("dd " + monthString + " yyyy") + " - " +
-                    this.endDate.toString("dd " + monthString + " yyyy");
+          name = this.startDate.toString("dd " + monthString + " yyyy");
+          if (this.endDate > this.startDate){
+              name += (" - " + this.endDate.toString("dd " + monthString + " yyyy"));
+          }
       } else {
-          return this.startDate.toString("dd " + monthString + " yyyy");
+          name = this.startDate.toString("dd " + monthString + " yyyy");
       }
+      return name;
     };
 
     oDeskTime.prototype.getDisplayNameWithAbbreviations = function(){
@@ -77,11 +108,11 @@ oDesk = function(){
     services = function(){};
     datasource = function(){};
     report = function(sTimeType){};
-    
-    
+
+
 
     return {
-            oDeskObject: oDeskObject, 
+            oDeskObject: oDeskObject,
             Team: oDeskObject,
             Company: oDeskObject,
             Provider: oDeskObject,

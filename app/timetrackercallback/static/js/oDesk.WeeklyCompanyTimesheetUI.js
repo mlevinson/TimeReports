@@ -32,19 +32,25 @@
         return false;
     };
 
+    weeklyCompanyTimesheet.prototype.setDefaults = function(){
+        this.setSelectedDate(Date.today());
+    };
+
+    weeklyCompanyTimesheet.prototype.completeInitialization = function(){
+        var ui = this;
+        $(ui.elements.week.selector)
+            .weekSelector({weekStartDate: ui.report.state.timeline.startDate})
+            .unbind("dateSelected").bind("dateSelected", function(e, selectedDate){
+                ui.setSelectedDate(selectedDate);
+            });
+        $(ui.elements.report.container)
+                .oDeskDataTable({report: ui.report, service: oDesk.Services.getHours});
+    };
+
     weeklyCompanyTimesheet.prototype.init = function(){
         var ui = this;
         ui.initComplete = false;
-        this.initialize(function(){
-            $(ui.elements.week.selector)
-                .weekSelector({weekStartDate: ui.report.state.timeline.startDate})
-                .unbind("dateSelected").bind("dateSelected", function(e, selectedDate){
-                    ui.setSelectedDate(selectedDate);
-                });
-            $(ui.elements.report.container)
-                    .oDeskDataTable({report: ui.report, service: oDesk.Services.getHours});
-            ui.setSelectedDate(Date.today());
-        });
+        this.initialize();
     };
 
     WeeklyCompanyTimesheet = new weeklyCompanyTimesheet();

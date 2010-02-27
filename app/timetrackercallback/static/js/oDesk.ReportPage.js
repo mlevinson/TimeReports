@@ -5,11 +5,17 @@
         this.companySelectorFlavor = "member";
         this.canBindCompanySelector = true;
         this.canBindTeamSelector = true;
+        this.canBindProviderSelector = false;
         this.companyReference = null;
         this.canBindGoButton = true;
+        this.providerSelectorOptions = {};
         this.elements = {
             company : {
                 selector:"#top_selector"
+            },
+            provider : {
+                name : ".provider-name",
+                selector: "#timereports_provider_selector SELECT"
             },
             team : {
                  name : ".team-name",
@@ -58,22 +64,50 @@
         });
     };
 
+    oDesk.ReportPage.prototype.setParam = function(param, value){
+        var ui = this;
+        if (param == "providerId") {
+            ui.report.state.provider.id = value;
+        } else if (param == "teamId") {
+            ui.report.state.team.id = value;
+        } else if (param == "startDate"){
+            if(value){
+                ui.report.state.timeline.startDate = Date.fromString(value, "yyyy-mm-dd");
+            }
+        }  else if (param == "endDate"){
+            if(value){
+                ui.report.state.timeline.endDate = Date.fromString(value, "yyyy-mm-dd");
+            }
+        }
+    };
 
-    oDesk.ReportPage.prototype.initialize = function(initComplete){
+    oDesk.ReportPage.prototype.setDefaults = function(){};
+    oDesk.ReportPage.prototype.completeInitialization = function(){};
+    oDesk.ReportPage.prototype.validateState = function(){
+        this.report.state.timeline.validateAndFix();
+    };
+
+    oDesk.ReportPage.prototype.initialize = function(parameters){
         var ui = this;
         ui.report = new oDesk.Report(ui.parameters.timeline.type);
+        ui.setDefaults();
+
         ui.companyReference = oDeskUtil.getParameterByName(
                                     ui.parameters.company.name,
                                     ui.parameters.company.defaultValue);
+        var params = parameters || {};
+        $.each(params, function(param, name){
+           ui.setParam(param, oDeskUtil.getParameterByName(name, null));
+        });
+        ui.validateState();
         ui.bindGoButton();
         ui.addLoadingIndicator();
         oDesk.Services.getAuthUserAndRoles(function(user){
             ui.report.state.authUser = user;
             ui.bindCompanySelector();
             ui.bindTeamSelector();
-            if($.isFunction(initComplete)){
-                initComplete();
-            }
+            ui.bindProviderSelector();
+            ui.completeInitialization();
         });
 
     };
@@ -86,7 +120,12 @@
             $(ui.elements.team.selector).oDeskSelectWidget("populate");
         }
     };
-    oDesk.ReportPage.prototype.teamChanged = function(team){};
+    oDesk.ReportPage.prototype.teamChanged = function(team){
+        var ui = this;
+        if (ui.canBindProviderSelector){
+            $(ui.elements.provider.selector).oDeskSelectWidget("populate");
+        }
+    };
 
     oDesk.ReportPage.prototype.bindGoButton = function(){
         var ui = this;
@@ -116,6 +155,20 @@
 
     };
 
+     oDesk.ReportPage.prototype.bindProviderSelector = function(){
+        var ui = this;
+        var defaults = {
+            report: ui.report,
+            includeAllOption: false,
+            stateVariable: ui.report.state.provider,
+            service: oDesk.Services.getProviders,
+            useDisplayName: false
+        };
+        $(ui.elements.provider.selector).oDeskSelectWidget(
+            $.extend({}, defaults, ui.providerSelectorOptions)
+        );
+    };
+
     oDesk.ReportPage.prototype.bindTeamSelector = function(){
         var ui = this;
         if(!ui.canBindTeamSelector) return;
@@ -129,9 +182,7 @@
         .unbind("selectionChanged").bind("selectionChanged", function(){
             ui.teamChanged(ui.report.state.team);
         })
-        .unbind("populationComplete").bind("populationComplete", function(){
-            $(this).oDeskSelectWidget("setDefaults");
-        }).oDeskSelectWidget("populate");
+        .oDeskSelectWidget("populate");
     };
 
 

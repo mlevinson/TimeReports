@@ -272,15 +272,16 @@
             <div id="reports_main_content" class="content_main">
                 <div class="control_bar">
                     <div class="control" id="timereports_team_selector">
-                        Team:&nbsp;&nbsp;<select class="dispatchable ie-onchange-fix">
+                        <label for="team-selector">Team:</label>
+                        <select id="team-selector" class="dispatchable ie-onchange-fix">
                         </select>
                     </div>
-                    <div class="control" id="reports_time_range_selector">
-                        Range:&nbsp;
+                    <div class="control" id="timereports_range_selector">
+                        <label for="date-from">Range:</label>
                         <input  id="date_from" type="text"
                                 class="calendar dispatchable change ie-onchange-fix"
                                 format="%m/%d/%Y">
-                        &nbsp;to&nbsp;
+                        <label for="date-to">to</label>
                         <input  id="date_to" type="text"
                                 class="calendar dispatchable change ie-onchange-fix"
                                 format="%m/%d/%Y">

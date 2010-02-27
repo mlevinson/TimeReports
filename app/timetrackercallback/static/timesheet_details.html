@@ -6,14 +6,14 @@
             Outsource to Freelancers, IT Companies, Programmers, Web Designers from India, Russia, USA, and more - oDesk
         </title>
         <link rel="stylesheet" href="http://www.odesk.com/css/static/REL201002040104/nav.css" type="text/css" />
-        <link rel="stylesheet" href="css/timereports.css" type="text/css" />
-        <link rel="stylesheet" href="css/datePicker.css" type="text/css" />
-        <link rel="stylesheet" href="css/customselector.css" type="text/css" />
         <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/css_browser_selector.js">
 </script>
         <link rel="stylesheet" href="http://www.odesk.com/css/static/REL201002040104/odesk_console.css" type="text/css" />
         <link rel="stylesheet" href="http://www.odesk.com/js/jquery/plugins/css/static/REL201002040104/thickbox.css" type="text/css" />
         <link rel="stylesheet" href="http://www.odesk.com/api/owl/dhtml_widgets.css" type="text/css" />
+        <link rel="stylesheet" href="css/timereports.css" type="text/css" />
+        <link rel="stylesheet" href="css/datePicker.css" type="text/css" />
+        <link rel="stylesheet" href="css/customselector.css" type="text/css" />
         <script type="text/javascript">
 //<![CDATA[
         var _sf_startpt=(new Date()).getTime()
@@ -34,11 +34,11 @@
         </script>
         <script type="text/javascript" src="http://www.odesk.com/js/jquery/jquery.pack.js">
 </script>
+        <script type='text/javascript' src='http://www.odesk.com/js/jquery/plugins/static/REL201002040104/jquery.plugins.js'>
+</script>
         <script type='text/javascript' src='http://www.odesk.com/js/static/REL201002040104/common.utils.js'>
 </script>
 
-        <script type='text/javascript' src='http://www.odesk.com/js/jquery/plugins/static/REL201002040104/jquery.plugins.js'>
-</script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
         <link rel='stylesheet' href='http://www.odesk.com/js/jquery/plugins/css/static/REL201002040104/jquery.plugins.css' type='text/css' />
         <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/nav.js">
@@ -50,22 +50,22 @@
         <script src="js/date.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/date1.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/jquery.formatCurrency.js" type="text/javascript" charset="utf-8"></script>
-        <script src="js/oDeskUtil.js" type="text/javascript" charset="utf-8"></script>
         <!--[if IE]><script type="text/javascript" src="js/jquery.bgiframe.pack.js"></script><![endif]-->
         <script type="text/javascript" src="js/jquery.datePicker.js"></script>
+        <script src="js/oDeskUtil.js" type="text/javascript" charset="utf-8"></script>
         <script type="text/javascript" src="js/oDesk.Core.js"></script>
         <script type="text/javascript" src="js/oDesk.DataSource.js"></script>
         <script type="text/javascript" src="js/oDesk.Report.js"></script>
         <script type="text/javascript" src="js/oDesk.Services.js"></script>
         <script type="text/javascript" src="js/oDesk.AuthUser.js"></script>
-        <script type="text/javascript" src="js/oDesk.Report.DataTable.js"></script>
-        <script type="text/javascript" src="js/oDesk.WeeklyCompanyTimesheet.js"></script>
         <script type="text/javascript" src="js/jquery.ui.oDeskDataTable.js"></script>
         <script type="text/javascript" src="js/jquery.ui.oDeskCompanySelector.js"></script>
+        <script type="text/javascript" src="js/oDesk.Report.DataTable.js"></script>
+        <script type="text/javascript" src="js/oDesk.TimesheetDetails.js"></script>
         <script src="js/jquery.ui.oDeskSelectWidget.js" type="text/javascript" charset="utf-8"></script>
-        <script src="js/jquery.ui.weekSelector.js" type="text/javascript" charset="utf-8"></script>
         <script type="text/javascript" src="js/oDesk.ReportPage.js"></script>
-        <script type="text/javascript" src="js/oDesk.WeeklyCompanyTimesheetUI.js"></script>
+        <script type="text/javascript" src="js/oDesk.TimesheetDetailsUI.js"></script>
+
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     </head>
     <body bgcolor="#FFFFFF">
@@ -259,15 +259,14 @@
                             Reports Home</a></li>
                         </ul>
                 </div>
-
             </div>
             <div id="reports_header">
                 <div id="company_bar">
                     <span class="label">Company:</span>
                     <div id="top_selector"></div>
                 </div>
-               <div id="pageTitle">
-                    <h1>Weekly Company Timesheet</h1>
+                <div id="pageTitle">
+                    <h1>Timesheet Details</h1>
                 </div>
             </div>
             <div id="reports_main_content" class="content_main">
@@ -277,7 +276,20 @@
                         <select id="team-selector" class="dispatchable ie-onchange-fix">
                         </select>
                     </div>
-                    <div class="control" id="timereports_week_selector">
+                     <div class="control" id="timereports_provider_selector">
+                        <label for="provider-selector">Provider:</label>
+                        <select id="provider-selector" class="dispatchable ie-onchange-fix">
+                        </select>
+                    </div>
+                    <div class="control" id="timereports_range_selector">
+                        <label for="date_from">Range:</label>
+                        <input  id="date_from" type="text"
+                                class="calendar dispatchable change ie-onchange-fix"
+                                format="%m/%d/%Y">
+                        <label for="date_to">to</label>
+                        <input  id="date_to" type="text"
+                                class="calendar dispatchable change ie-onchange-fix"
+                                format="%m/%d/%Y">
                     </div>
                     <div class="control" id="run_report">
                         <button id="go_run_report">Go</button>
@@ -285,15 +297,17 @@
                     <br class="clear">
                 </div>
                 <h2 class="table-caption">
-                Timesheet for <span class="team-name">Team</span>
-                <span class="table-sub-caption" id="time-week"></span></h2>
-                <div id="reports-grid"></div>
+                     Timesheet Details for <span class="provider-name">Provider</span>
+                     <span class="table-sub-caption">
+                        <span id="time-range"></span> - <span id="team-name"></span>
+                     </span>
+                    </h2>
+                    <div id="reports-grid"></div>
+                </div>
            </div>
         </div>
-    <script type="text/javascript">
-       $(function(){
-            WeeklyCompanyTimesheet.init();
-        });
-    </script>
+        <script type="text/javascript">
+            TimesheetDetails.init();
+        </script>
     </body>
 </html>

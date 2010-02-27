@@ -270,11 +270,13 @@
             <div id="reports_main_content" class="content_main">
                 <div class="control_bar">
                     <div class="control" id="timereports_team_selector">
-                        Team:&nbsp;<select class="dispatchable ie-onchange-fix">
+                        <label for="team-selector">Team:</label>
+                        <select id="team-selector" class="dispatchable ie-onchange-fix">
                         </select>
                     </div>
                     <div class="control" id="timereports_provider_selector">
-                        Provider:&nbsp;<select class="dispatchable ie-onchange-fix">
+                        <label for="provider-selector">Provider:</label>
+                        <select id="provider-selector" class="dispatchable ie-onchange-fix">
                         </select>
                     </div>
                     <div class="control" id="timereports_month_selector">
@@ -292,13 +294,14 @@
                                 <span class="toggle radio selected" id="hours">Hours</span>
                                 <span class="space">|</span>
                                 <span class="toggle radio" id="charges">
-                                    Estimated Charges&nbsp;
+                                    Estimated Charges
                                     <span class="helpTip" title=""
-                                    bt-xtitle="The charges shown in this report&lt;br &gt;&lt;/span&gt;
-                                    are estimated because they do not include&lt;br /&gt;discretionary
-                                    payments such as bonuses.&lt;br /&gt;Actual charges can be
-                                    viewed&lt;br /&gt;in Payments &gt; Financial
-                                    Activity.">&nbsp;</span>
+                                    bt-xtitle="The charges shown in this report
+                                    &lt;br &gt;&lt;/span&gt;
+                                    are estimated because they do not include&lt;br /&gt;
+                                    discretionary payments such as bonuses.&lt;br /&gt;
+                                    Actual charges can be viewed &lt;br /&gt;in Payments&gt;
+                                    Financial Activity.">&nbsp;</span>
                                 </span>
                             </div>
                         </div>
@@ -307,8 +310,8 @@
             <h2 class="table-caption monthly">
                 <span id="hours_title" class="hours_label">Hours</span> for
                 <span class="provider-name">Provider</span> in
-                <span class="team-name">Team</span> 
-                
+                <span class="team-name">Team</span>
+
                 <span class="table-sub-caption" id="time-month-name"></span></h2>
                 <div id="reports-grid"></div>
            </div>

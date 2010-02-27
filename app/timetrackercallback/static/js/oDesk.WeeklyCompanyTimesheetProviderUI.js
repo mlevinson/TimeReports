@@ -66,8 +66,6 @@
         return false;
     };
 
-
-
     weeklyCompanyTimesheetProvider.prototype.filterProviders = function(data){
         if(!data ||  !data.table || !data.table.rows) return [];
         var providers = [], providerIds = [];
@@ -93,7 +91,7 @@
          var element = $(html).appendTo(this.elements.report.providerList);
          var id = "#" + element.attr("id");
          $(element).oDeskDataTable({
-             "report": ui.report, 
+             "report": ui.report,
              "service": oDesk.Services.getAgencyHours
          }).oDeskDataTable("generateReport");
      };
@@ -104,34 +102,40 @@
         var element = $(html).appendTo(this.elements.report.providerList);
         var id = "#" + element.attr("id");
         $(element).oDeskDataTable({
-            "report": ui.report, 
+            "report": ui.report,
             "service": oDesk.Services.getAgencyHours
         }).oDeskDataTable("generateReport");
+    };
+
+    weeklyCompanyTimesheetProvider.prototype.setDefaults = function(){
+        var ui = this;
+        ui.setSelectedDate(Date.today());
+        ui.report.state.filter_agency_hours = false;
+        if(oDeskUtil.getParameterByName("test", null) == "test"){
+            $.getJSON("js/data.json",
+                function(data){
+                    ui.initComplete = true;
+                    ui.report.state.agency_hours_cache = data;
+                    ui.report.state.agency_hours_status_cache = "success";
+                    ui.refreshReport();
+            });
+        }
+    };
+
+    weeklyCompanyTimesheetProvider.prototype.completeInitialization = function(){
+        var ui = this;
+        $(ui.elements.week.selector)
+            .weekSelector({weekStartDate: ui.report.state.timeline.startDate})
+            .unbind("dateSelected").bind("dateSelected", function(e, selectedDate){
+                ui.setSelectedDate(selectedDate);
+        });
     };
 
 
     weeklyCompanyTimesheetProvider.prototype.init = function(){
         var ui = this;
         ui.initComplete = false;
-        this.initialize(function(){
-            $(ui.elements.week.selector)
-                .weekSelector({weekStartDate: ui.report.state.timeline.startDate})
-                .unbind("dateSelected").bind("dateSelected", function(e, selectedDate){
-                    ui.setSelectedDate(selectedDate);
-            });
-            ui.setSelectedDate(Date.today());
-            ui.report.state.filter_agency_hours = false;
-            if(oDeskUtil.getParameterByName("test", null) == "test"){
-                $.getJSON("js/data.json",
-                    function(data){
-                        ui.initComplete = true;
-                        ui.report.state.agency_hours_cache = data;
-                        ui.report.state.agency_hours_status_cache = "success";
-                        ui.refreshReport();
-                });
-
-            }
-        });
+        this.initialize();
     };
 
     WeeklyCompanyTimesheetProvider = new weeklyCompanyTimesheetProvider();

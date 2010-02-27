@@ -3,36 +3,44 @@ $.widget("ui.oDeskSelectWidget",{
     _init: function(){
         var widget = this;
         var select = this.element[0];
-        widget.setDefaults(select);
         $(select).unbind("change").bind("change", function(){
             $(this).children("option:selected").each(function(){
                 var selectedReference =  $(this).val();
                 if(selectedReference == "0"){
                     widget.setDefaults(select);
                 } else {
-                     var obj = widget.options.stateVariable;
-                     obj.reference = selectedReference;
-                     obj.id = $(this).attr("id");
-                     if(widget.options.useDisplayName){
-                         obj.setDisplayName($(this).text());
-                     } else {
-                         obj.name = $(this).text();
-                     }
-                     $(select).trigger("selectionChanged", obj);
+                    widget._selectionChanged(this);
                 }
             });
         });
     },
+    _selectionChanged: function(element){
+        var widget = this;
+        if(!element || !$(element).length) return;
+         $(element).attr("selected", true);
+         var obj = widget.options.stateVariable;
+         obj.reference = $(element).val();
+         obj.id = $(element).attr("id");
+         if (obj.id == widget.options.all_option_id){
+             obj.id = 0;
+         }
+         if(widget.options.useDisplayName){
+             obj.setDisplayName($(element).text());
+         } else {
+             obj.name = $(element).text();
+         }
+         $(widget.element[0]).trigger("selectionChanged", obj);
+    },
+    selectWithId: function(id){
+      var element = $(this.element[0]).children("option#" + id);
+      this._selectionChanged(element);
+    },
+    selectWithReference: function(reference){
+      var element = $(this.element[0]).children("option:[value=" + reference + "]");
+      this._selectionChanged(element);
+    },
     setDefaults: function(select){
-        if(!select){
-            select = this.element[0];
-        }
-        var obj = this.options.stateVariable;
-        if(!obj) return;  
-        obj.reference = null;
-        obj.id = 0;
-        obj.name = this.options.all_option_text;
-        $(select).trigger("selectionChanged", obj);
+        this._selectionChanged($(this.element[0]).children("option:first-child"));
     },
     populate: function(params){
        if(!this.options.stateVariable || !this.options.report || !this.options.service)  return;
@@ -45,14 +53,28 @@ $.widget("ui.oDeskSelectWidget",{
 
        var widget = this;
        this.options.service(this.options.report, function(objs){
+           var selectedObj = null;
            $.each(objs, function(i, obj){
+               var selected = false;
+               if(obj.id == widget.options.stateVariable.id){
+                   selected = true;
+                   selectedObj = obj;
+               }
                options += "<option id='" + obj.id + "' value='" +
-                           obj.reference +"'>";
+                           obj.reference + "' selected='" + selected + "'>";
+
                options += widget.options.useDisplayName ? obj.getDisplayName() : obj.name;
                options += "</option>";
            });
            $(widget.element[0]).html(options);
            $(widget.element[0]).trigger("populationComplete", objs);
+           if(selectedObj){
+               widget.options.stateVariable = selectedObj;
+               widget.selectWithId(selectedObj.id);
+           } else {
+               widget.setDefaults();
+           }
+
        });
     }
 });

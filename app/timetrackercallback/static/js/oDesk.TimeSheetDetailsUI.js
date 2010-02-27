@@ -1,7 +1,9 @@
 (function($){
-    taskSummaryReport = function(){
+    timesheetDetails = function(){
         oDesk.ReportPage.prototype.constructor.call(this);
         this.companySelectorFlavor = "hiring";
+        this.canBindProviderSelector = true;
+        this.canBindDateRange = true;
         $.extend(this.elements, {
             timerange:{
                 tableCaption: "#time-range",
@@ -15,11 +17,11 @@
         });
         this.parameters.timeline.type = "range";
     };
-    taskSummaryReport.prototype = new oDesk.ReportPage();
-    taskSummaryReport.prototype.constructor = taskSummaryReport;
+    timesheetDetails.prototype = new oDesk.ReportPage();
+    timesheetDetails.prototype.constructor = timesheetDetails;
 
 
-    taskSummaryReport.prototype.refreshReport = function(){
+    timesheetDetails.prototype.refreshReport = function(){
         var ui = this;
         ui.setSelectedDateRange(
                 Date.fromString($(ui.elements.timerange.startDate).val()),
@@ -32,24 +34,18 @@
         $(ui.elements.report.container).oDeskDataTable("generateReport");
     };
 
-    taskSummaryReport.prototype.setSelectedDateRange = function(d1, d2){
+    timesheetDetails.prototype.setSelectedDateRange = function(d1, d2){
         var ui = this;
         this.report.state.timeline = new oDesk.Timeline(
              this.parameters.timeline.type, d1, d2);
     };
 
-    taskSummaryReport.prototype.bindTimeSelector = function(){
+    timesheetDetails.prototype.bindTimeSelector = function(){
         var ui = this;
-        Date.format = "dd mmm yyyy";
-        var d1 = Date.today();
-        var d2 = d1.clone();
-        d1.addDays(-30);
-        this.setSelectedDateRange(d1, d2);
-
         $(ui.elements.timerange.startDate)
             .datePicker({startDate:'01/01/1996', clickInput:true, createButton:false})
-            .dpSetSelected(d1.asString())
-            .dpSetEndDate(d2.asString())
+            .dpSetSelected(ui.report.state.timeline.startDate.asString())
+            .dpSetEndDate(ui.report.state.timeline.endDate.asString())
             .bind('dpClosed', function(e, selectedDates){
                 var d = selectedDates[0];
                 if (d) {
@@ -60,8 +56,8 @@
         );
         $(ui.elements.timerange.endDate)
             .datePicker({startDate:'01/01/1996', clickInput:true, createButton:false})
-            .dpSetSelected(d2.asString())
-            .dpSetStartDate(d1.asString())
+            .dpSetSelected(ui.report.state.timeline.endDate.asString())
+            .dpSetStartDate(ui.report.state.timeline.startDate.asString())
             .bind('dpClosed', function(e, selectedDates){
                 var d = selectedDates[0];
                 if (d) {
@@ -72,22 +68,42 @@
             );
     };
 
-    taskSummaryReport.prototype.canRefreshReport = function(){
+    timesheetDetails.prototype.teamChanged = function(company){
+        var ui = this;
+        $(ui.elements.provider.selector).oDeskSelectWidget("populate");
+    };
+
+    timesheetDetails.prototype.canRefreshReport = function(){
         return false;
     };
 
-    taskSummaryReport.prototype.completeInitialization = function(){
+    timesheetDetails.prototype.setDefaults = function(){
+        Date.format = "dd mmm yyyy";
+        var d1 = Date.today();
+        var d2 = d1.clone();
+        d1.addDays(-30);
+        this.setSelectedDateRange(d1, d2);
+    };
+
+    timesheetDetails.prototype.completeInitialization = function(){
         var ui = this;
+        ui.bindProviderSelector();
         ui.bindTimeSelector();
         $(ui.elements.report.container)
-                .oDeskDataTable({report: ui.report, service: oDesk.Services.getTaskSummary, groupRows:true});
+                    .oDeskDataTable({
+                        report: ui.report,
+                        service: oDesk.Services.getTaskSummary,
+                        groupRows:true});
     };
 
-    taskSummaryReport.prototype.init = function(){
+    timesheetDetails.prototype.init = function(){
         var ui = this;
-        ui.initComplete = false;
-        this.initialize();
+        this.initialize({
+            providerId: "provider",
+            teamId: "team",
+            startDate:"startDate",
+            endDate:"endDate"});
     };
 
-    TaskSummaryReport = new taskSummaryReport();
+    TimesheetDetails = new timesheetDetails();
 })(jQuery);

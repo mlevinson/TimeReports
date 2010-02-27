@@ -785,9 +785,10 @@
 					};
 				} else {
 					$createIn = $('body');
+					var dpclass = c.settings.selectWeek ? 'dp-popup dp-week' : 'dp-popup';
 					attrs = {
 						'id'		:	'dp-popup',
-						'class'	:	'dp-popup'
+						'class'	:	dpclass
 					};
 					cssRules = {
 						'top'	:	eleOffset.top + c.verticalOffset,
