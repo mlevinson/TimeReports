@@ -66,7 +66,7 @@
                   {   sClass: "footer-label",
                       colspan: labelspan,
                       fnRender: function(results, group){
-                          return "Total for week " + group.cell.weekLabel + ":";
+                          return "Total for the week " + group.cell.weekLabel + " of " + group.cell.value.toString("yyyy:");
                       }
                   },
                   {

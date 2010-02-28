@@ -57,12 +57,12 @@
             var weekEndDate = weekStartDate.clone();
             weekEndDate.addDays(weekDays);
             weekDays = 6;
-            var start = weekStartDate.toString("dd MMM");
+            var start = weekStartDate.toString("MMM dd");
             if (weekEndDate >= endDate){
               weekEndDate = endDate.clone();
               done = true;
             }
-            var end = weekEndDate.toString("dd MMM");
+            var end = weekEndDate.toString("MMM dd");
             var weekLabel = start;
             if(end != start){
               weekLabel += " - "  + end;
