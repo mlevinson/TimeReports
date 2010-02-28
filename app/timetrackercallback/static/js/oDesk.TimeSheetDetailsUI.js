@@ -23,15 +23,30 @@
 
     timesheetDetails.prototype.refreshReport = function(){
         var ui = this;
+        $(ui.elements.report.placeholder).hide();
+        $(ui.elements.report.content).show();
         ui.setSelectedDateRange(
                 Date.fromString($(ui.elements.timerange.startDate).val()),
                 Date.fromString($(ui.elements.timerange.endDate).val())
             );
         $(ui.elements.team.name).text(ui.report.state.team.name);
+        $(ui.elements.provider.name).text(ui.report.state.provider.name);
         $(ui.elements.timerange.tableCaption).text(this.report.state.timeline.getDisplayName());
-        $(ui.elements.report.placeholder).hide();
-        $(ui.elements.report.content).show();
         $(ui.elements.report.container).oDeskDataTable("generateReport");
+    };
+
+    timesheetDetails.prototype.setParam = function(param, value){
+        if(param == "go" && value == "go"){
+            this.forceRefresh = true;
+        } else if (param =="test" && value == "test") {
+            oDesk.Services.getTimesheetDetails = function(report, success, failure){
+               $.getJSON("js/timesheetDetails.json", function(data){
+                   success(new oDesk.DataSource.ResultSet(data));
+               });
+            };
+        }else {
+            oDesk.ReportPage.prototype.setParam.call(this, param, value);
+        }
     };
 
     timesheetDetails.prototype.setSelectedDateRange = function(d1, d2){
@@ -68,12 +83,13 @@
             );
     };
 
-    timesheetDetails.prototype.teamChanged = function(company){
-        var ui = this;
-        $(ui.elements.provider.selector).oDeskSelectWidget("populate");
-    };
-
     timesheetDetails.prototype.canRefreshReport = function(){
+        if(!this.initComplete && this.forceRefresh &&
+                this.report.state.company.id &&
+                this.report.state.provider.id){
+            this.initComplete = true;
+            return true;
+        }
         return false;
     };
 
@@ -87,12 +103,11 @@
 
     timesheetDetails.prototype.completeInitialization = function(){
         var ui = this;
-        ui.bindProviderSelector();
         ui.bindTimeSelector();
         $(ui.elements.report.container)
                     .oDeskDataTable({
                         report: ui.report,
-                        service: oDesk.Services.getTaskSummary,
+                        service: oDesk.Services.getTimesheetDetails,
                         groupRows:true});
     };
 
@@ -102,7 +117,10 @@
             providerId: "provider",
             teamId: "team",
             startDate:"startDate",
-            endDate:"endDate"});
+            endDate:"endDate",
+            go:"go",
+            test: "test"
+        });
     };
 
     TimesheetDetails = new timesheetDetails();

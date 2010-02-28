@@ -209,11 +209,16 @@
         resultset.prototype.getUniqueRowValues = function(columnIndex){
             var uniqueList = [];
             $.each(this.rows, function(i, row){
-             if(columnIndex >= row.length) return false;
-             var value = row[columnIndex].value;
-             if($.inArray(value, uniqueList) == -1){
-                uniqueList.push(value);
-             }
+                var value;
+                if($.isFunction(columnIndex)){
+                    value = columnIndex(row);
+                } else {
+                    if(columnIndex >= row.length) return false;
+                    value = row[columnIndex].value;
+                }
+                if($.inArray(value, uniqueList) == -1){
+                    uniqueList.push(value);
+                }
             });
             uniqueList.sort();
             return uniqueList;
@@ -366,6 +371,16 @@
         resultset.prototype.calculateColumnTotals = function(){
             this.columnTotals = this.getColumnTotals();
         };
+
+        resultset.prototype.calculateTotalsForCustomGroups = function(groupFunction){
+               var results = this;
+               var uniqueGroupValues = results.getUniqueRowValues(groupFunction);
+               $.each(uniqueGroupValues, function(groupIndex, group){
+                   results.groupTotals[group] = results.getColumnTotals(function(row){
+                       return (groupFunction(row) == group);
+                   });
+               });
+           };
 
         resultset.prototype.calculateGroupTotals = function(columnIndex){
             var results = this;

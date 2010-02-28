@@ -80,6 +80,20 @@ a:hover {color:#0033FF; text-decoration:underline; }
     width: 90px;
 }
 
+.tabular .timesheet_details_team,
+.tabular .timesheet_details_day{
+    width: 120px;
+}
+
+.tabular .timesheet_details_memo pre{
+    font: inherit;
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
 .tabular{
     width: 100%;
     table-layout:fixed;

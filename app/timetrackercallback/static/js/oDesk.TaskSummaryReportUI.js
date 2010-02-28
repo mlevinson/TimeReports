@@ -72,6 +72,21 @@
             );
     };
 
+
+    taskSummaryReport.prototype.setParam = function(param, value){
+        if(param == "go" && value == "go"){
+            this.forceRefresh = true;
+        } else if (param =="test" && value == "test") {
+            oDesk.Services.getTaskSummary = function(report, success, failure){
+               $.getJSON("js/taskSummary.json", function(data){
+                   oDesk.Services.addTaskDescriptions(report, data, success, failure);
+               });
+            };
+        }else {
+            oDesk.ReportPage.prototype.setParam.call(this, param, value);
+        }
+    };
+
     taskSummaryReport.prototype.canRefreshReport = function(){
         return false;
     };
@@ -86,7 +101,7 @@
     taskSummaryReport.prototype.init = function(){
         var ui = this;
         ui.initComplete = false;
-        this.initialize();
+        this.initialize({go:"go", test:"test"});
     };
 
     TaskSummaryReport = new taskSummaryReport();

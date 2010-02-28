@@ -120,6 +120,24 @@
     };
 
 
+    oDesk.Report.prototype.getTimesheetDetailsQuery = function(){
+        if(!this.state.company.id ||
+            !this.state.provider.id ||
+            !this.state.timeline.startDate ||
+            !this.state.timeline.endDate ) return null;
+
+        var query = new oDesk.DataSource.Query(this.state.makeParams());
+        query.setUrlTemplate(oDesk.urls.getHours);
+        query.addUrlFragment(oDesk.urls.getHoursTeamFragment);
+        query.addSelectStatement(["worked_on", "memo", "team_name", "team_id", "sum(hours)", "sum(charges)"]);
+        query.addCondition(">=", "worked_on", "{timelineStartDate}");
+        query.addCondition("<=", "worked_on", "{timelineEndDate}");
+        query.addCondition("=", "provider_id", "{providerId}");
+        query.addSortStatement(["worked_on", "team_name", "memo"]);
+        return query.toString();
+    };
+
+
     oDesk.Report.prototype.getTaskHoursQuery = function(){
         if(!this.state.company.id ||
             !this.state.timeline.startDate ||
@@ -128,7 +146,7 @@
         var query = new oDesk.DataSource.Query(this.state.makeParams());
         query.setUrlTemplate(oDesk.urls.getHours);
         query.addUrlFragment(oDesk.urls.getHoursTeamFragment);
-        query.addSelectStatement(["task", "provider_name", "provider_id", "sum(hours)", "sum(charges)", "task"]);
+        query.addSelectStatement(["task", "provider_name", "provider_id", "sum(hours)", "sum(charges)"]);
         query.addCondition(">=", "worked_on", "{timelineStartDate}");
         query.addCondition("<=", "worked_on", "{timelineEndDate}");
         query.addCondition("=", "provider_id", "{providerId}");

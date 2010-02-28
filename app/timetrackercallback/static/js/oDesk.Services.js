@@ -198,6 +198,15 @@
         }, failure);
     };
 
+
+    oDesk.Services.getTimesheetDetails = function(report, success, failure){
+        oDeskUtil.ajax(report.getTimesheetDetailsQuery(), function(data, status){
+            if ($.isFunction(success)){
+               success(new oDesk.DataSource.ResultSet(data), status);
+            };
+        }, failure);
+    };
+
     oDesk.Services.getProviders = function(report, success, failure){
 
          $.ajax({

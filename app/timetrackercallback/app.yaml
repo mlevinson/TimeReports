@@ -36,6 +36,14 @@ handlers:
   static_files: static/task_summary_report.html
   upload: static/task_summary_report.html
 
+- url: /timesheet_details.html
+  static_files: static/timesheet_details.html
+  upload: static/timesheet_details.html
+
+- url: /timesheet_details
+  static_files: static/timesheet_details.html
+  upload: static/timesheet_details.html
+
 - url: /my_weekly_timesheet
   static_files: static/my_weekly_timesheet.html
   upload: static/my_weekly_timesheet.html

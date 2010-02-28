@@ -85,14 +85,18 @@ $.widget("ui.oDeskDataTable",{
                      td += col.sClass;
                      td += "\"";
                   }
-
+                  if(col.colspan){
+                      td += " colspan=\"";
+                      td += col.colspan;
+                      td += "\"";
+                  }
                   td += ">";
                   td += col.fnRender(results, group);
                   td += "</td>";
                   tr += td;
                });
                tr += "</tr>";
-               return tr;
+               return {row: tr, fullRow: groupFooter.fullRow? true: false};
          }
          return null;
      },
@@ -115,13 +119,16 @@ $.widget("ui.oDeskDataTable",{
              };
              if(group.startRowIndex == rowIndex){
                  $.each(rowGroupings, function(i, group){
-                     group.footerRow = widget.getGroupFooterRow(widget.options.results, group);
-                     var g = group;
-                     while(g && group.footerRow){
-                        g.numberOfFooterRows ++;
-                        g = g.parent;
+                     var footer = widget.getGroupFooterRow(widget.options.results, group);
+                     if(footer){
+                         group.footerRow = footer.row;
+                         var g = group;
+                         while(g && group.footerRow && !footer.fullRow){
+                            g.numberOfFooterRows ++;
+                            g = g.parent;
+                         }
+                         firstGroupRow = true;
                      }
-                     firstGroupRow = true;
                  });
                  columnGroups[group.columnIndex].groupNow = true;
              } else if (group.startRowIndex + group.numberOfRows == rowIndex + 1){
@@ -292,21 +299,19 @@ $.widget("ui.oDeskDataTable",{
           return groups;
       }
 
-      function beginGroup(columnIndex, rowIndex, value){
+      function beginGroup(columnIndex, rowIndex, value, cell){
           var group = this.currentColumnGroup(columnIndex);
           if(group && group.value == value) return;
           else if (group && group.value != value){
             this.endGroup(group);
           }
 
-          group = new this.columnGroup(columnIndex, rowIndex, value);
+          group = new this.columnGroup(columnIndex, rowIndex, value, cell);
           if(this.currentGroup){
               group.parent = this.currentGroup;
               this.currentGroup.children.push(group);
-          } else {
-              this.currentGroup = group;
           }
-
+          this.currentGroup = group;
           var currentRowGroupings = this.groupings[rowIndex];
           if (!currentRowGroupings){
               currentRowGroupings = [];
@@ -323,12 +328,14 @@ $.widget("ui.oDeskDataTable",{
       };
 
       function endGroup(group, rowIndex){
+          var grouper = this;
+          if(group.numberOfRows) return;
           $.each(group.children, function(i, child){
-             this.endGroup(child, rowIndex);
+             grouper.endGroup(child, rowIndex);
           });
           group.numberOfRows = rowIndex - group.startRowIndex + 1;
-          if (this.currentGroup == group){
-              this.currentGroup = group.parent;
+          if (grouper.currentGroup == group){
+              grouper.currentGroup = group.parent;
           }
       };
 
@@ -345,24 +352,26 @@ $.widget("ui.oDeskDataTable",{
           $.each(rows, function(r, row){
               $.each(columns, function(c, col){
                  if(!col.canGroup) return;
+                 var cell = row[c];
                  var value = grouper.getValue(row, col, c);
                  var group = grouper.currentColumnGroup(c);
                  if(group && group.value != value){
                      grouper.endGroup(group, r - 1);
-                     grouper.beginGroup(c, r, value);
+                     grouper.beginGroup(c, r, value, cell);
                  } else if (!group){
-                     grouper.beginGroup(c, r, value);
+                     grouper.beginGroup(c, r, value, cell);
                  }
               });
           });
           grouper.endAll(rows.length - 1);
       };
 
-      function columnGroup(columnIndex, rowIndex, value){
+      function columnGroup(columnIndex, rowIndex, value, cell){
           this.columnIndex = columnIndex;
           this.startRowIndex = rowIndex;
           this.numberOfRows = 0;
           this.value = value;
+          this.cell = cell;
           this.children = [];
           this.parent = null;
           this.numberOfFooterRows = 0;
