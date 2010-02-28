@@ -13,7 +13,13 @@
         });
         $.extend(this.elements.report, {
            placeholder: "#report_placeholder",
-           content: "#report_content"
+           content: "#report_content",
+           displayType: {
+               all: "#display_type .toggle",
+               compact: "#compact",
+               complete: "#complete"
+           },
+           memo: "td.timesheet_details_memo pre"
         });
         this.parameters.timeline.type = "range";
     };
@@ -108,7 +114,20 @@
                     .oDeskDataTable({
                         report: ui.report,
                         service: oDesk.Services.getTimesheetDetails,
-                        groupRows:true});
+                        groupRows:true})
+                    .bind('dataTablePopulated', function(){
+                        $(ui.elements.report.memo).compactness();
+                    });
+        $(ui.elements.report.displayType.compact).click(function(){
+            $(ui.elements.report.displayType.all).removeClass("selected");
+            $(this).addClass("selected");
+           $(ui.elements.report.memo).compactness("compact");
+        });
+        $(ui.elements.report.displayType.complete).click(function(){
+            $(ui.elements.report.displayType.all).removeClass("selected");
+            $(this).addClass("selected");
+           $(ui.elements.report.memo).compactness("remove");
+        });
     };
 
     timesheetDetails.prototype.init = function(){

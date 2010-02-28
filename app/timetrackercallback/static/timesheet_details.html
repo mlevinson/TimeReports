@@ -63,6 +63,7 @@
         <script type="text/javascript" src="js/oDesk.Report.DataTable.js"></script>
         <script type="text/javascript" src="js/oDesk.TimesheetDetails.js"></script>
         <script src="js/jquery.ui.oDeskSelectWidget.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/jquery.ui.compactness.js" type="text/javascript" charset="utf-8"></script>
         <script type="text/javascript" src="js/oDesk.ReportPage.js"></script>
         <script type="text/javascript" src="js/oDesk.TimesheetDetailsUI.js"></script>
 
@@ -300,6 +301,17 @@
                     Select a team, provider &amp; date range, then press the Go button.
                 </div>
                 <div style="display:none" id="report_content">
+                    <div class="control_bar white">
+                        <div class="upper-right">
+                                <div class="control radio-switch dispatchable" id="display_type">
+                                    <span class="label">Display:</span>
+                                    <span class="toggle radio selected" id="complete">Complete</span>
+                                    <span class="space">|</span>
+                                    <span class="toggle radio" id="compact">Compact</span>
+                                </div>
+                            </div>
+                        <br class="clear"/>
+                    </div>
                     <h2 class="table-caption">
                         Timesheet Details for <span class="provider-name">Provider</span>
                         in <span class="team-name">Team</span>

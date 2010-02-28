@@ -47,7 +47,7 @@ $.widget("ui.weekSelector",{
     }
 });
 
-$.extend($.ui.ringceMonthSelector, {
+$.extend($.ui.weekSelector, {
    defaults: {
        weekStartDate: Date.today()
    }
