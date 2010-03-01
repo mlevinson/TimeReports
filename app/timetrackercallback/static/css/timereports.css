@@ -165,7 +165,7 @@ a:hover {color:#0033FF; text-decoration:underline; }
 #timereports_week_selector{position:relative;top:2px; min-width:200px; }
 
 #timereports_range_selector{
-    display:block;float:left;position:relative;top:0px;
+    display:block;float:left;position:relative;top:-1px;
 }
 .helpTip{colorfloat:right;;}
 .report_table_list li{
@@ -186,7 +186,10 @@ a:hover {color:#0033FF; text-decoration:underline; }
 .control label{
     margin: 0 2px;
 }
-.control button,
+.control button{
+    position:relative;
+    top: 1px;
+}
 .control select,
 .control input,
 .control label{

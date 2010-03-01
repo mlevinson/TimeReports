@@ -108,28 +108,27 @@
         });
         if(previousRecord){
             previousRecord.worked_on.lastDayInWeek = true;
-        } 
+        }
         var columns = [{
                             name:"date",
                             type:"string",
                             valueFunctions:{
                                 value: function(record){return record.worked_on.value;},
-                                team: function(record){return record.team_id.value;},
+                                team: function(record){return record.team_id? record.team_id.value : report.state.team.id;},
                                 lastDayInWeek: function(record){return record.worked_on.lastDayInWeek;},
                                 firstDayInWeek: function(record){return record.worked_on.firstDayInWeek;},
                                 weekNumber: function(record){return record.worked_on.weekNumber;},
                                 weekLabel: function(record){return record.worked_on.weekLabel;}
                             }
                       }];
-        var teams = results.getUniqueRecordValues("team_id");
-        if(teams.length > 1){
-            report.state.showTeamName = true;
+        report.state.showTeamName = (report.state.team.id == 0);
+        if(report.state.showTeamName){
             columns.push({
                 name: "team",
                 type: "string",
                 valueFunctions: {
-                    value: function(record){return record.team_name.value;},
-                    id: function(record){return record.team_id.value;}
+                    value: function(record){return record.team_name? record.team_name.value : report.state.team.name;},
+                    id: function(record){return record.team_id? record.team_id.value : report.state.team.id;}
                 }
             });
         }
