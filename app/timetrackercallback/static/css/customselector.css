@@ -1,5 +1,5 @@
 .customSelector{
-    position: relative; 
+    position: relative;
     margin-left: 4px;
 }
 
@@ -27,12 +27,6 @@
     -webkit-border-radius: .4em;
 }
 
-.customSelector > ul { 
-    margin-top:0;
-    max-height: 200px;
-    overflow: auto;
-}
-
 .customSelector > .display:hover {
     -moz-box-shadow: 0px 0px 2px 1px #4F93FF;
     -webkit-box-shadow: 0px 0px 3px #4F93FF;
@@ -54,23 +48,26 @@
     color: #666;
 }
 
+
 .customSelector > ul {
     list-style-type: none;
     background-color: #fff;
     position: absolute;
     z-index: 1000;
-    top: -10;
-    left: 0;
+    margin:0;
+    top: 24px;
+    left: 0px;
     display: none;
     border: 1px solid #ccc;
-    width: 300px;
     -moz-box-shadow: 0px 0px 2px 1px #ccc;
     -webkit-box-shadow: 0px 0px 3px #ccc;
+    min-width: 200px;
 }
 
 .customSelector li {
     font-weight: bold;
     padding: 4px 8px;
+    list-style-type: none;
 }
 
 

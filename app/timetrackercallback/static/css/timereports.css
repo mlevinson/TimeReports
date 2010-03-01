@@ -162,7 +162,7 @@ a:hover {color:#0033FF; text-decoration:underline; }
 #timereports_provider_selector,
 #timereports_week_selector,
 #timereports_month_selector{display:block;float:left;position:relative;top:-2px;}
-#timereports_week_selector{position:relative;top:2px; min-width:200px; }
+#timereports_week_selector{position:relative;top:2px; min-width:220px; }
 
 #timereports_range_selector{
     display:block;float:left;position:relative;top:-1px;
