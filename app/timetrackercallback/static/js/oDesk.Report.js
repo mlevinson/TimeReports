@@ -3,7 +3,8 @@
          getAuthUser: "https://www.odesk.com/api/auth/v1/login.json",
          getCompany: "http://www.odesk.com/api/hr/v2/companies/{companyReference}.json",
          getTeams: "http://www.odesk.com/api/hr/v2/companies/{companyReference}/teams.json",
-         getProviders: "http://www.odesk.com/api/hr/v2/teams/{teamReference}/users.json",
+         getProvidersByCompany: "http://www.odesk.com/api/hr/v2/companies/{companyReference}/users.json",
+         getProvidersByTeam: "http://www.odesk.com/api/hr/v2/teams/{teamReference}/users.json",
          getHours: "http://www.odesk.com/gds/timereports/v1/companies/{companyId}",
          getHoursTeamFragment: "/teams/{teamId}",
          getProviderHours: "http://www.odesk.com/gds/timereports/v1/providers/{authUserId}",
@@ -63,11 +64,15 @@
     };
 
     oDesk.Report.prototype.getProvidersQuery = function(){
-        if(!this.state.company.reference) return null;
+        if(!this.state.company.id && !this.state.team.id) return null;
         var params = this.state.makeParams();
-        params.teamReference = params.teamReference || params.companyReference;
         var query = new oDesk.DataSource.Query(params);
-        query.setUrlTemplate(oDesk.urls.getProviders);
+        if(this.state.team.id){
+            query.setUrlTemplate(oDesk.urls.getProvidersByTeam);
+        } else {
+            query.setUrlTemplate(oDesk.urls.getProvidersByCompany);
+        }
+
         return query.toString();
     };
 
