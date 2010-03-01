@@ -106,7 +106,9 @@
             record.worked_on.weekLabel = weeks.labels[currentWeek];
             previousRecord = record;
         });
-        previousRecord.worked_on.lastDayInWeek = true;
+        if(previousRecord){
+            previousRecord.worked_on.lastDayInWeek = true;
+        } 
         var columns = [{
                             name:"date",
                             type:"string",

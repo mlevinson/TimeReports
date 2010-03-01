@@ -103,7 +103,7 @@
         Date.format = "dd mmm yyyy";
         var d1 = Date.today();
         var d2 = d1.clone();
-        d1.addDays(-30);
+        d1.moveToDayOfWeek(1, -1);
         this.setSelectedDateRange(d1, d2);
     };
 
