@@ -143,7 +143,7 @@ $.widget("ui.oDeskCompanySelector",{
             item: selection,
             allOptionSelected: allOptionSelected,
             isSelectionTeam: isSelectionTeam,
-            selectedReference: reference
+            reference: reference
         };
 
         if(selection && isSelectionTeam){
@@ -189,7 +189,7 @@ $.extend($.ui.oDeskCompanySelector, {
            item: null,
            allOptionSelected: false,
            isSelectionTeam: false,
-           selectedReference: null
+           reference: null
        }
    }
  });

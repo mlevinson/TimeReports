@@ -42,35 +42,16 @@
 
 
     oDesk.Services.getTeams = function(report, success, failure){
-         $.ajax({
-             url: report.getTeamsQuery(),
-             dataType: 'jsonp',
-             error: function(request, status, error){
-                 if($.isFunction(failure)){
-                     failure(status, error);
-                 }
-             },
-             success: function(data, status, request){
-                 teams = [];
-                 var companyTeamObject = null;
-                 $.each(data.teams, function(i, team){
-                    var teamObject = new oDesk.Team(team.id, team.name, team.reference, report.state.company);
-                    if (team.reference == report.state.company.reference){
-                        report.state.company.id = team.id;
-                        companyTeamObject = teamObject;
-                    } else {
-                        teams.push(teamObject);
-                    }
-                 });
-                 teams.sort();
-                 if(companyTeamObject){
-                     teams.unshift(companyTeamObject);
-                 }
-                 if($.isFunction(success)){
-                     success(teams);
-                 }
-             }
-         });
+        var teams = [];
+        $.each(report.state.company.team.teams, function(i, team){
+             if(!team.hidden) teams.push(team);
+        });
+        if(!report.state.company.team.hidden){
+            teams.unshift(report.state.company.team);
+        }
+        if($.isFunction(success)){
+            success(teams);
+        }
     };
 
 

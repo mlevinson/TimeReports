@@ -9,6 +9,9 @@
         this.companyReference = null;
         this.canBindGoButton = true;
         this.providerSelectorOptions = {};
+        this.companySelectorBound = false;
+        this.teamSelectorBound = false;
+        this.providerSelectorBound = false;
         this.elements = {
             company : {
                 selector:"#top_selector"
@@ -117,12 +120,14 @@
         var ui = this;
         ui.report.state.company = company;
         if(ui.canBindTeamSelector){
+            ui.bindTeamSelector();
             $(ui.elements.team.selector).oDeskSelectWidget("populate");
         }
     };
     oDesk.ReportPage.prototype.teamChanged = function(team){
         var ui = this;
         if (ui.canBindProviderSelector){
+            ui.bindProviderSelector();
             $(ui.elements.provider.selector).oDeskSelectWidget("populate");
         }
     };
@@ -137,26 +142,27 @@
 
     oDesk.ReportPage.prototype.bindCompanySelector = function(){
         var ui = this;
-        if(!ui.canBindCompanySelector) return;
+        if(!ui.canBindCompanySelector || ui.companySelectorBound) return;
         $(ui.elements.company.selector).unbind("change").bind("change", function(event, selection){
             ui.report.state.company = selection.item;
             ui.decorateReportsHome();
             ui.companyChanged(selection.item);
         });
-
+        ui.report.state.companySelectorFlavor = ui.companySelectorFlavor;
         $(ui.elements.company.selector).oDeskCompanySelector({
             showTeams: false,
             companies: ui.report.state.authUser.getCompanies(
                     oDesk.AuthUser.Flavors[ui.companySelectorFlavor]),
             selection: {
-                selectedReference: ui.companyReference
+                reference: ui.companyReference
             }
         });
-
+        ui.companySelectorBound = true;
     };
 
      oDesk.ReportPage.prototype.bindProviderSelector = function(){
         var ui = this;
+        if(!ui.canBindProviderSelector || ui.providerSelectorBound) return;
         var defaults = {
             report: ui.report,
             includeAllOption: false,
@@ -167,11 +173,12 @@
         $(ui.elements.provider.selector).oDeskSelectWidget(
             $.extend({}, defaults, ui.providerSelectorOptions)
         );
+        ui.providerSelectorBound = true;
     };
 
     oDesk.ReportPage.prototype.bindTeamSelector = function(){
         var ui = this;
-        if(!ui.canBindTeamSelector) return;
+        if(!ui.canBindTeamSelector || ui.teamSelectorBound) return;
         $(ui.elements.team.selector).oDeskSelectWidget({
             report: ui.report,
             all_option_id: "all_teams",
@@ -181,8 +188,8 @@
         })
         .unbind("selectionChanged").bind("selectionChanged", function(){
             ui.teamChanged(ui.report.state.team);
-        })
-        .oDeskSelectWidget("populate");
+        });
+        ui.teamSelectorBound = true;
     };
 
 
