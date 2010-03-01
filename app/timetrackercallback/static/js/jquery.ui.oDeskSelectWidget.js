@@ -69,7 +69,9 @@ $.widget("ui.oDeskSelectWidget",{
            $(widget.element[0]).html(options);
            $(widget.element[0]).trigger("populationComplete", objs);
            if(selectedObj){
-               widget.options.stateVariable = selectedObj;
+               widget.options.stateVariable.id = selectedObj.id;
+               widget.options.stateVariable.reference = selectedObj.reference;
+               widget.options.stateVariable.name = selectedObj.name;
                widget.selectWithReference(selectedObj.reference);
            } else {
                widget.setDefaults();
