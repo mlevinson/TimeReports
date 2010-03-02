@@ -28,6 +28,14 @@
                 home: "#reports_home",
                 container: "#reports-grid",
                 goButton: "#go_run_report"
+            },
+            help:{
+                all: "th.details, th.diary",
+                details: "th.details",
+                providerDetails: "th.provider.details",
+                teamDetails: "th.team.details",
+                diary: "th.diary",
+                help: "span.help"
             }
         };
 
@@ -193,6 +201,20 @@
         ui.teamSelectorBound = true;
     };
 
-
+    oDesk.ReportPage.prototype.bindTableHeaderHelp = function(){
+        var ui = this;
+        $(ui.elements.help.all).each(function(){
+            var help = $(this).children(ui.elements.help.help);
+            var pos = $(this).position();
+            var top = pos.top - help.outerHeight();
+            $(this).children(ui.elements.help.help).css("top", top);
+            $(this).children(ui.elements.help.help).css("left", pos.left);
+        });
+        $(ui.elements.help.all).unbind("mouseover").bind("mouseover", function(){
+            $(this).children(ui.elements.help.help).show();
+        }).unbind("mouseout").bind("mouseout", function(){
+            $(this).children(ui.elements.help.help).hide();
+        });
+    }
 
 })(jQuery);

@@ -38,6 +38,8 @@
     };
 
     myWeeklyTimesheet.prototype.setDefaults = function(){
+        var ui = this;
+        ui.setSelectedDate(Date.today());
         if(oDeskUtil.getParameterByName("test", null) == "test"){
             oDesk.Services.getProviderHours = function(report, success, failure){
                 $.getJSON("js/mytimesheet.json", success);
@@ -55,8 +57,10 @@
                     ui.setSelectedDate(selectedDate);
         });
         $(ui.elements.report.container)
-                 .oDeskDataTable({groupRows:true, report: ui.report, service: oDesk.Services.getProviderHours});
-        ui.setSelectedDate(Date.today());
+                 .oDeskDataTable({groupRows:true, report: ui.report, service: oDesk.Services.getProviderHours})
+                 .unbind("dataTablePopulated").bind("dataTablePopulated", function(){
+                     ui.bindTableHeaderHelp();
+                 });
     };
 
     myWeeklyTimesheet.prototype.init = function(){

@@ -1,7 +1,7 @@
 (function($){
     oDesk.Report.prototype.columnSpec = function(){
         var cols = [{
-            sTitle:"Provider",
+            sTitle:'Provider<span class="help" style="display:none">Click on the provider name to view their timesheet details.</span>',
             sClass: "provider details",
             canGroup:true,
             groupValue: function(field){
@@ -26,7 +26,7 @@
         var report = this;
         if(!report.state.team.id){
             cols.push({
-                sTitle:"Team",
+                sTitle: 'Team<span  class="help" style="display:none">Click on the team name to view timesheet details.</span>',
                 sClass: "team details",
                 fnRender: function(data){
                      var field = data.aData[data.iDataColumn];
@@ -46,7 +46,7 @@
         $.each(oDeskUtil.dayNames, function(i, day){
            var className = i ? "numeric hours" : "numeric hours diary";
            cols.push({
-               sTitle: day,
+               sTitle: i ? day : day + '<span  class="help" style="display:none">Click on the hours to view the corresponding work diary.</span>',
                fnRender: function(data){
                    var field = data.aData[data.iDataColumn];
                    var text = oDesk.Report.formatHoursField(data);
