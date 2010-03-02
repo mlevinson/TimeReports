@@ -2,6 +2,7 @@
     taskSummaryReport = function(){
         oDesk.ReportPage.prototype.constructor.call(this);
         this.companySelectorFlavor = "hiring";
+        this.providerSummary = false;
         $.extend(this.elements, {
             timerange:{
                 tableCaption: "#time-range",
@@ -93,6 +94,7 @@
 
     taskSummaryReport.prototype.completeInitialization = function(){
         var ui = this;
+        ui.report.providerSummary = this.providerSummary;
         ui.bindTimeSelector();
         $(ui.elements.report.container)
                 .oDeskDataTable({report: ui.report, service: oDesk.Services.getTaskSummary, groupRows:true});

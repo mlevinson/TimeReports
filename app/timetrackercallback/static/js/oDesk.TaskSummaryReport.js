@@ -2,7 +2,7 @@
     oDesk.Report.prototype.columnSpec = function(){
         var report = this;
         var cols = [];
-        cols.push({
+        var taskColumn = {
             sTitle:"Task",
             canGroup: true,
             groupValue: function(field){
@@ -21,13 +21,22 @@
 
               return text;
             }
-        });
-        cols.push({
+        };
+        var providerColumn = {
             sTitle:"User",
-            canGroup: true,
+            canGroup: report.state.showTeamName,
             groupValue: function(field){return field.value;},
             fnRender: function(data){return data.aData[data.iDataColumn].value;}
-        });
+        };
+
+        if (report.providerSummary){
+            cols.push(providerColumn);
+            cols.push(taskColumn);
+        } else {
+            cols.push(taskColumn);
+            cols.push(providerColumn);
+        }
+
         if(report.state.showTeamName){
             cols.push({
                 sClass:"task_summary_details_team",
@@ -90,7 +99,7 @@
                 sClass: "footer-label",
                 colspan: labelspan,
                 fnRender: function(results, col){
-                    return "Total for all tasks and users:";
+                    return report.providerSummary ? "Total for all users:" : "Total for all tasks:";
                 }
           });
           footerRows.push(
@@ -114,14 +123,20 @@
 
     oDesk.Report.prototype.transformData = function(results){
         var report = this;
-        var columns = [
-            {name:"task", type:"string", valueFunctions:{
-                value: function(record){return record.taskDescription.value;},
-                code: function(record){return record.task.value;},
-                url: function(record){return record.taskUrl? record.taskUrl.value : null;}
-            }},
-            {name:"provider", type:"string", valueFunctions:{value: function(record){return record.provider_name.value;}}}
-        ];
+        var taskColumn = {name:"task", type:"string", valueFunctions:{
+            value: function(record){return record.taskDescription.value;},
+            code: function(record){return record.task.value;},
+            url: function(record){return record.taskUrl? record.taskUrl.value : null;}
+        }};
+        var providerColumn = {name:"provider", type:"string", valueFunctions:{value: function(record){return record.provider_name.value;}}};
+        var columns = [];
+        if (report.providerSummary){
+            columns.push(providerColumn);
+            columns.push(taskColumn);
+        } else {
+            columns.push(taskColumn);
+            columns.push(providerColumn);
+        }
         report.state.showTeamName = (report.state.team.id == 0);
         if(report.state.showTeamName){
             columns.push({

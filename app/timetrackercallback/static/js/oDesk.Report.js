@@ -47,7 +47,7 @@
 
     oDesk.Report.prototype.getAuthUserQuery = function(){
         return oDesk.urls.getAuthUser;
-    }
+    };
 
     oDesk.Report.prototype.getCompanyQuery = function(){
         if(!this.state.company.reference) return null;
@@ -164,11 +164,25 @@
         var query = new oDesk.DataSource.Query(this.state.makeParams());
         query.setUrlTemplate(oDesk.urls.getHours);
         query.addUrlFragment(oDesk.urls.getHoursTeamFragment);
-        query.addSelectStatement(["task", "provider_name", "provider_id", "sum(hours)", "sum(charges)"]);
+
+        var selectColumns = ["task", "provider_name", "provider_id", "sum(hours)", "sum(charges)"];
+        var sortColumns = null;
+        if(report.providerSummary){
+            sortColumns = ["provider_name", "task"];
+        } else {
+            sortColumns = ["task", "provider_name"];
+        }
+
+        if(this.state.team.id){
+            selectColumns.push("team_name", "team_id");
+            sortColumns.push("team_name");
+        }
+
+        query.addSelectStatement(selectColumns);
         query.addCondition(">=", "worked_on", "{timelineStartDate}");
         query.addCondition("<=", "worked_on", "{timelineEndDate}");
         query.addCondition("=", "provider_id", "{providerId}");
-        query.addSortStatement(["task", "provider_name"]);
+        query.addSortStatement(sortColumns);
         return query.toString();
     };
 

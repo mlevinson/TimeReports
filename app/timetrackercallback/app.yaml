@@ -36,6 +36,14 @@ handlers:
   static_files: static/task_summary_report.html
   upload: static/task_summary_report.html
 
+- url: /provider_work_summary.html
+  static_files: static/provider_work_summary.html
+  upload: static/provider_work_summary.html
+
+- url: /provider_work_summary
+  static_files: static/provider_work_summary.html
+  upload: static/provider_work_summary.html
+
 - url: /timesheet_details.html
   static_files: static/timesheet_details.html
   upload: static/timesheet_details.html
@@ -79,8 +87,8 @@ handlers:
 
 - url: /company_selector
   static_files: static/test/test.CompanySelector.html
-  upload: static/test/test.CompanySelector.html   
-  
+  upload: static/test/test.CompanySelector.html
+
 - url: /urlparameters
   static_files: static/test/timesheet_detail_parameters.html
   upload: static/test/timesheet_detail_parameters.html

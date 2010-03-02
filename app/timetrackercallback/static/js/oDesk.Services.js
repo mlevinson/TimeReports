@@ -125,7 +125,10 @@
         });
 
         var taskCodes = results.getUniqueRecordValues("task");
-
+        if(!taskCodes.length){
+            success(results, "Success");
+            return;
+        }
         oDeskUtil.ajax(report.getTasksQuery(taskCodes), function(tasksData, status, request){
              if(!tasksData || !tasksData.tasks || !tasksData.tasks.task){
                  if($.isFunction(success)){
@@ -156,10 +159,18 @@
              });
 
              results.records.sort(function(record1, record2){
-                if(record1.taskDescription.value == record2.taskDescription.value){
-                    return record1.provider_name.value > record2.provider_name.value ? 1 : -1;
+
+                var providerCheck =
+                    (record1.provider_name.value == record2.provider_name.value) ? 0 :
+                        ((record1.provider_name.value > record2.provider_name.value) ? 1 : -1);
+
+                var taskCheck = (record1.taskDescription.value == record2.taskDescription.value) ? 0 :
+                                    ((record1.taskDescription.value > record2.taskDescription.value) ? 1 : -1);
+
+                if(report.providerSummary){
+                    return providerCheck || taskCheck;
                 } else {
-                    return record1.taskDescription.value > record2.taskDescription.value ? 1 : -1;
+                    return taskCheck || providerCheck;
                 }
              });
 
