@@ -54,9 +54,26 @@
         }
     };
 
+    oDesk.Services.fixHours = function(report, data, success, failure, status){
+        var successOK = $.isFunction(success);
+        if ((report.state.team.id  ||
+            !data || !data.table || !data.table.rows || data.table.rows == "") && successOK){
+            success(data, status);
+        } else if (!report.state.team.id && successOK){
+            $.each(data.table.rows, function(r, row){
+               if(row.c[4].v && (!row.c[3].v || row.c[3].v == "") ){
+                   row.c[3].v = row.c[4].v;
+               }
+            });
+            success(data, status);
+        }
+    };
+
 
     oDesk.Services.getHours = function(report, success, failure){
-        oDeskUtil.ajax(report.getHoursQuery(), success, failure);
+        oDeskUtil.ajax(report.getHoursQuery(), function(data, status){
+            oDesk.Services.fixHours(report, data, success, failure, status);
+        }, failure);
     };
 
     oDesk.Services.getProviderHours = function(report, success, failure){

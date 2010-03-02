@@ -250,7 +250,7 @@
 
             var spec = $.extend({}, defaults, s);
             var uniques = spec.uniques;
-
+            var labelToRowMap = {};
             resultset.rows = [];
             var totalRows = 0;
 
@@ -298,7 +298,12 @@
 
             // Add Zero values for all week day columns
             for(rowIndex = 0; rowIndex < totalRows; rowIndex++){
-                var row = resultset.rows[rowIndex];
+               var row = resultset.rows[rowIndex];
+               var label = "";
+               for (c = 0; c < spec.labels.length; c++){
+                   label += row[c].value;
+                }
+                labelToRowMap[label] = row;
                 for (c = 0; c < 7; c++){
                    var f = constructField("value", "number");
                     f.set(0);
@@ -314,18 +319,11 @@
 
 
             $.each(this.records, function(i, record){
-                var rowIndex = 0;
+                var labelCombo = "";
                 $.each(spec.labels, function(specIndex, labelSpec){
-                    var labelNames = uniques[labelSpec.name];
-                    var index = $.inArray(labelSpec.labelFunction(record), labelNames);
-                    if(index > -1){
-                        rowIndex += rowIndex;
-                        rowIndex += index;
-                    } else {
-                        throw("Label not found.");
-                    }
+                    labelCombo += labelSpec.labelFunction(record);
                 });
-                var row = resultset.rows[rowIndex];
+                var row = labelToRowMap[labelCombo];
                 $.each(spec.labels, function(specIndex, labelSpec){
                     if(labelSpec.labelValues){
                         $.each(labelSpec.labelValues, function(valueName, valueFunction){

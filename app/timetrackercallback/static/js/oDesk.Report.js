@@ -103,10 +103,10 @@
         query.addCondition("<=", "worked_on", "{timelineEndDate}");
         query.addCondition("=", "provider_id", "{providerId}");
         if(!this.state.team.id){
-            query.addSelectStatement(["worked_on", "team_name", "team_id", "provider_id", "provider_name", "sum(hours)", "sum(charges)"]);
+            query.addSelectStatement(["worked_on", "sum(hours)", "sum(charges)", "team_name", "team_id", "provider_name", "provider_id"]);
             query.addSortStatement(["worked_on", "team_name", "provider_name"]);
         } else {
-            query.addSelectStatement(["worked_on", "provider_id", "provider_name", "sum(hours)", "sum(charges)"]);
+            query.addSelectStatement(["worked_on", "sum(hours)", "sum(charges)", "provider_name", "provider_id"]);
             query.addSortStatement(["worked_on", "provider_name"]);
         }
 
