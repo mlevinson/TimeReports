@@ -91,6 +91,8 @@ a:hover {color:#0033FF; text-decoration:underline; }
     width: 120px;
 }
 
+
+
 .tabular .timesheet_details_memo pre{
     font: inherit;
     white-space: pre-wrap;       /* css-3 */
@@ -125,7 +127,7 @@ a:hover {color:#0033FF; text-decoration:underline; }
 
 
 .tabular th span.help{
-    display:block;   
+    display:block;
     text-align: left;
     background-color: white;
     -moz-border-radius: 8px;
@@ -135,7 +137,7 @@ a:hover {color:#0033FF; text-decoration:underline; }
     width: 160px;
     background-repeat:no-repeat;
     position:absolute;
-    z-index: 120;    
+    z-index: 120;
     white-space: pre-wrap;       /* css-3 */
     white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
     white-space: -pre-wrap;      /* Opera 4-6 */
@@ -240,7 +242,7 @@ a:hover {color:#0033FF; text-decoration:underline; }
 
 .control label{
     margin: 0 2px;
-}             
+}
 
 .control label.block{
     display:block;float:left;

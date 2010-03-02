@@ -116,9 +116,11 @@
                         report: ui.report,
                         service: oDesk.Services.getTimesheetDetails,
                         groupRows:true})
-                    .bind('dataTablePopulated', function(){
-                        $(ui.elements.report.memo).compactness();
-                    });
+                    .unbind("dataTablePopulated").bind("dataTablePopulated", function(){
+                            ui.bindTableHeaderHelp();
+                            $(ui.elements.report.memo).compactness();
+                     });
+
         $(ui.elements.report.displayType.compact).click(function(){
             $(ui.elements.report.displayType.all).removeClass("selected");
             $(this).addClass("selected");

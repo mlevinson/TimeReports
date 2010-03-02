@@ -2,9 +2,20 @@
     oDesk.Report.prototype.columnSpec = function(){
         var report = this;
         var cols = [];
+
+        function getWorkDiaryUrl(field, text){
+            var url = "http://www.odesk.com/workdiary/{team}/{provider}/{date}";
+            url = oDeskUtil.substitute(url, {
+                    team: escape(field.team),
+                    provider: escape(report.state.provider.id),
+                    date: escape(field.value.toString("yyyyMMdd"))
+                });
+            return '<a href="' + url + '">' + text + '</a>';
+        };
+
         cols.push({
-            sClass: "timesheet_details_day",
-            sTitle:"Date",
+            sClass: report.state.showTeamName ? "timesheet_details_day" : "timesheet_details_day details",
+            sTitle: report.state.showTeamName ? 'Date' : 'Date<span class="help" style="display:none">Click on the date to view the work diary.</span>',
             canGroup: true,
             groupValue: function(field){
               return field.value.toString("yyyymmdd");
@@ -12,24 +23,23 @@
             fnRender: function(data){
                 var field = data.aData[data.iDataColumn];
                 var text = field.value.toString("ddd, MMM d yyyy");
-                var url = "http://www.odesk.com/workdiary/{team}/{provider}/{date}";
-                url = oDeskUtil.substitute(url, {
-                    team: escape(field.team),
-                    provider: escape(report.state.provider.id),
-                    date: escape(field.value.toString("yyyyMMdd"))
-                });
-                return '<a href="' + url + '">' + text + '</a>';
+                return report.state.showTeamName ? text :  getWorkDiaryUrl(field, text);
             }
         });
         if(report.state.showTeamName){
             cols.push({
-                sClass:"timesheet_details_team",
+                sClass:"timesheet_details_team details",
                 canGroup: true,
                 groupValue: function(field){
                   return field.value;
                 },
-                sTitle:"Team",
-                fnRender: oDesk.Report.renderField});
+                sTitle: 'Team<span class="help" style="display:none">Click on the team name to view the work diary.</span>',
+                fnRender: function(data){
+                    var field = data.aData[data.iDataColumn];
+                    var dateField = data.aData[0];
+                    return getWorkDiaryUrl(dateField, field.value || "No name");
+                }
+           });
         }
         cols.push({
             sClass:"timesheet_details_memo",
