@@ -2,27 +2,53 @@
     oDesk.Report.prototype.columnSpec = function(){
         var report = this;
         var cols = [];
-        if(report.state.provider.id){
-            cols.push({
-                sTitle:"Buyer",
-                canGroup: report.state.showAgencyName,
-                groupValue: function(field){return field.value;},
-                fnRender: oDesk.Report.renderField});
-        } else {
-            cols.push({sTitle:"Provider", fnRender: oDesk.Report.renderField});
-        }
+        var title = "Buyer";
+        var className = "buyer details";
+        title += '<span class="help" style="display:none">Click on the buyer name to view timesheet details.</span>';
+        cols.push({
+            sTitle: title,
+            sClass: className,
+            canGroup: report.state.showAgencyName,
+            groupValue: function(field){return field.value;},
+            fnRender: function(data){
+                var field = data.aData[data.iDataColumn];
+                var url = "timesheet_details.html";
+                var params = {
+                    startDate: report.state.timeline.startDate.toString("yyyy-MM-dd"),
+                    endDate: report.state.timeline.endDate.toString("yyyy-MM-dd"),
+                    provider: report.state.provider.id,
+                    company_ref: report.state.company.reference,
+                    team:  field.teamId,
+                    go:"go"
+                };
+                return oDesk.Report.renderUrl(field.value, url, params);
+            }
+        });
+
         if (report.state.showAgencyName){
             cols.push({
                 sTitle: "Provider Company",
                 fnRender: oDesk.Report.renderField
             });
         }
-
+        var helpSpan = '<span  class="help" style="display:none">Click on the hours to view the corresponding work diary.</span>';
         $.each(oDeskUtil.dayNames, function(i, day){
-           cols.push({
-               sTitle: day,
-               fnRender:  oDesk.Report.formatHoursField,
-               sClass: "numeric"
+            var className = i ? "numeric hours" : "numeric hours diary";
+            cols.push({
+               sTitle: i ? day : day + helpSpan,
+               fnRender: function(data){
+                   var field = data.aData[data.iDataColumn];
+                   var text = oDesk.Report.formatHoursField(data);
+                   if(text == "") return text;
+                   var url = "http://www.odesk.com/workdiary/{team}/{provider}/{date}";
+                   url = oDeskUtil.substitute(url, {
+                       team: escape(field.teamId),
+                       provider: escape(report.state.provider.id),
+                       date: escape(field.date.toString("yyyyMMdd"))
+                   });
+                      return '<a href="' + url + '">' + text + '</a>';
+               },
+               sClass: className
            });
         });
          cols.push({
@@ -86,14 +112,10 @@
         report.state.showAgencyName = false;
 
         var labels = [{
-             name: report.state.provider.id ? "provider" : "buyer",
-             labelFunction: function(record){
-                 if (report.state.provider.id) {
-                     return record.team_name.value;
-                 } else {
-                     var provider = new oDesk.Provider(record.provider_id.value, record.provider_name.value);
-                     return provider.getDisplayName();
-                 }
+             name: "buyer",
+             labelFunction: function(record){return record.team_name.value;},
+             labelValues: {
+                 teamId: function(record){return record.team_id.value;}
              }
         }];
 
@@ -110,7 +132,9 @@
              labels: labels,
              values: {
                  value: function(record){return record.hours.value;},
-                 earnings: function(record){return record.earnings.value;}
+                 earnings: function(record){return record.earnings.value;},
+                 teamId: function(record){return record.team_id.value;},
+                 date: function(record){return record.worked_on.value;},
              }
         });
 

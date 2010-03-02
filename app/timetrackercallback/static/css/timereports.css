@@ -186,6 +186,9 @@ a:hover {color:#0033FF; text-decoration:underline; }
     margin: 16px 0;
 }
 
+.report_table_list h2{
+    margin-bottom: 16px;
+}
 
 
 #hours-title{text-transform:capitalize;}
@@ -237,9 +240,11 @@ a:hover {color:#0033FF; text-decoration:underline; }
 
 .control label{
     margin: 0 2px;
+}             
+
+.control label.block{
+    display:block;float:left;
 }
-
-
 
 .control a.linkButton,
 .control button{
@@ -261,6 +266,7 @@ a:hover {color:#0033FF; text-decoration:underline; }
     -webkit-border-radius: 4px;
     border-radius: 4px;
 }
+.control_bar.pad{padding-bottom: 0.9em;}
 
 #timereports_range_selector input.calendar{
     position:relative;
