@@ -33,7 +33,7 @@
     };
 
     monthlyProviderTimesheet.prototype.canRefreshReport = function(){
-        if(!this.initComplete && this.report.state.company.id){
+        if(!this.initComplete && this.report.state.company.id && this.report.state.provider.name){
             this.initComplete = true;
             return true;
         }

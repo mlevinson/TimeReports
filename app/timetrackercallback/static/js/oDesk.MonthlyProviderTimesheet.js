@@ -3,50 +3,28 @@
         var report = this;
         var cols = [];
 
-        function getTimesheetUrl(field, team, text){
+        function getTimesheetUrl(field, text){
             var url = "timesheet_details.html";
             var params = {
                     startDate: field.startDate.toString("yyyy-MM-dd"),
                     endDate: field.endDate.toString("yyyy-MM-dd"),
                     provider: report.state.provider.id,
                     company_ref: report.state.company.reference,
-                    team: team,
                     go:"go"
             };
             return oDesk.Report.renderUrl(text, url, params);
         }
 
-        if(report.state.team.id){
-            cols.push({
-                sTitle: 'Week<span class="help" style="display:none">Click on the week name to view their timesheet details.</span>',
-                sClass: "week details",
-                fnRender: function(data){
-                    var field = data.aData[data.iDataColumn];
-                    return getTimesheetUrl(field, report.state.team.id, field.value);
-                }
-            });
-        } else {
-            cols.push({
-                sTitle: 'Week',
-                sClass: 'week',
-                canGroup:true,
-                groupValue: function(field){
-                  return field.value;
-                },
-                fnRender: oDesk.Report.renderField
-            });
-        }
-        if(!report.state.team.id){
-            cols.push({
-                sTitle: 'Team<span  class="help" style="display:none">Click on the team name to view timesheet details.</span>',
-                sClass: "team details",
-                fnRender: function(data){
-                     var field = data.aData[data.iDataColumn];
-                     var dateField = data.aData[0];
-                     return getTimesheetUrl(dateField, field.teamId, field.value);
-                }
-            });
-        }
+
+        cols.push({
+            sTitle: 'Week<span class="help" style="display:none">Click on the week name to view their timesheet details.</span>',
+            sClass: "week details",
+            fnRender: function(data){
+                var field = data.aData[data.iDataColumn];
+                return getTimesheetUrl(field, field.value);
+            }
+        });
+
         function render(data){
             if(report.state.mustGetHours){
                 return oDesk.Report.formatHoursField(data);
@@ -55,22 +33,10 @@
             }
         }
         $.each(oDeskUtil.dayNames, function(i, day){
-           var className = i ? "numeric" : "numeric diary";
            cols.push({
-               sTitle: i ? day : day + '<span  class="help" style="display:none">Click on the values to view the corresponding work diary.</span>',
-               fnRender: function(data){
-                   var field = data.aData[data.iDataColumn];
-                   var text = oDesk.Report.formatHoursField(data);
-                   if(text == "") return text;
-                   var url = "http://www.odesk.com/workdiary/{team}/{provider}/{date}";
-                   url = oDeskUtil.substitute(url, {
-                       team: escape(field.teamId),
-                       provider: escape(report.state.provider.id),
-                       date: escape(field.date.toString("yyyyMMdd"))
-                   });
-                   return '<a href="' + url + '">' + text + '</a>';
-               },
-               sClass: className
+               sTitle: day,
+               fnRender: render,
+               sClass: "numeric"
            });
         });
 
@@ -138,32 +104,17 @@
             }
         }];
 
-
-        if(!report.state.team.id){
-            labels.push({
-                name: "team",
-                labelFunction: function(record){
-                    return record.team_name.value;
-                },
-                labelValues: {
-                    teamId: function(record){return record.team_id.value;},
-                    date: function(record){return record.worked_on.value;}
-                }
-            });
-        }
-
         results.pivotWeekDays({
             uniques: {week:weeks.labels},
             labels:labels,
             values:{
-                value: function(record){return report.state.mustGetHours?record.hours.value :record.charges.value;}
+                value: function(record){return report.state.mustGetHours?record.hours.value :record.charges.value;},
+                date: function(record){return record.worked_on.value;}
             }
          });
 
-
          results.addTotalColumn("hours", {value: function(f){return f.dataType =="number" ? f.value || 0 : 0;}});
          results.calculateColumnTotals();
-
 
         return results;
     };
