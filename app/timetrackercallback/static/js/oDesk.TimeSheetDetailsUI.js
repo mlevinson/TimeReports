@@ -92,7 +92,8 @@
     timesheetDetails.prototype.canRefreshReport = function(){
         if(!this.initComplete && this.forceRefresh &&
                 this.report.state.company.id &&
-                this.report.state.provider.id){
+                this.report.state.provider.id &&
+                this.report.state.provider.name){
             this.initComplete = true;
             return true;
         }
