@@ -4,6 +4,17 @@ oDesk.Report.renderField = function(data){
     return val;
 };
 
+oDesk.Report.renderUrl = function(value, url, params){
+    var paramString = "";
+    $.each(params, function(key, value){
+       paramString +=  paramString.length ? "&" : "?";
+       paramString += key;
+       paramString += "=";
+       paramString += escape(value);
+    });
+    return '<a href="' + url + paramString + '">' + value + '</a>';
+};
+
 oDesk.Report.prototype.dtFormatHours = function(data){
      val = data.aData[data.iDataColumn];
      if(val == 0){

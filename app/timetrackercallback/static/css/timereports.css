@@ -75,6 +75,9 @@ a:hover {color:#0033FF; text-decoration:underline; }
     width: 56px;
 }
 
+.tabular .numeric.hours {
+    width: 44px;
+}
 
 .tabular .total{
     width: 90px;

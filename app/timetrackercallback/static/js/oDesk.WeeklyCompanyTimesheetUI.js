@@ -32,6 +32,21 @@
         return false;
     };
 
+
+    weeklyCompanyTimesheet.prototype.setParam = function(param, value){
+        if(param == "go" && value == "go"){
+            this.forceRefresh = true;
+        } else if (param =="test" && value == "test") {
+            oDesk.Services.getHours = function(report, success, failure){
+               $.getJSON("js/weeklyTimesheet.json", function(data, status){
+                   success(data, status);
+               });
+            };
+        } else {
+            oDesk.ReportPage.prototype.setParam.call(this, param, value);
+        }
+    };
+
     weeklyCompanyTimesheet.prototype.setDefaults = function(){
         this.setSelectedDate(Date.today());
     };
@@ -44,13 +59,17 @@
                 ui.setSelectedDate(selectedDate);
             });
         $(ui.elements.report.container)
-                .oDeskDataTable({report: ui.report, service: oDesk.Services.getHours});
+                .oDeskDataTable({report: ui.report, groupRows:true, service: oDesk.Services.getHours});
     };
 
     weeklyCompanyTimesheet.prototype.init = function(){
         var ui = this;
         ui.initComplete = false;
-        this.initialize();
+        this.initialize({
+            teamId: "team",
+            startDate: "weekStart",
+            test: "test"
+        });
     };
 
     WeeklyCompanyTimesheet = new weeklyCompanyTimesheet();

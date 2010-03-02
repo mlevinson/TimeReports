@@ -277,8 +277,8 @@
             var repeatCount = 1;
              $.each(spec.labels, function(specIndex, labelSpec){
                  var rowIndex = 0;
-                 var labelValues = uniques[labelSpec.name];
-                 repeatCount *= labelValues.length;
+                 var labelNames = uniques[labelSpec.name];
+                 repeatCount *= labelNames.length;
                  var repeatFactor = totalRows/repeatCount;
                  var labelIndex = -1;
                  var repeats = 0;
@@ -286,9 +286,9 @@
                  for(rowIndex = 0; rowIndex < totalRows; rowIndex++){
                     if(repeats == 0){
                         labelIndex ++;
-                        if(labelIndex >= labelValues.length) labelIndex = 0;
+                        if(labelIndex >= labelNames.length) labelIndex = 0;
                         f = constructField(labelSpec.name, "string");
-                        f.set(labelValues[labelIndex]);
+                        f.set(labelNames[labelIndex]);
                         repeats = repeatFactor;
                     }
                     resultset.rows[rowIndex].push(f.clone());
@@ -314,8 +314,8 @@
             $.each(this.records, function(i, record){
                 var rowIndex = 0;
                 $.each(spec.labels, function(specIndex, labelSpec){
-                    var labelValues = uniques[labelSpec.name];
-                    var index = $.inArray(labelSpec.labelFunction(record), labelValues);
+                    var labelNames = uniques[labelSpec.name];
+                    var index = $.inArray(labelSpec.labelFunction(record), labelNames);
                     if(index > -1){
                         rowIndex += rowIndex;
                         rowIndex += index;
@@ -324,10 +324,23 @@
                     }
                 });
                 var row = resultset.rows[rowIndex];
+                $.each(spec.labels, function(specIndex, labelSpec){
+                    if(labelSpec.labelValues){
+                        $.each(labelSpec.labelValues, function(valueName, valueFunction){
+                           row[specIndex][valueName] = valueFunction(record);
+                        });
+                    }
+                });
                 var weekDay = record[spec.dateField].dayOfWeek();
                 var field = row[weekDay + spec.labels.length];
                 $.each(spec.values, function(valueName, valueFunction){
-                   field[valueName] += valueFunction(record);
+                    var value = valueFunction(record);
+                    if(typeof(value) == "number"){
+                        field[valueName] += value;
+                    } else {
+                        field[valueName] = value;
+                    }
+
                 });
             });
         };

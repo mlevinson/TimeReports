@@ -1,12 +1,62 @@
 (function($){
     oDesk.Report.prototype.columnSpec = function(){
-        var cols = [{sTitle:"Provider", fnRender: oDesk.Report.renderField}];
+        var cols = [{
+            sTitle:"Provider",
+            canGroup:true,
+            groupValue: function(field){
+              return field.value;
+            },
+            fnRender: function(data){
+                var field = data.aData[data.iDataColumn];
+                var url = "timesheet_details.html";
+                var params = {
+                    startDate: report.state.timeline.startDate.toString("yyyy-MM-dd"),
+                    endDate: report.state.timeline.endDate.toString("yyyy-MM-dd"),
+                    provider: field.providerId,
+                    company_ref: report.state.company.reference,
+                    go:"go"
+                };
+                if(report.state.team.id){
+                    params.team = report.state.team.id;
+                }
+                return oDesk.Report.renderUrl(field.value, url, params);
+            }
+            }];
         var report = this;
+        if(!report.state.team.id){
+            cols.push({
+                sTitle:"Team",
+                fnRender: function(data){
+                     var field = data.aData[data.iDataColumn];
+                     var url = "timesheet_details.html";
+                     var params = {
+                        startDate: report.state.timeline.startDate.toString("yyyy-MM-dd"),
+                        endDate: report.state.timeline.endDate.toString("yyyy-MM-dd"),
+                        provider: field.providerId,
+                        company_ref: report.state.company.reference,
+                        team: field.teamId,
+                        go:"go"
+                     };
+                     return oDesk.Report.renderUrl(field.value, url, params);
+                }
+            });
+        }
         $.each(oDeskUtil.dayNames, function(i, day){
            cols.push({
                sTitle: day,
-               fnRender: oDesk.Report.formatHoursField,
-               sClass: "numeric"
+               fnRender: function(data){
+                   var field = data.aData[data.iDataColumn];
+                   var text = oDesk.Report.formatHoursField(data);
+                   if(text == "") return text;
+                   var url = "http://www.odesk.com/workdiary/{team}/{provider}/{date}";
+                   url = oDeskUtil.substitute(url, {
+                       team: escape(field.teamId),
+                       provider: escape(field.providerId),
+                       date: escape(field.date.toString("yyyyMMdd"))
+                   });
+                   return '<a href="' + url + '">' + text + '</a>';
+               },
+               sClass: "numeric hours"
            });
         });
         cols.push({
@@ -32,6 +82,7 @@
           var footerRows = [];
           footerRows.push({
                 sClass: "footer-label",
+                colspan: report.state.team.id? 1 : 2,
                 fnRender: function(results, col){
                    return "Total for " + report.state.team.name + ":";
                 }
@@ -62,20 +113,40 @@
 
 
     oDesk.Report.prototype.transformData = function(data){
+          var report = this;
           var results = new oDesk.DataSource.ResultSet(data);
-          results.pivotWeekDays({
-              labels: [
-                  {
-                      name: "provider",
-                      labelFunction: function(record){
-                        var provider = new oDesk.Provider(record.provider_id.value, record.provider_name.value);
-                        return provider.getDisplayName();
-                      }
+          var labels = [
+                {
+                    name: "provider",
+                    labelFunction: function(record){
+                      var provider = new oDesk.Provider(record.provider_id.value, record.provider_name.value);
+                      return provider.getDisplayName();
+                    },
+                    labelValues: {
+                        providerId: function(record){return record.provider_id.value;}
+                    }
+                }
+          ];
+          if(!report.state.team.id){
+              labels.push({
+                  name: "team",
+                  labelFunction: function(record){
+                      return record.team_name.value;
+                  },
+                  labelValues: {
+                      providerId: function(record){return record.provider_id.value;},
+                      teamId: function(record){return record.team_id.value;}
                   }
-              ],
+              });
+          }
+          results.pivotWeekDays({
+              labels: labels,
               values: {
                   value: function(record){return record.hours.value;},
-                  charges: function(record){return record.charges.value;}
+                  charges: function(record){return record.charges.value;},
+                  providerId: function(record){return record.provider_id.value;},
+                  teamId: function(record){return report.state.team.id? report.state.team.id : record.team_id.value;},
+                  date: function(record){return record.worked_on.value;}
               }
           });
 

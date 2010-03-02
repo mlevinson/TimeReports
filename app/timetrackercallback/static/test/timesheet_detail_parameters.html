@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+    <head>
+
+        <script type="text/javascript" src="http://www.odesk.com/js/jquery/jquery.pack.js"></script>
+        <script type="text/javascript">
+           $(function(){
+              $("#show").click(function(){
+                    var baseurl = "http://timetrackercallback.appspot.com/timesheet_details.html";
+                    var params = {};
+
+                    var inputs = {
+                        company_ref: "#company",
+                        team: "#team",
+                        provider: "#provider",
+                        startDate: "#startDate",
+                        endDate: "#endDate"
+                    };
+
+                    $.each(inputs, function(key, selector){
+                       var val = $(selector).val();
+                       if(val != "") {
+                           params[key] = val;
+                       }
+                    });
+
+                    if($("#go:checked").length){
+                        params.go = "go";
+                    }
+                    var paramString = "";
+                    $.each(params, function(key, value){
+                       paramString += paramString.length ? "&" : "?";
+                       paramString += key;
+                       paramString += "=";
+                       paramString += value;
+                    });
+
+                    var url = baseurl + paramString;
+                    $("#url").attr("href", url);
+                    $("#url").text(url)
+              });
+           });
+        </script>
+        <style type="text/css" media="screen">
+         body{
+                     vertical-align:baseline;
+                     font-family: helvetica, sans-serif;
+                     font-size: 18px;
+                 }
+                 input{font-size: 18px;}
+                 .header{
+                     padding: 16px;
+                     border-bottom: 1px lightgray dotted;
+                 }
+                 h1{
+                     font-size: 24px;
+                     font-weight: lighter;
+                 }
+                 #wrapper{
+                    width: 800px;
+                    height: 796px;
+                    margin: 32px auto;
+                    border: 1px lightgray dotted;
+                 }
+
+                 p{
+                     padding: 8px 4px;
+                     border-bottom: 1px lightgray dotted;
+                     line-height: 16px;
+                 }
+
+                 p label{
+                     display: inline-block;
+                     vertical-align: baseline;
+                     width: 180px;
+                     padding-right: 60px;
+                     text-align:right;
+                 }
+
+                 a.button{
+                     display:block;
+                     margin-left: 240px;
+                     float:left;
+                     margin-right: 8px;
+                     text-decoration: none;
+                     color: white;
+                     background-color: gray;
+                     padding: 8px;
+                     font-weight: bold;
+                     -moz-border-radius: 8px;
+                     -webkit-border-radius: 8px;
+                 }
+
+                 a.button:hover{
+                     background-color:red;
+                 }
+
+        </style>
+        <title>Timesheet Details URL Parameterization Test</title>
+    </head>
+    <body>
+        <div id="wrapper">
+            <p>
+                <label for="company">Company Reference:</label> <input type="text" id="company" value="49041">
+            </p>
+            <p>
+                <label for="team">Team Id:</label> <input type="text" id="team" value="teammichael:teammichael">
+            </p>
+            <p>
+                <label for="provider">Provider Id:</label> <input type="text" id="provider" value="lakshmivyas">
+            </p>
+            <p>
+                <label for="startDate">Start Date:</label> <input type="text" id="startDate" value="2010-02-01">
+            </p>
+            <p>
+                <label for="endDate">End Date:</label> <input type="text" id="endDate" value="2010-02-14">
+            </p>
+            <p>
+                <label for="go">Autorun Report:</label> <input type="checkbox" id="go">
+            </p>
+            <p>
+                <a class="button" id="show">Show URL</a><br style="clear:both">
+            </p>
+            <a id="url" target="_blank"></a>
+        </div>
+    </body>
+</html>
