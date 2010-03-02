@@ -173,7 +173,7 @@
             sortColumns = ["task", "provider_name"];
         }
 
-        if(this.state.team.id){
+        if(!this.state.team.id){
             selectColumns.push("team_name", "team_id");
             sortColumns.push("team_name");
         }

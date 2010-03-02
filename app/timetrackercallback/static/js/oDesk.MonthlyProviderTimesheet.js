@@ -55,7 +55,7 @@
           var footerRows = [];
           footerRows.push({
                 sClass: "footer-label",
-                colspan: report.state.team.id? 8 : 9,
+                colspan:  8,
                 fnRender: function(results, col){
                     var label = "Total ";
                     label += report.state.mustGetHours ? "Hours" : "Charges";
@@ -69,8 +69,8 @@
               {
                   fnRender: function(results, col){
                       var value = report.state.mustGetHours ?
-                                    report.formatHours(results.columnTotals[col].value, true) :
-                                    report.formatCharges(results.columnTotals[col].value, true);
+                                    report.formatHours(results.columnTotals[8].value, true) :
+                                    report.formatCharges(results.columnTotals[8].value, true);
                       return value;
                   },
                   sClass: "numeric grand-total"
@@ -87,13 +87,14 @@
         var labels = [{
             name:"week",
             labelFunction: function(record){
-                var whichWeek = 0;
+                var whichWeek = weeks.startDates.length - 1;
                 $.each(weeks.startDates, function(weekIndex, weekDate){
                     if (record.worked_on.value < weekDate){
                         whichWeek = weekIndex - 1;
                         return false;
                     }
                 });
+
                 record.whichWeek = whichWeek;
                 return weeks.labels[whichWeek];
             },

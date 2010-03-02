@@ -40,6 +40,22 @@
         return false;
     };
 
+    monthlyProviderTimesheet.prototype.setParam = function(param, value){
+        var ui = this;
+        if(param == "go" && value == "go"){
+            this.forceRefresh = true;
+        } else if (param =="test" && value == "test") {
+            oDesk.Services.getHours = function(report, success, failure){
+               $.getJSON("js/monthlytimesheet.json", function(data, status){
+                   oDesk.Services.fixHours(ui.report, data, success, failure, status);
+               });
+            };
+        } else {
+            oDesk.ReportPage.prototype.setParam.call(this, param, value);
+        }
+    };
+
+
     monthlyProviderTimesheet.prototype.setDefaults = function(){
         this.report.state.mustGetHours = true;
         this.setSelectedDate(Date.today());
@@ -76,8 +92,8 @@
             useDisplayName:true
         };
         this.canBindProviderSelector = true;
-        this.initialize(function(){
-
+        this.initialize({
+            test:"test"
         });
     };
 
