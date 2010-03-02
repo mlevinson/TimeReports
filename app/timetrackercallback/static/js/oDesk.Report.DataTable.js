@@ -16,6 +16,7 @@ oDesk.Report.renderUrl = function(value, url, params, classname){
     if(classname){
         link += ' class="' + classname + '"';
     }
+    if(!value) value = "";
     link += ' href="'  + url + paramString + '">' + value + '</a>';
     return link;
 };

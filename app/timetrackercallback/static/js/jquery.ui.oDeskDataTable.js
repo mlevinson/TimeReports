@@ -230,23 +230,23 @@ $.widget("ui.oDeskDataTable",{
           if (widget.options.groupRows){
              widget.options.grouper = new widget.columnGrouper();
              widget.options.grouper.defineGroups(results.rows, widget.options.columns);
-          }
-          $.each(widget.options.grouper.groupings, function(rowIndex, rowGroupings){
-              $.each(rowGroupings, function(i, group){
-                  var footer = widget.getGroupFooterRow(results, group);
-                  if(footer){
-                      group.footerRow = footer.row;
-                      group.fullRow = footer.fullRow;
-                      if(!footer.fullRow){
-                          var g = group;
-                          while(g){
-                            g.numberOfFooterRows++;
-                            g = g.parent;
-                          };
+              $.each(widget.options.grouper.groupings, function(rowIndex, rowGroupings){
+                  $.each(rowGroupings, function(i, group){
+                      var footer = widget.getGroupFooterRow(results, group);
+                      if(footer){
+                          group.footerRow = footer.row;
+                          group.fullRow = footer.fullRow;
+                          if(!footer.fullRow){
+                              var g = group;
+                              while(g){
+                                g.numberOfFooterRows++;
+                                g = g.parent;
+                              };
+                          }
                       }
-                  }
-              });
-          });
+                  });
+              });    
+          }
           $.each(results.rows, function(i, row){
               widget.addRow(i, row);
           });

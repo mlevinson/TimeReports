@@ -311,6 +311,8 @@
 
             // Populate values, aggregate if needed
             //
+
+
             $.each(this.records, function(i, record){
                 var rowIndex = 0;
                 $.each(spec.labels, function(specIndex, labelSpec){
@@ -342,6 +344,18 @@
                     }
 
                 });
+            });
+            var labelCount = spec.labels.length;
+
+            resultset.rows = $.map(resultset.rows, function(row){
+                var allZero = true;
+                for (var i = 0; i < 7; i++){
+                    if(row[i + labelCount].value) {
+                        allZero = false;
+                        break;
+                    }
+                };
+                return allZero? null : [row];
             });
         };
 
