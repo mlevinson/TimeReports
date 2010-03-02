@@ -191,7 +191,7 @@
              if($.isFunction(columnName)){
                  f = columnName(record);
              } else if (record[columnName] == undefined){
-                 return false;
+                 return [];
              }
              else {
                  f = record[columnName].value;
@@ -213,7 +213,7 @@
                 if($.isFunction(columnIndex)){
                     value = columnIndex(row);
                 } else {
-                    if(columnIndex >= row.length) return false;
+                    if(columnIndex >= row.length) return [];
                     value = row[columnIndex].value;
                 }
                 if($.inArray(value, uniqueList) == -1){

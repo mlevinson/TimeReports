@@ -183,7 +183,7 @@
         query.addSelectStatement(["worked_on",
                                   "sum(hours)", "sum(earnings)",
                                   "team_name", "team_id",
-                                  "provider_name", "provider_id", "agency_name", "agency_id"]);
+                                  "provider_name", "provider_id"]);
 
         query.addCondition(">=", "worked_on", "{timelineStartDate}");
         query.addCondition("<=", "worked_on", "{timelineEndDate}");

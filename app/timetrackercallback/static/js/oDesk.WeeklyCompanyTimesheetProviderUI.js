@@ -1,6 +1,7 @@
 (function($){
     weeklyCompanyTimesheetProvider = function(){
         oDesk.ReportPage.prototype.constructor.call(this);
+        this.companySelectorFlavor = "affiliate";
         this.canBindTeamSelector = false;
         $.extend(this.elements, {
             week:{
