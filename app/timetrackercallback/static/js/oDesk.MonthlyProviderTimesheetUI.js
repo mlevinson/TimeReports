@@ -63,17 +63,17 @@
         });
 
         $(ui.elements.report.container)
-                .oDeskDataTable({report: ui.report, service: oDesk.Services.getHours});
+                .oDeskDataTable({report: ui.report, service: oDesk.Services.getHours})
+                .unbind("dataTablePopulated").bind("dataTablePopulated", function(){
+                      ui.bindTableHeaderHelp();
+                  });
     };
 
     monthlyProviderTimesheet.prototype.init = function(){
         var ui = this;
         ui.initComplete = false;
         this.providerSelectorOptions = {
-            useDisplayName:true,
-            includeAllOption: true,
-            all_option_id: "all_providers",
-            all_option_text: "All providers",
+            useDisplayName:true
         };
         this.canBindProviderSelector = true;
         this.initialize(function(){
