@@ -165,12 +165,12 @@
         query.setUrlTemplate(oDesk.urls.getHours);
         query.addUrlFragment(oDesk.urls.getHoursTeamFragment);
 
-        var selectColumns = ["task", "provider_name", "provider_id", "sum(hours)", "sum(charges)"];
+        var selectColumns = ["memo", "provider_name", "provider_id", "sum(hours)", "sum(charges)"];
         var sortColumns = null;
         if(report.providerSummary){
-            sortColumns = ["provider_name", "task"];
+            sortColumns = ["provider_name", "memo"];
         } else {
-            sortColumns = ["task", "provider_name"];
+            sortColumns = ["memo", "provider_name"];
         }
 
         if(!this.state.team.id){

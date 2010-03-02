@@ -4,28 +4,31 @@
         var cols = [];
         var taskColumn = {
             sTitle:"Task",
-            canGroup: true,
+            canGroup: !report.providerSummary || (report.providerSummary && report.state.showTeamName),
             groupValue: function(field){
               return field.value;
             },
             fnRender: function(data){
-              var taskField = data.aData[data.iDataColumn];
-              var text = taskField.code;
-              if (taskField.value && taskField.value != "" && taskField.value != text){
-                  text += " - ";
-                  text += taskField.value;
-              }
-              if (taskField.url && taskField.url != ""){
-                  text = '<a href="' + taskField.url + '">' + text + '</a>';
-              }
-
-              return text;
+                return oDesk.Report.renderField(data);
+              // var taskField = data.aData[data.iDataColumn];
+              //           var text = taskField.code;
+              //           if (taskField.value && taskField.value != "" && taskField.value != text){
+              //               text += " - ";
+              //               text += taskField.value;
+              //           }
+              //           if (taskField.url && taskField.url != ""){
+              //               text = '<a href="' + taskField.url + '">' + text + '</a>';
+              //           }
+              //
+              //           return text;
             }
         };
         var providerColumn = {
             sTitle:"User",
-            canGroup: report.state.showTeamName,
-            groupValue: function(field){return field.value;},
+            canGroup: report.providerSummary || report.state.showTeamName,
+            groupValue: function(field){
+              return field.value;
+            },
             fnRender: function(data){return data.aData[data.iDataColumn].value;}
         };
 
@@ -70,7 +73,11 @@
                       sClass: "footer-label",
                       colspan:labelspan,
                       fnRender: function(results, group){
-                          return "Total:";
+                          if(report.providerSummary){
+                              return "Total for " + group.value + ":";
+                          } else {
+                              return "Total:";
+                          }
                       }
                   },
                   {
@@ -124,9 +131,7 @@
     oDesk.Report.prototype.transformData = function(results){
         var report = this;
         var taskColumn = {name:"task", type:"string", valueFunctions:{
-            value: function(record){return record.taskDescription.value;},
-            code: function(record){return record.task.value;},
-            url: function(record){return record.taskUrl? record.taskUrl.value : null;}
+            value: function(record){return record.memo.value;}
         }};
         var providerColumn = {name:"provider", type:"string", valueFunctions:{value: function(record){return record.provider_name.value;}}};
         var columns = [];

@@ -18,7 +18,7 @@
                         {"type":"string","label":"team_name"},
                         {"type":"number","label":"hours"},
                         {"type":"number","label":"charges"},
-                        {"type":"string","label":"task"}
+                        {"type":"string","label":"memo"}
                    ],
             "rows":[
                         {"c":[   {"v":"mlevinson"},     {"v":"Michael Levinson"},    {"v":"oDesk"},    {"v":"oDesk"},                                                     {"v":"8.34"},    {"v":"108.34"},    {"v":"YouTube_Script"}    ]},

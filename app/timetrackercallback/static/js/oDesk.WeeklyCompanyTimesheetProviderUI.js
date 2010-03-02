@@ -19,7 +19,7 @@
         });
 
         this.template =
-'<li id="#report_{provider_id}">\
+'<li id="report_{provider_id}">\
     <h2 class="provider_name">{provider_name}</h2>\
 </li>';
     };

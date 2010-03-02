@@ -3,25 +3,26 @@
         var report = this;
         var cols = [];
         var title = "Buyer";
-        var className = "buyer details";
-        title += '<span class="help" style="display:none">Click on the buyer name to view timesheet details.</span>';
+        var className = "buyer";
+        // title += '<span class="help" style="display:none">Click on the buyer name to view timesheet details.</span>';
         cols.push({
             sTitle: title,
             sClass: className,
             canGroup: report.state.showAgencyName,
             groupValue: function(field){return field.value;},
             fnRender: function(data){
-                var field = data.aData[data.iDataColumn];
-                var url = "timesheet_details.html";
-                var params = {
-                    startDate: report.state.timeline.startDate.toString("yyyy-MM-dd"),
-                    endDate: report.state.timeline.endDate.toString("yyyy-MM-dd"),
-                    provider: report.state.provider.id,
-                    company_ref: report.state.company.reference,
-                    team:  field.teamId,
-                    go:"go"
-                };
-                return oDesk.Report.renderUrl(field.value, url, params);
+                return oDesk.Report.renderField(data);
+                // var field = data.aData[data.iDataColumn];
+                //             var url = "timesheet_details.html";
+                //             var params = {
+                //                 startDate: report.state.timeline.startDate.toString("yyyy-MM-dd"),
+                //                 endDate: report.state.timeline.endDate.toString("yyyy-MM-dd"),
+                //                 provider: report.state.provider.id,
+                //                 company_ref: report.state.company.reference,
+                //                 team:  field.teamId,
+                //                 go:"go"
+                //             };
+                //             return oDesk.Report.renderUrl(field.value, url, params);
             }
         });
 

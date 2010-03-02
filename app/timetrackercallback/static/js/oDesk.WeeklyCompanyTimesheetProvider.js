@@ -76,13 +76,15 @@
     oDesk.Report.prototype.transformData = function(data){
         var report = this;
         var results = new oDesk.DataSource.ResultSet(data);
+        
+        
         report.state.showAgencyName = false;
 
         var labels = [{
              name: report.state.provider.id ? "provider" : "buyer",
              labelFunction: function(record){
                  if (report.state.provider.id) {
-                     return record.team_name.value;
+                     return record.team_name.value || record.team_id.value;
                  } else {
                      var provider = new oDesk.Provider(record.provider_id.value, record.provider_name.value);
                      return provider.getDisplayName();

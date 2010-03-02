@@ -80,7 +80,7 @@
                        labelFunction: function(record){
                            return report.state.buyer?
                                 record.provider_name.value :
-                                record.team_name.value;
+                                record.team_name.value || record.team_id.value;
                        }
                    }
                ],

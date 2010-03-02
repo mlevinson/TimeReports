@@ -39,18 +39,21 @@
              this.parameters.timeline.type, d1, d2);
     };
 
-    taskSummaryReport.prototype.bindTimeSelector = function(){
-        var ui = this;
+
+    taskSummaryReport.prototype.setDefaults = function(){
         Date.format = "dd mmm yyyy";
         var d1 = Date.today();
         var d2 = d1.clone();
-        d1.addDays(-30);
+        d1.moveToDayOfWeek(1, -1);
         this.setSelectedDateRange(d1, d2);
+    };
 
+    taskSummaryReport.prototype.bindTimeSelector = function(){
+        var ui = this;
         $(ui.elements.timerange.startDate)
             .datePicker({startDate:'01/01/1996', clickInput:true, createButton:false})
-            .dpSetSelected(d1.asString())
-            .dpSetEndDate(d2.asString())
+            .dpSetSelected(ui.report.state.timeline.startDate.asString())
+            .dpSetEndDate(ui.report.state.timeline.endDate.asString())
             .bind('dpClosed', function(e, selectedDates){
                 var d = selectedDates[0];
                 if (d) {
@@ -61,8 +64,8 @@
         );
         $(ui.elements.timerange.endDate)
             .datePicker({startDate:'01/01/1996', clickInput:true, createButton:false})
-            .dpSetSelected(d2.asString())
-            .dpSetStartDate(d1.asString())
+            .dpSetSelected(ui.report.state.timeline.endDate.asString())
+            .dpSetStartDate(ui.report.state.timeline.startDate.asString())
             .bind('dpClosed', function(e, selectedDates){
                 var d = selectedDates[0];
                 if (d) {

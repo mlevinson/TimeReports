@@ -144,6 +144,17 @@ a:hover {color:#0033FF; text-decoration:underline; }
 
 .control_bar.white{
     background-color:white;
+}      
+
+#report_summary h2{
+    color: #225A94;
+}
+
+#report_summary{    
+    background-color: #FFFFDF;
+    border-bottom: 3px double #225A94;
+    margin-bottom: 16px; 
+    padding-bottom:16px;
 }
 
 #report_placeholder{
