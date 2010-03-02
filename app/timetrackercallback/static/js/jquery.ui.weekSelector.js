@@ -19,7 +19,7 @@ $.widget("ui.weekSelector",{
             });
 
             $("#next_week").unbind("click").bind("click", function(){
-                var newStartDate = widget.options.weekStartDate.clone();
+                var newStartDate = $("#week_selector").dpGetSelected()[0].clone();
                 newStartDate.moveToDayOfWeek(1, 1);
                 $("#week_selector").dpSetSelected(newStartDate.toString("dd/MM/yyyy"));
                 return false;
