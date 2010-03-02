@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script type="text/javascript" src="http://www.odesk.com/js/jquery/jquery.pack.js"></script>
+        <style type="text/css" media="screen">
+           body{
+               width: 960px;
+               margin:20px auto;
+           }
+           textarea{
+                width: 100%;
+                height: 300px;
+            }
+            #error{
+                color: red;
+                background-color: yellow;
+                font-weight: bold;
+            }
+        </style>
+        <script type="text/javascript" charset="utf-8">
+           $(function(){
+               $("#input").change(function(){
+                   $("#error").text();
+                   var json = null;
+                   try{
+                       json = JSON.parse($("#input").val());
+                   } catch (e){
+                       json = null;
+                   }
+                   if(!json){
+                       $("#error").text("Invalid JSON");
+                       return;
+                   }
+                   var dollarAmountIndex = -1;
+
+                   $.each(json.table.cols, function(c, col){
+                      if(col.label == "earnings" || col.label == "charges") {
+                          dollarAmountIndex = c;
+                          return false;
+                      }
+                   });
+
+                   if(dollarAmountIndex == -1){
+                       $("#error").text("Cannot find earnings or charges");
+                       return;
+                   }
+                   $.each(json.rows, function(r, row){
+                       row.c[dollarAmountIndex].v = Math.floor(Math.random()*101);
+                   });
+
+
+               });
+           });
+        </script>
+    </head>
+    <body>
+        <h1>Salary Obfuscator</h1>
+        <div id="col1">
+            <textarea id="input">
+                Paste JSON here
+            </textarea>
+        </div>
+        <div id="col2">
+            <textarea id="output">
+            </textarea>
+        </div>
+        <br/><br/>
+        <div><label id="error"></label></div>
+    </body>
+</html>
