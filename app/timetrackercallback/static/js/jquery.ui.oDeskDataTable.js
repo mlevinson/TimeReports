@@ -118,18 +118,7 @@ $.widget("ui.oDeskDataTable",{
                  group: group
              };
              if(group.startRowIndex == rowIndex){
-                 $.each(rowGroupings, function(i, group){
-                     var footer = widget.getGroupFooterRow(widget.options.results, group);
-                     if(footer){
-                         group.footerRow = footer.row;
-                         var g = group;
-                         while(g && group.footerRow && !footer.fullRow){
-                            g.numberOfFooterRows ++;
-                            g = g.parent;
-                         }
-                         firstGroupRow = true;
-                     }
-                 });
+                 firstGroupRow = true;
                  columnGroups[group.columnIndex].groupNow = true;
              } else if (group.startRowIndex + group.numberOfRows == rowIndex + 1){
                  columnGroups[group.columnIndex].groupDone = true;
@@ -222,7 +211,7 @@ $.widget("ui.oDeskDataTable",{
                   td += " colspan=\"";
                   td += col.colspan;
                   td += "\"";
-                  columnOffset += (parseInt(col.colspan) - 1);
+                  columnOffset += (parseInt(col.colspan, 10) - 1);
               }
               td += ">";
               td += col.fnRender(results, c + columnOffset);
@@ -242,6 +231,22 @@ $.widget("ui.oDeskDataTable",{
              widget.options.grouper = new widget.columnGrouper();
              widget.options.grouper.defineGroups(results.rows, widget.options.columns);
           }
+          $.each(widget.options.grouper.groupings, function(rowIndex, rowGroupings){
+              $.each(rowGroupings, function(i, group){
+                  var footer = widget.getGroupFooterRow(results, group);
+                  if(footer){
+                      group.footerRow = footer.row;
+                      group.fullRow = footer.fullRow;
+                      if(!footer.fullRow){
+                          var g = group;
+                          while(g){
+                            g.numberOfFooterRows++;
+                            g = g.parent;
+                          };
+                      }
+                  }
+              });
+          });
           $.each(results.rows, function(i, row){
               widget.addRow(i, row);
           });
@@ -375,6 +380,8 @@ $.widget("ui.oDeskDataTable",{
           this.children = [];
           this.parent = null;
           this.numberOfFooterRows = 0;
+          this.footerRow = null;
+          this.fullFooterRow = false;
       };
 
       return {

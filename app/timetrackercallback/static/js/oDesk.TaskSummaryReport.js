@@ -22,7 +22,20 @@
               return text;
             }
         });
-        cols.push({sTitle:"User", fnRender: function(data){return data.aData[data.iDataColumn].value;}});
+        cols.push({
+            sTitle:"User",
+            canGroup: true,
+            groupValue: function(field){return field.value;},
+            fnRender: function(data){return data.aData[data.iDataColumn].value;}
+        });
+        if(report.state.showTeamName){
+            cols.push({
+                sClass:"task_summary_details_team",
+                sTitle:"Team",
+                fnRender: oDesk.Report.renderField
+            });
+        }
+
         cols.push({
           sTitle: "Total Hours",
           fnRender:oDesk.Report.formatHoursField,
@@ -38,11 +51,15 @@
     };
 
     oDesk.Report.prototype.getGroupFooter = function(results, group){
+          if(group.columnIndex) return;
           var report = this;
+          var labelspan = report.state.showTeamName ? 2 : 1;
           return {
               sClass: "footer-row",
               columns: [
-                  {   sClass: "footer-label",
+                  {
+                      sClass: "footer-label",
+                      colspan:labelspan,
                       fnRender: function(results, group){
                           return "Total:";
                       }
@@ -51,14 +68,14 @@
                       sClass: "numeric grand-total",
                       fnRender: function(results, group){
                          var total = results.groupTotals[group.value];
-                         return report.formatHours(total[2].value, true);
+                         return report.formatHours(total[labelspan + 1].value, true);
                       }
                   },
                   {
                       sClass: "numeric grand-total",
                       fnRender: function(results, group){
                          var total = results.groupTotals[group.value];
-                         return report.formatCharges(total[3].value, true);
+                         return report.formatCharges(total[labelspan + 2].value, true);
                       }
                   }
               ]
@@ -67,10 +84,11 @@
 
     oDesk.Report.prototype.footerSpec = function(){
           var report = this;
+          var labelspan = report.state.showTeamName ? 3 : 2;
           var footerRows = [];
           footerRows.push({
                 sClass: "footer-label",
-                colspan: 2,
+                colspan: labelspan,
                 fnRender: function(results, col){
                     return "Total for all tasks and users:";
                 }
@@ -78,7 +96,7 @@
           footerRows.push(
               {
                   fnRender: function(results, col){
-                      return report.formatHours(results.columnTotals[2].value, true);
+                      return report.formatHours(results.columnTotals[labelspan].value, true);
                   },
                   sClass: "numeric grand-total"
               }
@@ -86,7 +104,7 @@
            footerRows.push(
               {
                   fnRender: function(results, col){
-                      return report.formatCharges(results.columnTotals[3].value, true);
+                      return report.formatCharges(results.columnTotals[labelspan + 1].value, true);
                   },
                   sClass: "numeric grand-total"
               }
@@ -95,21 +113,33 @@
       };
 
     oDesk.Report.prototype.transformData = function(results){
-        results.createRows({
-         columns: [
+        var report = this;
+        var columns = [
             {name:"task", type:"string", valueFunctions:{
-                    value: function(record){return record.taskDescription.value;},
-                    code: function(record){return record.task.value;},
-                    url: function(record){return record.taskUrl? record.taskUrl.value : null;}
-                }},
-            {name:"provider", type:"string", valueFunctions:{value: function(record){return record.provider_name.value;}}},
+                value: function(record){return record.taskDescription.value;},
+                code: function(record){return record.task.value;},
+                url: function(record){return record.taskUrl? record.taskUrl.value : null;}
+            }},
+            {name:"provider", type:"string", valueFunctions:{value: function(record){return record.provider_name.value;}}}
+        ];
+        report.state.showTeamName = (report.state.team.id == 0);
+        if(report.state.showTeamName){
+            columns.push({
+                name: "team",
+                type: "string",
+                valueFunctions: {
+                    value: function(record){return record.team_name.value;},
+                    id: function(record){return record.team_id.value;}
+                }
+            });
+        }
+        columns.push(
             {name:"hours", type:"number", valueFunctions:{value: function(record){return record.hours.value;}}},
             {name:"charges", type:"number", valueFunctions:{value: function(record){return record.charges.value;}}}
-         ]
-        });
-
-        results.calculateColumnTotals();
+        );
+        results.createRows({columns: columns});
         results.calculateGroupTotals(0);
+        results.calculateColumnTotals();
         return results;
     };
 })(jQuery);
