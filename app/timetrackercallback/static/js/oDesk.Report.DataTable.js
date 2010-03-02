@@ -4,7 +4,7 @@ oDesk.Report.renderField = function(data){
     return val;
 };
 
-oDesk.Report.renderUrl = function(value, url, params){
+oDesk.Report.renderUrl = function(value, url, params, classname){
     var paramString = "";
     $.each(params, function(key, value){
        paramString +=  paramString.length ? "&" : "?";
@@ -12,7 +12,12 @@ oDesk.Report.renderUrl = function(value, url, params){
        paramString += "=";
        paramString += escape(value);
     });
-    return '<a href="' + url + paramString + '">' + value + '</a>';
+    var link  = '<a';
+    if(classname){
+        link += ' class="' + classname + '"';
+    }
+    link += ' href="'  + url + paramString + '">' + value + '</a>';
+    return link;
 };
 
 oDesk.Report.prototype.dtFormatHours = function(data){

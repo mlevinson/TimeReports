@@ -2,6 +2,7 @@
     oDesk.Report.prototype.columnSpec = function(){
         var cols = [{
             sTitle:"Provider",
+            sClass: "provider details",
             canGroup:true,
             groupValue: function(field){
               return field.value;
@@ -26,6 +27,7 @@
         if(!report.state.team.id){
             cols.push({
                 sTitle:"Team",
+                sClass: "team details",
                 fnRender: function(data){
                      var field = data.aData[data.iDataColumn];
                      var url = "timesheet_details.html";
@@ -42,6 +44,7 @@
             });
         }
         $.each(oDeskUtil.dayNames, function(i, day){
+           var className = i ? "numeric hours" : "numeric hours diary";
            cols.push({
                sTitle: day,
                fnRender: function(data){
@@ -56,7 +59,7 @@
                    });
                    return '<a href="' + url + '">' + text + '</a>';
                },
-               sClass: "numeric hours"
+               sClass: className
            });
         });
         cols.push({
@@ -119,8 +122,7 @@
                 {
                     name: "provider",
                     labelFunction: function(record){
-                      var provider = new oDesk.Provider(record.provider_id.value, record.provider_name.value);
-                      return provider.getDisplayName();
+                        return record.provider_name.value;
                     },
                     labelValues: {
                         providerId: function(record){return record.provider_id.value;}

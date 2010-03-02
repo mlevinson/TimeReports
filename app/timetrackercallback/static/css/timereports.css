@@ -70,6 +70,9 @@ a:hover {color:#0033FF; text-decoration:underline; }
 .table10 td.total{width:100px;}
 .table10 td.fixed.label{width: 218px;}
 
+.tabular th{
+    background-color: #EEE;
+}
 
 .tabular .numeric{
     width: 56px;
@@ -100,6 +103,44 @@ a:hover {color:#0033FF; text-decoration:underline; }
 .tabular{
     width: 100%;
     table-layout:fixed;
+}
+
+.tabular td a{
+    color: #222;
+    text-decoration:underline;
+}
+
+.tabular td a:hover{
+    color: #0033FF;
+}
+
+.tabular th.diary{
+    background:#EEE url(../images/diary-grey.png) no-repeat center left;
+}
+
+.tabular th.details{
+    padding-left: 24px;
+    background:#EEE url(../images/table-grey.png) no-repeat center left;
+}
+
+
+.tabular th span.help{
+    display:block;   
+    text-align: left;
+    background-color: white;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border:#ccc 4px solid;
+    padding: 16px;
+    width: 160px;
+    background-repeat:no-repeat;
+    position:absolute;
+    z-index: 120;    
+    white-space: pre-wrap;       /* css-3 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 
 .control_bar.white{
@@ -167,6 +208,14 @@ a:hover {color:#0033FF; text-decoration:underline; }
 #timereports_month_selector{display:block;float:left;position:relative;top:-2px;}
 #timereports_week_selector{position:relative;top:2px; min-width:220px; }
 
+#timereports_week_selector #week_selector{padding:0 6px;}
+
+#timereports_week_selector a,
+#timereports_month_selector a{
+    color: black;
+    font-weight:medium;
+}
+
 #timereports_range_selector{
     display:block;float:left;position:relative;top:-1px;
 }
@@ -189,6 +238,10 @@ a:hover {color:#0033FF; text-decoration:underline; }
 .control label{
     margin: 0 2px;
 }
+
+
+
+.control a.linkButton,
 .control button{
     position:relative;
     top: 1px;
@@ -198,6 +251,15 @@ a:hover {color:#0033FF; text-decoration:underline; }
 .control label{
     position: relative;
     top: 2px;
+}
+
+.control_bar{
+    background-color: #DCECBE;
+    padding: .8em 1em .6em 1em;
+    margin-bottom: .6em;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
 }
 
 #timereports_range_selector input.calendar{
@@ -343,15 +405,15 @@ a:hover {color:#0033FF; text-decoration:underline; }
 }
 .reportsList dt.piechartReport {
 	padding-left: 24px;
-	background: url('images/chart_pie.png') 0 2px no-repeat;
+	background: url('../images/chart_pie.png') 0 2px no-repeat;
 }
 .reportsList dt.barchartReport {
 	padding-left: 24px;
-	background: url('images/chart_bar.png') 0 2px no-repeat;
+	background: url('../images/chart_bar.png') 0 2px no-repeat;
 }
 .reportsList dt.taskCode {
 	padding-left: 24px;
-	background: url('images/tag_blue.png') 0 2px no-repeat;
+	background: url('../images/tag_blue.png') 0 2px no-repeat;
 }
 /* ======================== Saved Reports module ==========================*/
 .removeMe {
@@ -460,4 +522,76 @@ a:hover {color:#0033FF; text-decoration:underline; }
 /* ======================== Modals ==================================*/
 #saveThisReport .content {
 	margin: 2em;
+}
+
+/* =========================Link Button ===============================*/
+a.linkButton,
+input.formButton {
+	font-weight: bold;
+	font-size: 1.2em;
+	padding: .2em 1em;
+	-moz-border-radius: .4em;
+	-webkit-border-radius: .4em;
+	cursor: pointer;
+	color:#000;
+}
+
+a.linkButton.small, input.formButton.small {
+	font-size: 1em;
+	font-weight: normal;
+}
+
+a.linkButton:hover {
+	text-decoration:none;
+}
+
+a.linkButton.primary,
+input.formButton.primary {
+	background: url('../images/btn_mid.gif') top left repeat-x #FFCC00;
+	border-top: 2px solid #FFDA47;
+	border-left: 2px solid #FFDA47;
+	border-bottom: 2px solid #A58400;
+	border-right: 2px solid #A58400;
+}
+a.linkButton.primary:hover,
+a.linkButton.primary.hover,
+input.formButton.primary.hover {
+	background: url('../images/btn_mid_hover.gif') top left repeat-x #FFE57F;
+	border-top: 2px solid #FFDA47;
+	border-left: 2px solid #FFDA47;
+	border-bottom: 2px solid #A58400;
+	border-right: 2px solid #A58400;
+	-moz-box-shadow: 0px 0px 2px 1px #4F93FF;
+	-webkit-box-shadow: 0px 0px 3px #4F93FF;
+}
+
+a.linkButton.secondary,
+input.formButton.secondary {
+	background: url('../images/btn_mid_secondary.gif') top left repeat-x #FFCC00;
+	border-top: 2px solid #DFC661;
+	border-left: 2px solid #DFC661;
+	border-bottom: 2px solid #A58400;
+	border-right: 2px solid #A58400;
+}
+
+a.linkButton.secondary:hover,
+a.linkButton.secondary.hover,
+input.formButton.secondary.hover {
+	background: url('../images/btn_mid_hover.gif') top left repeat-x #FFE57F;
+	border-top: 2px solid #DFC661;
+	border-left: 2px solid #DFC661;
+	border-bottom: 2px solid #A58400;
+	border-right: 2px solid #A58400;
+	-moz-box-shadow: 0px 0px 2px 1px #4F93FF;
+	-webkit-box-shadow: 0px 0px 3px #4F93FF;
+}
+
+a.linkButton.disabled,
+input.formButton.disabled {
+	background: url('../images/btn_mid_disabled.gif') top left repeat-x #FFCC00;
+	border-top: 2px solid #cfcfcf;
+	border-left: 2px solid #cfcfcf;
+	border-bottom: 2px solid #9f9f9f;
+	border-right: 2px solid #9f9f9f;
+	color:#8f8f8f;
 }

@@ -6,6 +6,14 @@
             week:{
                 tableCaption: "#time-week",
                 selector: "#timereports_week_selector"
+            },
+            help:{
+                all: "th.details, th.diary",
+                details: "th.details",
+                providerDetails: "th.provider.details",
+                teamDetails: "th.team.details",
+                diary: "th.diary",
+                help: "th span.help"
             }
         });
     };
@@ -59,7 +67,27 @@
                 ui.setSelectedDate(selectedDate);
             });
         $(ui.elements.report.container)
-                .oDeskDataTable({report: ui.report, groupRows:true, service: oDesk.Services.getHours});
+                .oDeskDataTable({report: ui.report, groupRows:true, service: oDesk.Services.getHours})
+                .unbind("dataTablePopulated").bind("dataTablePopulated", function(){
+                    var providerDetailHtml = '<span class="help" style="display:none">Click on the provider name to view their timesheet details.</span>';
+                    var teamDetailHtml = '<span  class="help" style="display:none">Click on the team name to view timesheet details.</span>';
+                    var diaryHtml = '<span  class="help" style="display:none">Click on the hours to view the corresponding work diary.</span>';
+                    $(ui.elements.help.providerDetails).append(providerDetailHtml);
+                    $(ui.elements.help.teamDetails).append(teamDetailHtml);
+                    $(ui.elements.help.diary).append(diaryHtml);
+                    $(ui.elements.help.all).each(function(){
+                       var help = $(this).children("span.help");
+                       var pos = $(this).position();
+                       var top = pos.top - help.outerHeight();
+                       $(this).children("span.help").css("top", top);
+                       $(this).children("span.help").css("left", pos.left);
+                    });
+                    $(ui.elements.help.all).unbind("mouseover").bind("mouseover", function(){
+                        $(this).children("span.help").show();
+                    }).unbind("mouseout").bind("mouseout", function(){
+                        $(this).children("span.help").hide();
+                    });
+                });
     };
 
     weeklyCompanyTimesheet.prototype.init = function(){

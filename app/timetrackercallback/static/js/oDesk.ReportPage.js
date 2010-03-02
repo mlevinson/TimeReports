@@ -137,6 +137,7 @@
         if(!ui.canBindGoButton) return;
         $(ui.elements.report.goButton).unbind("click").bind("click", function(){
              ui.refreshReport();
+             return false;
         });
     };
 
