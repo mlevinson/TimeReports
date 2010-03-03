@@ -167,7 +167,7 @@
 
         var selectColumns = ["memo", "provider_name", "provider_id", "sum(hours)", "sum(charges)"];
         var sortColumns = null;
-        if(report.providerSummary){
+        if(this.providerSummary){
             sortColumns = ["provider_name", "memo"];
         } else {
             sortColumns = ["memo", "provider_name"];
