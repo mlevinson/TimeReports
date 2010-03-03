@@ -9,18 +9,17 @@
               return field.value;
             },
             fnRender: function(data){
-                return oDesk.Report.renderField(data);
-              // var taskField = data.aData[data.iDataColumn];
-              //           var text = taskField.code;
-              //           if (taskField.value && taskField.value != "" && taskField.value != text){
-              //               text += " - ";
-              //               text += taskField.value;
-              //           }
-              //           if (taskField.url && taskField.url != ""){
-              //               text = '<a href="' + taskField.url + '">' + text + '</a>';
-              //           }
-              //
-              //           return text;
+                var taskField = data.aData[data.iDataColumn];
+                var text = taskField.code;
+                if (taskField.value && taskField.value != "" && taskField.value != text){
+                    text += " - ";
+                    text += taskField.value;
+                }
+                if (taskField.url && taskField.url != ""){
+                    text = '<a href="' + taskField.url + '">' + text + '</a>';
+                }
+
+                return text;
             }
         };
         var providerColumn = {
@@ -131,7 +130,9 @@
     oDesk.Report.prototype.transformData = function(results){
         var report = this;
         var taskColumn = {name:"task", type:"string", valueFunctions:{
-            value: function(record){return record.memo.value;}
+            value: function(record){return record.taskDescription.value;},
+            code: function(record){return record.task.value;},
+            url: function(record){return record.taskUrl? record.taskUrl.value : null;}
         }};
         var providerColumn = {name:"provider", type:"string", valueFunctions:{value: function(record){return record.provider_name.value;}}};
         var columns = [];

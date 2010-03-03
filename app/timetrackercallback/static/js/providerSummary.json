@@ -18,7 +18,7 @@
                         {"type":"string","label":"team_name"},
                         {"type":"number","label":"hours"},
                         {"type":"number","label":"charges"},
-                        {"type":"string","label":"memo"}
+                        {"type":"string","label":"task"}
                    ],
             "rows":[
                         {"c":[   {"v":"lakshmivyas"},   {"v":"Lakshmi Vyasarajan"},  {"v":"oDesk"},    {"v":"oDesk"},                                                     {"v":"9.00"},    {"v":"109.16"},    {"v":"YouTube_Doc"}       ]},
