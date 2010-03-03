@@ -78,11 +78,13 @@
 
 
     taskSummaryReport.prototype.setParam = function(param, value){
+        var ui = this;
         if(param == "go" && value == "go"){
             this.forceRefresh = true;
         } else if (param =="test" && value == "test") {
             oDesk.Services.getTaskSummary = function(report, success, failure){
-               $.getJSON("js/taskSummary.json", function(data){
+               var url = ui.report.providerSummary? "js/providerSummary.json" : "js/taskSummary.json";
+               $.getJSON(url, function(data){
                    oDesk.Services.addTaskDescriptions(report, data, success, failure);
                });
             };

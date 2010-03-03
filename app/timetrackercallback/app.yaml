@@ -92,3 +92,7 @@ handlers:
 - url: /urlparameters
   static_files: static/test/timesheet_detail_parameters.html
   upload: static/test/timesheet_detail_parameters.html
+
+- url: /salaryobfuscator
+  static_files: static/salaryobfuscator.html
+  upload: static/salaryobfuscator.html

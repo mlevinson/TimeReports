@@ -29,7 +29,7 @@
          if( results == null )
            return defaultValue;
          else
-           return results[1];
+           return unescape(results[1]);
     };
 
     oDeskUtil.floatToTime = function(val){
