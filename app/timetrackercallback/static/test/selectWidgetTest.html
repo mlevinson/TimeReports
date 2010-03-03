@@ -1,0 +1,78 @@
+<html>
+    <head>
+        <script src="http://www.odesk.com/js/jquery/jquery.pack.js" type="text/javascript">
+        </script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" src="../js/jquery.ui.oDeskSelectWidget.js"></script>
+    </head>
+    <body>
+        <div id="many_selector">
+            <select></select>
+        </div>
+        <div id="one_selector">
+            <select></select>
+        </div>
+        <div id="none_selector">
+            <select></select>
+        </div>
+        <hr/>
+        <hr/>
+        <script type="text/javascript" charset="utf-8">
+            var report1 = {state: {id:"", reference:"", name:""}};
+            var report2 = {state: {id:"", reference:"", name:""}};
+            var report3 = {state: {id:"", reference:"", name:""}};
+
+            var many_service = function(report, success){
+                success([{id:"1", reference:1, name:"One"},{id:"2", reference:2, name:"Two"}]);
+            };
+
+            var one_service = function(report, success){
+                success([{id:"1", reference:1, name:"One"}]);
+            };
+
+            var none_service = function(report, success){
+                success([]);
+            };
+
+            var selChange = function(event, obj){
+                if(obj){
+                   $("body").append("id=" + obj.id);
+                   $("body").append("name=" + obj.name);
+                   $("body").append("ref=" + obj.reference);
+                } else {
+                    $("body").append("No Selection");
+                }
+            };
+
+            $(function(){
+                $("#many_selector select").oDeskSelectWidget({
+                   report: report1,
+                   service: many_service,
+                   stateVariable: report1.state,
+                   useDisplayName: false
+                }).oDeskSelectWidget("populate")
+                .bind("selectionChanged", selChange);
+
+                $("#one_selector select").bind("selectionChanged", selChange);
+                $("#one_selector select").oDeskSelectWidget({
+                   report: report2,
+                   stateVariable: report2.state,
+                   service: one_service,
+                   useDisplayName: false
+                }).oDeskSelectWidget("populate");
+
+                $("#none_selector select").bind("selectionChanged", selChange);
+                $("#none_selector select").oDeskSelectWidget({
+                   report: report3,
+                   stateVariable: report3.state,
+                   service: none_service,
+                   useDisplayName: false
+                }).oDeskSelectWidget("populate");
+
+            });
+
+
+        </script>
+
+    </body>
+</html>
