@@ -12,6 +12,9 @@
                     company_ref: report.state.company.reference,
                     go:"go"
             };
+            if(report.state.team.id){
+                params.teamId = report.state.team.id;
+            }
             return oDesk.Report.renderUrl(text, url, params);
         }
 
@@ -25,24 +28,22 @@
             }
         });
 
-        function render(data){
-            if(report.state.mustGetHours){
-                return oDesk.Report.formatHoursField(data);
-            } else {
-                return oDesk.Report.formatChargesField(data);
-            }
-        }
         $.each(oDeskUtil.dayNames, function(i, day){
            cols.push({
                sTitle: day,
-               fnRender: render,
+               fnRender: oDesk.Report.formatHoursField,
                sClass: "numeric"
            });
         });
 
         cols.push({
-          sTitle: "Total",
-          fnRender:render,
+          sTitle: "Total Hours",
+          fnRender:oDesk.Report.formatHoursField,
+          sClass:"numeric total"
+        });
+        cols.push({
+          sTitle: "Total Charges",
+          fnRender:oDesk.Report.formatChargesField,
           sClass:"numeric total"
         });
 
@@ -52,30 +53,36 @@
 
     oDesk.Report.prototype.footerSpec = function(){
           var report = this;
+
+          function columnTotalRenderer(results, col){
+              return oDesk.Report.formatHours(results.columnTotals[col].value);
+          }
+
           var footerRows = [];
           footerRows.push({
                 sClass: "footer-label",
-                colspan:  8,
+                colspan:8,
                 fnRender: function(results, col){
-                    var label = "Total ";
-                    label += report.state.mustGetHours ? "Hours" : "Charges";
-                    label += " for ";
+                    var label = "Total for ";
                     label += report.state.provider.name;
                     label += ":";
                     return label;
                 }
           });
-          footerRows.push(
-              {
-                  fnRender: function(results, col){
-                      var value = report.state.mustGetHours ?
-                                    report.formatHours(results.columnTotals[8].value, true) :
-                                    report.formatCharges(results.columnTotals[8].value, true);
-                      return value;
-                  },
-                  sClass: "numeric grand-total"
+
+
+          footerRows.push({
+              sClass: "numeric grand-total",
+              fnRender: function(results, col){
+                  return oDesk.Report.formatHours(results.columnTotals[8].value, true);
               }
-           );
+          });
+          footerRows.push({
+              sClass: "numeric grand-total",
+              fnRender: function(results, col){
+                  return oDesk.Report.formatCharges(results.columnTotals[8].value, true);
+              }
+          });
           return footerRows;
       };
 
@@ -110,11 +117,13 @@
             labels:labels,
             values:{
                 value: function(record){return report.state.mustGetHours?record.hours.value :record.charges.value;},
+                charges: function(record){return record.charges.value;},
                 date: function(record){return record.worked_on.value;}
             }
          });
 
          results.addTotalColumn("hours", {value: function(f){return f.dataType =="number" ? f.value || 0 : 0;}});
+         results.addTotalColumn("charges", {value:function(f){return f.dataType == "number"? f.charges || 0 : 0;}});
          results.calculateColumnTotals();
 
         return results;

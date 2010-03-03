@@ -81,14 +81,12 @@
             ui.report.state.provider.id = value;
         } else if (param == "teamId") {
             ui.report.state.team.id = value;
-        } else if (param == "startDate"){
+        } else if (param == "startDate" && value){
             if(value){
-                ui.report.state.timeline.startDate = Date.fromString(value, "yyyy-mm-dd");
+                ui.report.state.timeline.setStartDate(Date.fromString(value, "yyyy-mm-dd"));
             }
-        }  else if (param == "endDate"){
-            if(value){
-                ui.report.state.timeline.endDate = Date.fromString(value, "yyyy-mm-dd");
-            }
+        } else if (param == "endDate" && value){
+            ui.report.state.timeline.setEndDate(Date.fromString(value, "yyyy-mm-dd"));
         }
     };
 

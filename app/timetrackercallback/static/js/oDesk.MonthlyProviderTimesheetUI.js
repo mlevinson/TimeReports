@@ -9,12 +9,6 @@
             }
         });
 
-        $.extend(this.elements.report, {
-            displayType: "#display_type .radio",
-            displayTypeHours: "#display_type #hours",
-            hoursOrCharges: ".hours_label"
-        });
-
         this.parameters.timeline.type = "month";
     };
     monthlyProviderTimesheet.prototype = new oDesk.ReportPage();
@@ -69,15 +63,6 @@
                 ui.setSelectedDate(selectedDate);
         });
 
-        $(ui.elements.report.displayType).unbind("click").bind("click", function(){
-            if($(this).hasClass("selected")) return false;
-            $(ui.elements.report.displayType).toggleClass("selected");
-            ui.report.state.mustGetHours = $(ui.elements.report.displayTypeHours).hasClass("selected");
-            $(ui.elements.report.hoursOrCharges).text(ui.report.state.mustGetHours?"Hours":"Charges");
-            ui.refreshReport();
-            return false;
-        });
-
         $(ui.elements.report.container)
                 .oDeskDataTable({report: ui.report, service: oDesk.Services.getHours})
                 .unbind("dataTablePopulated").bind("dataTablePopulated", function(){
@@ -89,11 +74,19 @@
         var ui = this;
         ui.initComplete = false;
         this.providerSelectorOptions = {
-            useDisplayName:true
+            useDisplayName:true,
+            all_option_id: "all_providers",
+            all_option_text: "All Providers",
+            includeAllOption:true
+
         };
         this.canBindProviderSelector = true;
         this.initialize({
-            test:"test"
+            test:"test",
+            providerId:"provider",
+            teamId:"team",
+            go:"go",
+            startDate: "startDate"
         });
     };
 
