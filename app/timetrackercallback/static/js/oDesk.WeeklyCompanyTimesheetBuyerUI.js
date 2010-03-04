@@ -80,6 +80,9 @@
                  var buyer = new oDesk.Company();
                  buyer.name = row.c[3].v;
                  buyer.id = row.c[4].v;
+                 if(!buyer.name || buyer.name == ""){
+                     buyer.name = buyer.id;
+                 }
                  buyerIds.push(buyer.id);
                  buyers.push(buyer);
             }

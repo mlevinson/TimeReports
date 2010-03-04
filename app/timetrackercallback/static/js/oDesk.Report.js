@@ -104,7 +104,7 @@
         query.addCondition("=", "provider_id", "{providerId}");
         if(!this.state.team.id){
             query.addSelectStatement(["worked_on", "sum(hours)", "sum(charges)", "team_name", "team_id", "provider_name", "provider_id"]);
-            query.addSortStatement(["worked_on", "team_name", "provider_name"]);
+            query.addSortStatement(["team_name", "worked_on", "provider_name"]);
         } else {
             query.addSelectStatement(["worked_on", "sum(hours)", "sum(charges)", "provider_name", "provider_id"]);
             query.addSortStatement(["worked_on", "provider_name"]);
@@ -181,11 +181,13 @@
         query.setUrlTemplate(oDesk.urls.getHours);
         query.addUrlFragment(oDesk.urls.getHoursTeamFragment);
 
-        var selectColumns = ["task", "provider_name", "provider_id", "sum(hours)", "sum(charges)"];
+        var selectColumns = ["provider_name", "provider_id", "sum(hours)", "sum(charges)"];
         var sortColumns = null;
         if(this.providerSummary){
-            sortColumns = ["provider_name", "task"];
+            selectColumns.unshift("memo");
+            sortColumns = ["provider_name", "memo"];
         } else {
+            selectColumns.unshift("task");
             sortColumns = ["task", "provider_name"];
         }
 

@@ -39,9 +39,12 @@
         if(param == "go" && value == "go"){
             this.forceRefresh = true;
         } else if (param =="test" && value == "test") {
+            var d = Date.parseExact("20100201", "yyyyMMdd");
+            ui.setSelectedDate(d);
+            $(ui.elements.timeline.selector).ringceMonthSelector("selectDate", d);
             oDesk.Services.getHours = function(report, success, failure){
                $.getJSON("js/monthlytimesheet.json", function(data, status){
-                   oDesk.Services.fixHours(ui.report, data, success, failure, status);
+                   success(data, status);
                });
             };
         } else {
@@ -51,7 +54,6 @@
 
 
     monthlyProviderTimesheet.prototype.setDefaults = function(){
-        this.report.state.mustGetHours = true;
         this.setSelectedDate(Date.today());
     };
 
@@ -59,6 +61,7 @@
         var ui = this;
         $(ui.elements.timeline.selector)
             .ringceMonthSelector()
+            .ringceMonthSelector("selectDate", ui.report.state.timeline.startDate)
             .unbind("monthSelected").bind("monthSelected", function(e, selectedDate){
                 ui.setSelectedDate(selectedDate);
         });

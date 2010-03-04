@@ -171,6 +171,12 @@
                     record[field.name] = field;
                     field.set(col.v);
                 });
+                // TODO: remove this when the API gets fixed.
+                
+                if(record.team_name && record.team_id && (!record.team_name.value || record.team_name.value == "")){
+                    record.team_name.value = record.team_id.value;
+                }
+                
                 records.push(record);
             });
             return records;

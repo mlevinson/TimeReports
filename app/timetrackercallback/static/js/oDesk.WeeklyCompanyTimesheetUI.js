@@ -40,7 +40,7 @@
         } else if (param =="test" && value == "test") {
             oDesk.Services.getHours = function(report, success, failure){
                $.getJSON("js/weeklyTimesheet.json", function(data, status){
-                   oDesk.Services.fixHours(ui.report, data, success, failure, status);
+                   success(data, status);
                });
             };
         } else {

@@ -4,7 +4,7 @@
         var cols = [];
         var taskColumn = {
             sTitle:"Task",
-            canGroup: !report.providerSummary || (report.providerSummary && report.state.showTeamName),
+            canGroup: true,
             groupValue: function(field){
               return field.value;
             },
@@ -22,21 +22,28 @@
                 return text;
             }
         };
+
+        var memoColumn = {
+             sTitle:"Memo",
+             canGroup: report.state.showTeamName,
+             groupValue: function(field){
+                   return field.value;
+             },
+             fnRender: oDesk.Report.renderField
+        };
         var providerColumn = {
             sTitle:"User",
             canGroup: report.providerSummary || report.state.showTeamName,
             groupValue: function(field){
               return field.value;
             },
-            fnRender: function(data){return data.aData[data.iDataColumn].value;}
+             fnRender: oDesk.Report.renderField
         };
-
+        cols.push(providerColumn);
         if (report.providerSummary){
-            cols.push(providerColumn);
-            cols.push(taskColumn);
+            cols.push(memoColumn);
         } else {
-            cols.push(taskColumn);
-            cols.push(providerColumn);
+            cols.unshift(taskColumn);
         }
 
         if(report.state.showTeamName){
@@ -134,14 +141,17 @@
             code: function(record){return record.task.value;},
             url: function(record){return record.taskUrl? record.taskUrl.value : null;}
         }};
+
+        var memoColumn = {name:"task", type:"string", valueFunctions:{
+            value: function(record){return record.memo.value;}
+        }};
         var providerColumn = {name:"provider", type:"string", valueFunctions:{value: function(record){return record.provider_name.value;}}};
         var columns = [];
+        columns.push(providerColumn);
         if (report.providerSummary){
-            columns.push(providerColumn);
-            columns.push(taskColumn);
+            columns.push(memoColumn);
         } else {
-            columns.push(taskColumn);
-            columns.push(providerColumn);
+            columns.unshift(taskColumn);
         }
         report.state.showTeamName = (report.state.team.id == 0);
         if(report.state.showTeamName){

@@ -74,13 +74,13 @@
           footerRows.push({
               sClass: "numeric grand-total",
               fnRender: function(results, col){
-                  return oDesk.Report.formatHours(results.columnTotals[8].value, true);
+                  return oDesk.Report.formatHours(results.columnTotals[col].value, true);
               }
           });
           footerRows.push({
               sClass: "numeric grand-total",
               fnRender: function(results, col){
-                  return oDesk.Report.formatCharges(results.columnTotals[8].value, true);
+                  return oDesk.Report.formatCharges(results.columnTotals[col].value, true);
               }
           });
           return footerRows;
@@ -116,7 +116,7 @@
             uniques: {week:weeks.labels},
             labels:labels,
             values:{
-                value: function(record){return report.state.mustGetHours?record.hours.value :record.charges.value;},
+                value: function(record){return record.hours.value;},
                 charges: function(record){return record.charges.value;},
                 date: function(record){return record.worked_on.value;}
             }

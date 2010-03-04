@@ -54,26 +54,36 @@
         }
     };
 
-    oDesk.Services.fixHours = function(report, data, success, failure, status){
-        var successOK = $.isFunction(success);
-        if ((report.state.team.id  ||
-            !data || !data.table || !data.table.rows || data.table.rows == "") && successOK){
-            success(data, status);
-        } else if (!report.state.team.id && successOK){
-            $.each(data.table.rows, function(r, row){
-               if(row.c[4].v && (!row.c[3].v || row.c[3].v == "") ){
-                   row.c[3].v = row.c[4].v;
-               }
-            });
-            success(data, status);
-        }
+    oDesk.Services.getProviders = function(report, success, failure){
+
+         $.ajax({
+             url: report.getProvidersQuery(),
+             dataType: 'jsonp',
+             error: function(request, status, error){
+                 if($.isFunction(failure)){
+                     failure(status, error);
+                 }
+             },
+             success: function(data, status, request){
+                 providers = [];
+                 $.each(data.users, function(i, provider){
+                    var providerObject = new oDesk.Provider();
+                    providerObject.id = provider.id;
+                    providerObject.reference = provider.reference;
+                    providerObject.name = provider.first_name + " " + provider.last_name;
+                    providers.push(providerObject);
+                 });
+                 providers.sort();
+                 if($.isFunction(success)){
+                     success(providers);
+                 }
+             }
+         });
     };
 
 
     oDesk.Services.getHours = function(report, success, failure){
-        oDeskUtil.ajax(report.getHoursQuery(), function(data, status){
-            oDesk.Services.fixHours(report, data, success, failure, status);
-        }, failure);
+        oDeskUtil.ajax(report.getHoursQuery(), success, failure);
     };
 
     oDesk.Services.getProviderHours = function(report, success, failure){
@@ -130,7 +140,7 @@
 
         var results = new oDesk.DataSource.ResultSet(data);
 
-        if(!results.records.length){
+        if(!results.records.length || report.providerSummary){
             if($.isFunction(success)){
                 success(results, "Succcess");
             }
@@ -224,30 +234,4 @@
         }, failure);
     };
 
-    oDesk.Services.getProviders = function(report, success, failure){
-
-         $.ajax({
-             url: report.getProvidersQuery(),
-             dataType: 'jsonp',
-             error: function(request, status, error){
-                 if($.isFunction(failure)){
-                     failure(status, error);
-                 }
-             },
-             success: function(data, status, request){
-                 providers = [];
-                 $.each(data.users, function(i, provider){
-                    var providerObject = new oDesk.Provider();
-                    providerObject.id = provider.id;
-                    providerObject.reference = provider.reference;
-                    providerObject.name = provider.first_name + " " + provider.last_name;
-                    providers.push(providerObject);
-                 });
-                 providers.sort();
-                 if($.isFunction(success)){
-                     success(providers);
-                 }
-             }
-         });
-    };
 })(jQuery);

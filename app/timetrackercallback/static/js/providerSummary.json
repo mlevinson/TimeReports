@@ -14,11 +14,11 @@
             "cols":[
                         {"type":"string","label":"provider_id"},
                         {"type":"string","label":"provider_name"},
-                        {"type":"string","label":"team_id"},
                         {"type":"string","label":"team_name"},
+                        {"type":"string","label":"team_id"},
                         {"type":"number","label":"hours"},
                         {"type":"number","label":"charges"},
-                        {"type":"string","label":"task"}
+                        {"type":"string","label":"memo"}
                    ],
             "rows":[
                         {"c":[   {"v":"lakshmivyas"},   {"v":"Lakshmi Vyasarajan"},  {"v":"oDesk"},    {"v":"oDesk"},                                                     {"v":"9.00"},    {"v":"109.16"},    {"v":"YouTube_Doc"}       ]},

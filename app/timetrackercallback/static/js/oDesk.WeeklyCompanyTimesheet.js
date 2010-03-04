@@ -3,10 +3,6 @@
         var cols = [{
             sTitle:'Provider<span class="help" style="display:none">Click on the provider name to view their timesheet details.</span>',
             sClass: "provider details",
-            canGroup:true,
-            groupValue: function(field){
-              return field.value;
-            },
             fnRender: function(data){
                 var field = data.aData[data.iDataColumn];
                 var url = "timesheet_details.html";
@@ -25,9 +21,13 @@
             }];
         var report = this;
         if(!report.state.team.id){
-            cols.push({
+            cols.unshift({
                 sTitle: 'Team<span  class="help" style="display:none">Click on the team name to view timesheet details.</span>',
                 sClass: "team details",
+                canGroup:true,
+                groupValue: function(field){
+                   return field.value;
+                },
                 fnRender: function(data){
                      var field = data.aData[data.iDataColumn];
                      var url = "timesheet_details.html";
@@ -130,7 +130,7 @@
                 }
           ];
           if(!report.state.team.id){
-              labels.push({
+              labels.unshift({
                   name: "team",
                   labelFunction: function(record){
                       return record.team_name.value;
