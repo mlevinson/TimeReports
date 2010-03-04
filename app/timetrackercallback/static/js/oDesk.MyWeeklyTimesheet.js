@@ -4,25 +4,23 @@
         var cols = [];
         var title = "Buyer";
         var className = "buyer";
-        // title += '<span class="help" style="display:none">Click on the buyer name to view timesheet details.</span>';
+        title += '<span class="help" style="display:none">Click on the buyer name to view timesheet details.</span>';
         cols.push({
             sTitle: title,
             sClass: className,
             canGroup: report.state.showAgencyName,
             groupValue: function(field){return field.value;},
             fnRender: function(data){
-                return oDesk.Report.renderField(data);
-                // var field = data.aData[data.iDataColumn];
-                //             var url = "timesheet_details.html";
-                //             var params = {
-                //                 startDate: report.state.timeline.startDate.toString("yyyy-MM-dd"),
-                //                 endDate: report.state.timeline.endDate.toString("yyyy-MM-dd"),
-                //                 provider: report.state.provider.id,
-                //                 company_ref: report.state.company.reference,
-                //                 team:  field.teamId,
-                //                 go:"go"
-                //             };
-                //             return oDesk.Report.renderUrl(field.value, url, params);
+                var field = data.aData[data.iDataColumn];
+                var url = "my_timesheet_details.html";
+                var params = {
+                                startDate: report.state.timeline.startDate.toString("yyyy-MM-dd"),
+                                endDate: report.state.timeline.endDate.toString("yyyy-MM-dd"),
+                                provider: report.state.provider.id,
+                                buyer: field.companyId,
+                                go:"go"
+                            };
+                return oDesk.Report.renderUrl(field.value, url, params);
             }
         });
 
@@ -116,7 +114,7 @@
              name: "buyer",
              labelFunction: function(record){return record.team_name.value;},
              labelValues: {
-                 teamId: function(record){return record.team_id.value;}
+                 companyId: function(record){return record.company_id.value;}
              }
         }];
 

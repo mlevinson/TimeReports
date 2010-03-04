@@ -1,14 +1,14 @@
 (function($){
-    timesheetDetails = function(){
+    myTimesheetDetails = function(){
         oDesk.ReportPage.prototype.constructor.call(this);
-        this.companySelectorFlavor = "hiring";
-        this.canBindProviderSelector = true;
-        this.canBindDateRange = true;
+        this.companySelectorFlavor = "engaged";
+        this.canBindTeamSelector = false;
+        this.canBindDateRangeSelector = true;
+        this.elements.company.selector = "#buyer_selector";
+        this.parameters.buyerId = null;
         $.extend(this.elements, {
-            timerange:{
-                tableCaption: "#time-range",
-                startDate: "#date_from",
-                endDate: "#date_to"
+            buyer: {
+                name: ".buyer-name"
             }
         });
         $.extend(this.elements.report, {
@@ -23,84 +23,63 @@
         });
         this.parameters.timeline.type = "range";
     };
-    timesheetDetails.prototype = new oDesk.ReportPage();
-    timesheetDetails.prototype.constructor = timesheetDetails;
+    myTimesheetDetails.prototype = new oDesk.ReportPage();
+    myTimesheetDetails.prototype.constructor = myTimesheetDetails;
 
+    oDesk.ReportPage.prototype.companyChanged = function(company){
+        var ui = this;
+        ui.report.state.buyer = company;
+     };
 
-    timesheetDetails.prototype.refreshReport = function(){
+    myTimesheetDetails.prototype.refreshReport = function(){
         var ui = this;
         $(ui.elements.report.placeholder).hide();
         $(ui.elements.report.content).show();
+        ui.report.state.showTeamName = (ui.report.state.buyer.team.teams.length > 0);
         ui.setSelectedDateRange(
                 Date.fromString($(ui.elements.timerange.startDate).val()),
                 Date.fromString($(ui.elements.timerange.endDate).val())
             );
-        $(ui.elements.team.name).text(ui.report.state.team.name);
-        $(ui.elements.provider.name).text(ui.report.state.provider.name);
+        $(ui.elements.buyer.name).text(ui.report.state.buyer.name);
+        $(ui.elements.provider.name).text(ui.report.state.authUser.name);
         $(ui.elements.timerange.tableCaption).text(this.report.state.timeline.getDisplayName());
         $(ui.elements.report.container).oDeskDataTable("generateReport");
     };
 
-    timesheetDetails.prototype.setParam = function(param, value){
+    myTimesheetDetails.prototype.setParam = function(param, value){
         if(param == "go" && value == "go"){
             this.forceRefresh = true;
         } else if (param =="test" && value == "test") {
-            oDesk.Services.getTimesheetDetails = function(report, success, failure){
-               $.getJSON("js/timesheetDetails.json", function(data){
+            oDesk.Services.getmyTimesheetDetails = function(report, success, failure){
+               $.getJSON("js/myTimesheetDetails.json", function(data){
                    success(new oDesk.DataSource.ResultSet(data));
                });
             };
-        }else {
+        } else if (param == "buyerId" && value){
+            this.parameters.buyerId = value;
+        } else {
             oDesk.ReportPage.prototype.setParam.call(this, param, value);
         }
     };
 
-    timesheetDetails.prototype.setSelectedDateRange = function(d1, d2){
+    myTimesheetDetails.prototype.setSelectedDateRange = function(d1, d2){
         var ui = this;
         this.report.state.timeline = new oDesk.Timeline(
              this.parameters.timeline.type, d1, d2);
     };
 
-    timesheetDetails.prototype.bindTimeSelector = function(){
-        var ui = this;
-        $(ui.elements.timerange.startDate)
-            .datePicker({startDate:'01/01/1996', clickInput:true, createButton:false})
-            .dpSetSelected(ui.report.state.timeline.startDate.asString())
-            .dpSetEndDate(ui.report.state.timeline.endDate.asString())
-            .bind('dpClosed', function(e, selectedDates){
-                var d = selectedDates[0];
-                if (d) {
-                    d = new Date(d);
-                    $(ui.elements.timerange.endDate).dpSetStartDate(d.addDays(1).asString());
-                }
-            }
-        );
-        $(ui.elements.timerange.endDate)
-            .datePicker({startDate:'01/01/1996', clickInput:true, createButton:false})
-            .dpSetSelected(ui.report.state.timeline.endDate.asString())
-            .dpSetStartDate(ui.report.state.timeline.startDate.asString())
-            .bind('dpClosed', function(e, selectedDates){
-                var d = selectedDates[0];
-                if (d) {
-                    d = new Date(d);
-                        $(ui.elements.timerange.startDate).dpSetEndDate(d.addDays(-1).asString());
-                    }
-                }
-            );
-    };
 
-    timesheetDetails.prototype.canRefreshReport = function(){
+    myTimesheetDetails.prototype.canRefreshReport = function(){
         if(!this.initComplete && this.forceRefresh &&
-                this.report.state.company.id &&
-                this.report.state.provider.id &&
-                this.report.state.provider.name){
+                this.report.state.buyer &&
+                this.report.state.buyer.id){
             this.initComplete = true;
             return true;
         }
         return false;
     };
 
-    timesheetDetails.prototype.setDefaults = function(){
+    myTimesheetDetails.prototype.setDefaults = function(){
         Date.format = "dd mmm yyyy";
         var d1 = Date.today();
         var d2 = d1.clone();
@@ -108,13 +87,15 @@
         this.setSelectedDateRange(d1, d2);
     };
 
-    timesheetDetails.prototype.completeInitialization = function(){
-        var ui = this;
-        ui.bindTimeSelector();
+    myTimesheetDetails.prototype.completeInitialization = function(){
+        var ui = this;   
+        if(this.parameters.buyerId){
+            $(this.elements.company.selector).oDeskCompanySelector("selectWithId", this.parameters.buyerId);
+        }
         $(ui.elements.report.container)
                     .oDeskDataTable({
                         report: ui.report,
-                        service: oDesk.Services.getTimesheetDetails,
+                        service: oDesk.Services.getMyTimesheetDetails,
                         groupRows:true})
                     .unbind("dataTablePopulated").bind("dataTablePopulated", function(){
                             ui.bindTableHeaderHelp();
@@ -136,17 +117,16 @@
         });
     };
 
-    timesheetDetails.prototype.init = function(){
+    myTimesheetDetails.prototype.init = function(){
         var ui = this;
         this.initialize({
-            providerId: "provider",
-            teamId: "team",
             startDate:"startDate",
             endDate:"endDate",
             go:"go",
-            test: "test"
+            test: "test",
+            buyerId: "buyer"
         });
     };
 
-    TimesheetDetails = new timesheetDetails();
+    MyTimesheetDetails = new myTimesheetDetails();
 })(jQuery);

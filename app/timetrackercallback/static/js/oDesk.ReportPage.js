@@ -4,6 +4,7 @@
         this.report = null;
         this.companySelectorFlavor = "member";
         this.canBindCompanySelector = true;
+        this.canBindDateRangeSelector = false;
         this.canBindTeamSelector = true;
         this.canBindProviderSelector = false;
         this.companyReference = null;
@@ -12,6 +13,7 @@
         this.companySelectorBound = false;
         this.teamSelectorBound = false;
         this.providerSelectorBound = false;
+        this.dateRangeSelectorBound = false;
         this.elements = {
             company : {
                 selector:"#top_selector"
@@ -36,6 +38,11 @@
                 teamDetails: "th.team.details",
                 diary: "th.diary",
                 help: "span.help"
+            },
+            timerange:{
+                tableCaption: "#time-range",
+                startDate: "#date_from",
+                endDate: "#date_to"
             }
         };
 
@@ -111,6 +118,9 @@
         ui.validateState();
         ui.bindGoButton();
         ui.addLoadingIndicator();
+        if(ui.canBindDateRangeSelector){
+            ui.bindDateRangeSelector();
+        }
         oDesk.Services.getAuthUserAndRoles(function(user){
             ui.report.state.authUser = user;
             ui.bindCompanySelector();
@@ -182,6 +192,37 @@
         );
         ui.providerSelectorBound = true;
     };
+
+    oDesk.ReportPage.prototype.bindDateRangeSelector = function(){
+        var ui = this;
+        if(!ui.canBindDateRangeSelector || ui.dateRangeSelectorBound) return;
+        $(ui.elements.timerange.startDate)
+            .datePicker({startDate:'01/01/1996', clickInput:true, createButton:false})
+            .dpSetSelected(ui.report.state.timeline.startDate.asString())
+            .dpSetEndDate(ui.report.state.timeline.endDate.asString())
+            .bind('dpClosed', function(e, selectedDates){
+                var d = selectedDates[0];
+                if (d) {
+                    d = new Date(d);
+                    $(ui.elements.timerange.endDate).dpSetStartDate(d.addDays(1).asString());
+                }
+            }
+        );
+        $(ui.elements.timerange.endDate)
+            .datePicker({startDate:'01/01/1996', clickInput:true, createButton:false})
+            .dpSetSelected(ui.report.state.timeline.endDate.asString())
+            .dpSetStartDate(ui.report.state.timeline.startDate.asString())
+            .bind('dpClosed', function(e, selectedDates){
+                var d = selectedDates[0];
+                if (d) {
+                    d = new Date(d);
+                        $(ui.elements.timerange.startDate).dpSetEndDate(d.addDays(-1).asString());
+                    }
+                }
+            );
+        ui.dateRangeSelectorBound = true;
+    };
+
 
     oDesk.ReportPage.prototype.bindTeamSelector = function(){
         var ui = this;

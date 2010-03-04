@@ -60,6 +60,14 @@ handlers:
   static_files: static/my_weekly_timesheet.html
   upload: static/my_weekly_timesheet.html
 
+- url: /my_timesheet_details.html
+  static_files: static/my_timesheet_details.html
+  upload: static/my_timesheet_details.html
+
+- url: /my_timesheet_details
+  static_files: static/my_timesheet_details.html
+  upload: static/my_timesheet_details.html 
+
 - url: /weekly_company_timesheet_provider.html
   static_files: static/weekly_company_timesheet_provider.html
   upload: static/weekly_company_timesheet_provider.html

@@ -3,6 +3,49 @@ $.widget("ui.oDeskCompanySelector",{
     _init: function(){
       this.populateList();
     },
+    selectWithId: function(id){
+        var widget = this;
+        var reference = null;
+        if (id && widget.options.showTeams && widget.options.allowTeamSelection){
+            reference = widget._getTeamReference(unescape(id));
+        } else {
+            reference = widget._getCompanyReference(unescape(id));
+        }
+        if(!reference) return;
+        $(widget.options.selector)
+            .find("li." + widget.options.selectedListItemClass)
+            .removeClass(widget.options.selectedListItemClass);
+        $(widget.options.selector)
+            .find("li#" + unescape(reference))
+            .addClass(widget.options.selectedListItemClass);
+        widget._applySelection();
+    },
+    _getCompanyReference: function(id){
+        var widget = this;
+        var reference = null;
+        $.each(widget.options.companies, function(c, company){
+            if (company.id == id || company.team.id == id){
+                reference = company.reference;
+                return false;
+            }
+        });
+        return reference;
+    },
+    _getTeamReference: function(id){
+        var widget = this;
+        var reference = null;
+        $.each(widget.options.companies, function(c, company){
+            company.team.walk({
+                visitNode: function(team){
+                  if(team.id == id){
+                      reference = team.reference;
+                      return false;
+                  }
+                }
+            });
+        });
+        return reference;
+    },
     populateList: function(){
         var widget = this;
         $(widget.element[0]).children("." + widget.options.containerClass).remove();

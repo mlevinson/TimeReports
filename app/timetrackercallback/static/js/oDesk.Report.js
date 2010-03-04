@@ -124,7 +124,7 @@
 
         var query = new oDesk.DataSource.Query(this.state.makeParams());
         query.setUrlTemplate(oDesk.urls.getProviderHours);
-        query.addSelectStatement(["worked_on", "sum(hours)", "sum(earnings)", "team_name", "team_id", "agency_name", "agency_id"]);
+        query.addSelectStatement(["worked_on", "sum(hours)", "sum(earnings)", "team_name", "team_id", "agency_name", "agency_id", "company_id"]);
         query.addCondition(">=", "worked_on", "{timelineStartDate}");
         query.addCondition("<=", "worked_on", "{timelineEndDate}");
         query.addSortStatement(["team_name", "worked_on"]);
@@ -152,6 +152,22 @@
             query.addSortStatement(["worked_on", "memo"]);
         }
 
+        return query.toString();
+    };
+
+    oDesk.Report.prototype.getMyTimesheetDetailsQuery = function(){
+        if(!this.state.buyer.id ||
+            !this.state.authUser.id ||
+            !this.state.timeline.startDate ||
+            !this.state.timeline.endDate ) return null;
+
+        var query = new oDesk.DataSource.Query(this.state.makeParams());
+        query.setUrlTemplate(oDesk.urls.getProviderHours);
+        query.addCondition(">=", "worked_on", "{timelineStartDate}");
+        query.addCondition("<=", "worked_on", "{timelineEndDate}");
+        query.addCondition("=", "company_id", "{buyerId}");
+        query.addSelectStatement(["worked_on", "memo", "team_name", "team_id", "sum(hours)", "sum(earnings)"]);
+        query.addSortStatement(["worked_on", "team_name", "memo"]);
         return query.toString();
     };
 

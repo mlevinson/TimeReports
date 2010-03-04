@@ -216,6 +216,14 @@
         }, failure);
     };
 
+    oDesk.Services.getMyTimesheetDetails = function(report, success, failure){
+        oDeskUtil.ajax(report.getMyTimesheetDetailsQuery(), function(data, status){
+            if ($.isFunction(success)){
+               success(new oDesk.DataSource.ResultSet(data), status);
+            };
+        }, failure);
+    };
+
     oDesk.Services.getProviders = function(report, success, failure){
 
          $.ajax({

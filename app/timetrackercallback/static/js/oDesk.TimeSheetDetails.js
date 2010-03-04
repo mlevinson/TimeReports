@@ -131,7 +131,7 @@
                                 weekLabel: function(record){return record.worked_on.weekLabel;}
                             }
                       }];
-        report.state.showTeamName = (report.state.team.id == 0);
+        report.state.showTeamName = (report.state.showTeamName || (report.state.team.id == 0));
         if(report.state.showTeamName){
             columns.push({
                 name: "team",
@@ -145,7 +145,7 @@
         columns.push(
             {name:"memo", type:"string", valueFunctions:{value: function(record){return record.memo.value;}}},
             {name:"hours", type:"number", valueFunctions:{value: function(record){return record.hours.value;}}},
-            {name:"charges", type:"number", valueFunctions:{value: function(record){return record.charges.value;}}}
+            {name:"charges", type:"number", valueFunctions:{value: function(record){return record.charges? record.charges.value : record.earnings.value;}}}
         );
         results.createRows({columns: columns});
 

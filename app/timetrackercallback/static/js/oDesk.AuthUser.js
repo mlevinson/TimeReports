@@ -39,6 +39,7 @@
         recruiter: {permissions: ["manage_recruiting"]},
         affiliate: {permissions: ["manage_affiliation"]},
         hiring: {permissions: ["manage_employment"]},
+        engaged: {engagementReference: "__exists__"},
         team_admin: {roles: ["admin"]},
         company_admin: {roles: ["admin"], appliesTo:{company:"self", team:"self"}},
         member: {}
@@ -66,12 +67,57 @@
           }
     };
 
+    oDesk.AuthUser.prototype.filterRoles = function(company, filters){
+        if(!filters || !filters.roles || !filters.roles.length)  return;
+        var authUser = this;
+        authUser.processRule(company, filters.appliesTo, function(team){
+            var teamMatches = false;
+            $.each(filters.roles, function(roleIndex, role){
+                if ($.inArray(role, team.roles) > -1){
+                    teamMatches = true;
+                    return false;
+                }
+            });
+            return teamMatches;
+        });
+    };
+
+    oDesk.AuthUser.prototype.filterPermissions = function(company, filters){
+        if(!filters || !filters.permissions || !filters.permissions.length)  return;
+        var authUser = this;
+        authUser.processRule(company, filters.appliesTo, function(team){
+             var teamMatches = false;
+              $.each(filters.permissions, function(permissionIndex, permission){
+                  if ($.inArray(permission, team.permissions) > -1){
+                        teamMatches = true;
+                        return false;
+                   }
+              });
+              return teamMatches;
+        });
+    };
+
+    oDesk.AuthUser.prototype.filterEngagement = function(company, filters){
+        if(!filters || !filters.engagementReference)  return;
+        var authUser = this;
+        authUser.processRule(company, filters.appliesTo, function(team){
+             var teamMatches = false;
+             if(filters.engagementReference == "__exists__" ){
+                 teamMatches = (!!team.engagementReference);
+             } else {
+                 teamMatches = (team.engagementReference == filters.engagementReference);
+             }
+             return teamMatches;
+        });
+    };
+
     oDesk.AuthUser.prototype.getCompanies = function(f){
         var authUser = this;
         var defaults = {
             roles: [],
             permissions: [],
             companyReference: null,
+            engagementReference: null,
             appliesTo: {
                 //  company: "any"            - Include the company if any of the teams match the criteria
                 //  company: "all"            - Include the company if all of the teams match the criteria
@@ -85,7 +131,7 @@
         var filters = $.extend({}, defaults, f);
         filters.appliesTo = $.extend({}, defaults.appliesTo, filters.appliesTo);
         var companies = [];
-        var defaultHidden = filters.roles.length != 0 || filters.permissions.length != 0;
+        var defaultHidden = filters.roles.length != 0 || filters.permissions.length != 0 || !!filters.engagementReference;
         $.each(this.companies, function(companyIndex, company){
            if(filters.companyReference && filters.companyReference != company.reference) return;
            var filteredCompany = company.createCopy();
@@ -95,27 +141,9 @@
                 team.hidden = defaultHidden;
            });
 
-           authUser.processRule(filteredCompany, filters.appliesTo, function(team){
-                var teamMatches = false;
-                 $.each(filters.roles, function(roleIndex, role){
-                     if ($.inArray(role, team.roles) > -1){
-                         teamMatches = true;
-                         return false;
-                     }
-                 });
-                 return teamMatches;
-           });
-
-           authUser.processRule(filteredCompany, filters.appliesTo, function(team){
-                var teamMatches = false;
-                 $.each(filters.permissions, function(permissionIndex, permission){
-                     if ($.inArray(permission, team.permissions) > -1){
-                           teamMatches = true;
-                           return false;
-                      }
-                 });
-                 return teamMatches;
-           });
+           authUser.filterRoles(filteredCompany, filters);
+           authUser.filterPermissions(filteredCompany, filters);
+           authUser.filterEngagement(filteredCompany, filters);
         });
         return companies;
     };
@@ -200,6 +228,7 @@
         this.teams = [];
         this.roles = [];
         this.permissions = [];
+        this.engagementReference = null;
         if (this.parentTeam) this.parentTeam.addTeam(this);
 
     };
@@ -221,7 +250,9 @@
         });
         if(childNodeCount){
            spec.nodeBegin(this, childNodeCount);
-           spec.visitNode(this);
+           if(!spec.visitNode(this)){
+               return false;
+           }
             $.each(this.teams, function(t, team){
                 if(spec.nodeFilter){
                     team._walkTree(spec);
@@ -229,6 +260,7 @@
             });
             spec.nodeComplete(this);
         }
+        return true;
     };
 
     oDesk.Team.prototype.walkTree = function(s){
@@ -244,7 +276,9 @@
         var spec = $.extend({}, defaults, s);
         if(spec.nodeFilter(this)){
             spec.treeBegin();
-            this._walkTree(spec);
+            if(!this._walkTree(spec)){
+                return false;
+            }
             spec.treeComplete();
         }
     };
@@ -268,6 +302,7 @@
         var team = new oDesk.Team(thisTeam.id, thisTeam.name, thisTeam.reference, company, parentTeam);
         team.roles = thisTeam.roles;
         team.permissions = thisTeam.permissions;
+        team.engagementReference = thisTeam.engagementReference;
         $.each(this.teams, function(teamIndex, childTeam){
            team.addTeam(childTeam.createCopy(company, thisTeam));
         });
@@ -354,10 +389,14 @@
                 company.team.addTeam(parentTeam);
             }
         }
+        var team = null;
         if(userrole.parent_team__id == userrole.team__id){
-            return company.team;
+            team = company.team;
+        } else {
+            team = new oDesk.Team(userrole.team__id, userrole.team__name, userrole.team__reference, company, parentTeam);
         }
-        return new oDesk.Team(userrole.team__id, userrole.team__name, userrole.team__reference, company, parentTeam);
+        team.engagementReference = userrole.engagement__reference;
+        return team;
     };
 
     oDesk.Services.createRole = function(authUser, userrole){

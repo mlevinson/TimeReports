@@ -6,7 +6,6 @@
             Outsource to Freelancers, IT Companies, Programmers, Web Designers from India, Russia, USA, and more - oDesk
         </title>
         <link rel="stylesheet" href="http://www.odesk.com/css/static/REL201002040104/nav.css" type="text/css" />
-
         <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/css_browser_selector.js">
 </script>
         <link rel="stylesheet" href="http://www.odesk.com/css/static/REL201002040104/odesk_console.css" type="text/css" />
@@ -33,11 +32,11 @@
         </script>
         <script type="text/javascript" src="http://www.odesk.com/js/jquery/jquery.pack.js">
 </script>
+        <script type='text/javascript' src='http://www.odesk.com/js/jquery/plugins/static/REL201002040104/jquery.plugins.js'>
+</script>
         <script type='text/javascript' src='http://www.odesk.com/js/static/REL201002040104/common.utils.js'>
 </script>
 
-        <script type='text/javascript' src='http://www.odesk.com/js/jquery/plugins/static/REL201002040104/jquery.plugins.js'>
-</script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
         <link rel='stylesheet' href='http://www.odesk.com/js/jquery/plugins/css/static/REL201002040104/jquery.plugins.css' type='text/css' />
         <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/nav.js">
@@ -46,8 +45,28 @@
 </script>
         <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/odesk_console.js">
 </script>
+        <script src="js/date.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/date1.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/jquery.formatCurrency.js" type="text/javascript" charset="utf-8"></script>
+        <!--[if IE]><script type="text/javascript" src="js/jquery.bgiframe.pack.js"></script><![endif]-->
+        <script type="text/javascript" src="js/jquery.datePicker.js"></script>
         <script src="js/oDeskUtil.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" src="js/oDesk.Core.js"></script>
+        <script type="text/javascript" src="js/oDesk.DataSource.js"></script>
+        <script type="text/javascript" src="js/oDesk.Report.js"></script>
+        <script type="text/javascript" src="js/oDesk.Services.js"></script>
+        <script type="text/javascript" src="js/oDesk.AuthUser.js"></script>
+        <script type="text/javascript" src="js/jquery.ui.oDeskDataTable.js"></script>
+        <script type="text/javascript" src="js/jquery.ui.oDeskCompanySelector.js"></script>
+        <script type="text/javascript" src="js/oDesk.Report.DataTable.js"></script>
+        <script type="text/javascript" src="js/oDesk.TimesheetDetails.js"></script>
+        <script src="js/jquery.ui.oDeskSelectWidget.js" type="text/javascript" charset="utf-8"></script>
+        <script src="js/jquery.ui.compactness.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" src="js/oDesk.ReportPage.js"></script>
+        <script type="text/javascript" src="js/oDesk.MyTimesheetDetailsUI.js"></script>
         <link rel="stylesheet" href="css/timereports.css" type="text/css" />
+        <link rel="stylesheet" href="css/datePicker.css" type="text/css" />
+        <link rel="stylesheet" href="css/customselector.css" type="text/css" />
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     </head>
     <body bgcolor="#FFFFFF">
@@ -234,80 +253,69 @@
                         </li>
                     </ul>
                 </form>
-                <div id="lev2" style="height:20px">
-                    <ul></ul>
+                <div id="lev2" class="menu">
+                   <ul>
+                    <li class="menuitem">
+                        <a id="reports_home" class="nav-tooltip needsDecoration" href="reports_home.html">
+                            Reports Home</a></li>
+                        </ul>
                 </div>
             </div>
-            <div id="pageTitle">
-                <h1>Reports</h1>
-            </div>
-            <div id="mainBody" class="layout2">
-                <h2>Buyer Reports</h2>
-                <div id="col1">
-                    <dl class="reportsList">
-                        <dt class="tabularReport">
-                           <a href="weekly_company_timesheet.html">Weekly Company Timesheet</a>
-                        </dt>
-                        <dd>Summarizes work done by each provider during the course of a week.</dd>
-                        <dt class="tabularReport">
-                           <a href="monthly_provider_timesheet.html">Monthly Provider Timesheet</a>
-                        </dt>
-                        <dd>Summarizes the work done by each provider during a calendar month.</dd>
-                        <dt class="tabularReport">
-                           <a href="task_summary_report.html">Task Summary Report</a>
-                        </dt>
-                        <dd>Summarizes work done for each task by provider during the given time period.</dd>
-                        <dt class="tabularReport">
-                           <a href="provider_work_summary.html">Provider Work Summary</a>
-                        </dt>
-                        <dd>Summarizes work done by each provider grouped by tasks during the given time period.</dd>
-                        <dt class="tabularReport">
-                           <a href="timesheet_details.html">Timesheet Details</a>
-                        </dt>
-                        <dd>Displays a detailed report of work done by provider
-                            during a selected time period.</dd>
-                    </dl>
-                    <h2>Provider Reports</h2>
-                    <dl class="reportsList">
-                        <dt class="tabularReport">
-                            <a  href="my_weekly_timesheet.html">
-                                My Weekly Timesheet</a>
-                        </dt>
-                        <dd>Summarizes work done by you for
-                            each buyer during a given week.
-                        </dd>
-                        <dt class="tabularReport">
-                            <a  href="my_timesheet_details.html">
-                                My Timesheet Details</a>
-                        </dt>
-                        <dd>Displays a detailed report of work done by you
-                            during a selected time period.
-                        </dd>
-                    </dl>
-                    <h2>Provider Company Reports</h2>
-                        <dl class="reportsList">
-                        <dt class="tabularReport">
-                            <a  href="weekly_company_timesheet_provider.html">
-                                Weekly Company Timesheet by Provider</a>
-                        </dt>
-                        <dd>Reports on time and earnings by your providers
-                            during a given week.</dd>
-
-                        <dt class="tabularReport">
-                            <a  href="weekly_company_timesheet_buyer.html">
-                                Weekly Company Timesheet by Buyer</a>
-                        </dt>
-                        <dd>Reports on time and earnings from buyers
-                            during a given week.</dd>
-                    </dl>
-
+            <div id="reports_header">
+                <div id="pageTitle">
+                    <h1>My Timesheet Details</h1>
                 </div>
             </div>
-         </div>
-         <script type="text/javascript" >
-            $(function(){
-                oDeskUtil.decorateUrl(".tabularReport > a", window);
-            });
-         </script>
+            <div id="reports_main_content" class="content_main">
+                <div class="control_bar">
+                    <div class="control" id="buyer_control">
+                        <label class="block" for="buyer_selector">Buyer:</label>
+                        <div id="buyer_selector"></div>
+                    </div>
+                    <div class="control" id="timereports_range_selector">
+                        <label for="date_from">Range:</label>
+                        <input  id="date_from" type="text"
+                                class="calendar dispatchable change ie-onchange-fix"
+                                format="%m/%d/%Y">
+                        <label for="date_to">to</label>
+                        <input  id="date_to" type="text"
+                                class="calendar dispatchable change ie-onchange-fix"
+                                format="%m/%d/%Y">
+                    </div>
+                    <div class="control" id="run_report">
+                        <a href="#"  class="linkButton primary small" id="go_run_report">Go</a>
+                    </div>
+                    <br class="clear">
+                </div>
+                <div id="report_placeholder">
+                    Select a buyer &amp; date range, then press the Go button.
+                </div>
+                <div style="display:none" id="report_content">
+                    <div class="control_bar white">
+                        <div class="upper-right">
+                                <div class="control radio-switch dispatchable" id="display_type">
+                                    <span class="label">Display:</span>
+                                    <span class="toggle radio selected" id="complete">Complete</span>
+                                    <span class="space">|</span>
+                                    <span class="toggle radio" id="compact">Compact</span>
+                                </div>
+                            </div>
+                        <br class="clear"/>
+                    </div>
+                    <h2 class="table-caption">
+                        Timesheet Details
+                        of <span class="provider-name">Provider</span>
+                        for <span class="buyer-name">Buyer</span>
+                        <span class="table-sub-caption">
+                        <span id="time-range"></span>
+                        </span>
+                    </h2>
+                    <div id="reports-grid"></div>
+                </div>
+           </div>
+        </div>
+        <script type="text/javascript">
+            MyTimesheetDetails.init();
+        </script>
     </body>
 </html>
