@@ -146,10 +146,10 @@
         query.addCondition("=", "provider_id", "{providerId}");
         if(!this.state.team.id){
             query.addSelectStatement(["worked_on", "memo", "team_name", "team_id", "sum(hours)", "sum(charges)"]);
-            query.addSortStatement(["worked_on", "team_name", "memo"]);
+            query.addSortStatement(["worked_on", "team_name"]);
         } else {
             query.addSelectStatement(["worked_on", "memo", "sum(hours)", "sum(charges)"]);
-            query.addSortStatement(["worked_on", "memo"]);
+            query.addSortStatement(["worked_on"]);
         }
 
         return query.toString();
@@ -167,7 +167,7 @@
         query.addCondition("<=", "worked_on", "{timelineEndDate}");
         query.addCondition("=", "company_id", "{buyerId}");
         query.addSelectStatement(["worked_on", "memo", "team_name", "team_id", "sum(hours)", "sum(earnings)"]);
-        query.addSortStatement(["worked_on", "team_name", "memo"]);
+        query.addSortStatement(["worked_on", "team_name"]);
         return query.toString();
     };
 
@@ -185,7 +185,7 @@
         var sortColumns = null;
         if(this.providerSummary){
             selectColumns.unshift("memo");
-            sortColumns = ["provider_name", "memo"];
+            sortColumns = ["provider_name"];
         } else {
             selectColumns.unshift("task");
             sortColumns = ["task", "provider_name"];
