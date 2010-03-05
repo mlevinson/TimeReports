@@ -357,6 +357,26 @@
 
               });
 
+              test("Can filter using existence of engagement reference2", function(){
+
+                  var data = getoDeskUserRolesWithActiveEngagements();
+                  var authuser = new oDesk.AuthUser("mlevinson", "Michael", "Levinson");
+                  oDesk.Services.updateRoles(authuser, data);
+                  companies = authuser.getCompanies({
+                      engagementReference: "__exists__"
+                  });
+
+                  $.each(companies, function(i, company){
+                     if(company.name == "Remal IT" ||
+                        company.name == "Gearbox Solutions" ||
+                        company.name == "Gsoft, Inc"){
+                            ok(!company.hidden, company.name + " must be unfiltered.");
+                        } else {
+                            ok(company.hidden, company.name + " must be filtered.");
+                        }
+                  });
+              });
+
     };
 
 

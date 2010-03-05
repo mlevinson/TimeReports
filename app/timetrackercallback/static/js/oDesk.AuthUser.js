@@ -354,6 +354,7 @@
         company.permissions = this.permissions;
         company.team.roles = this.team.roles;
         company.team.permissions = this.team.permissions;
+        company.team.engagementReference = this.team.engagementReference;
         $.each(this.team.teams, function(teamIndex, team){
             company.team.addTeam(team.createCopy(company, company.team));
         });
@@ -367,7 +368,9 @@
             companyId = userrole.parent_team__id;
             teamName = userrole.parent_team__name;
         }
-        return new oDesk.Company(companyId, userrole.company__name, userrole.company__reference, teamName);
+        var company = new oDesk.Company(companyId, userrole.company__name, userrole.company__reference, teamName);
+        company.team.engagementReference = userrole.engagement__reference;
+        return company;
     };
 
     oDesk.Services.createTeam = function(authUser, userrole){
