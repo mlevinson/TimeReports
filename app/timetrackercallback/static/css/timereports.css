@@ -246,6 +246,15 @@ a:hover {color:#0033FF; text-decoration:underline; }
 #buyer_control{
     display:block;
     float:left;
+} 
+
+#buyer_control .buyer-name{
+    font-weight:bold;
+    display:block;
+    float:left;
+    margin-left: 2px;
+    position:relative;
+    top: 2px;
 }
 
 #buyer_selector{

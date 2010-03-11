@@ -66,7 +66,7 @@ handlers:
 
 - url: /my_timesheet_details
   static_files: static/my_timesheet_details.html
-  upload: static/my_timesheet_details.html 
+  upload: static/my_timesheet_details.html
 
 - url: /weekly_company_timesheet_provider.html
   static_files: static/weekly_company_timesheet_provider.html
@@ -83,6 +83,14 @@ handlers:
 - url: /weekly_company_timesheet_buyer.html
   static_files: static/weekly_company_timesheet_buyer.html
   upload: static/weekly_company_timesheet_buyer.html
+
+- url: /provider_company_timesheet_details.html
+  static_files: static/provider_company_timesheet_details.html
+  upload: static/provider_company_timesheet_details.html
+
+- url: /provider_company_timesheet_details
+  static_files: static/provider_company_timesheet_details.html
+  upload: static/provider_company_timesheet_details.html
 
 - url: /css
   static_dir: static/css

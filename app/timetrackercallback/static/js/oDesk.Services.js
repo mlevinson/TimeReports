@@ -19,6 +19,29 @@
          });
     };
 
+    oDesk.Services.findCompany = function(companyReference, success, failure){
+        var report = new oDesk.Report();
+        report.state.company.reference = companyReference;
+        oDesk.Services.getCompany(report, companyReference, function(data){
+            oDeskUtil.ajax(report.getTeamsQuery(), function(teamData, status){
+                var teams = [];
+                $.each(teamData.teams, function(i, team){
+                    var teamObj = new oDesk.oDeskObject();
+                    teamObj.id = team.id;
+                    teamObj.name = team.name;
+                    teamObj.reference = team.reference;
+                    if(team.reference == companyReference){
+                       report.state.company.id = team.id;
+                       report.state.company.team = teamObj;
+                       report.state.company.team.teams = teams;
+                    } else {
+                        teams.push(teamObj);
+                    }
+                });
+                if($.isFunction(success)){ success(report.state.company); }
+            }, failure);
+        }, failure);
+    };
 
     oDesk.Services.getCompany = function(report, companyReference, success, failure){
         report.state.company.reference = companyReference;
@@ -54,31 +77,40 @@
         }
     };
 
-    oDesk.Services.getProviders = function(report, success, failure){
+    oDesk.Services.findProvider = function(report, success, failure){
+        oDesk.Services.getProviders(report, function(providers){
+            var result = null;
+            $.each(providers, function(i, provider){
+               if(provider.id == report.state.provider.id){
+                   report.state.provider.name = provider.name;
+                   result = report.state.provider;
+                   return false;
+               }
+            });
+            if($.isFunction(success)){
+                success(result);
+            }
+        }, failure);
+    };
 
-         $.ajax({
-             url: report.getProvidersQuery(),
-             dataType: 'jsonp',
-             error: function(request, status, error){
-                 if($.isFunction(failure)){
-                     failure(status, error);
-                 }
-             },
-             success: function(data, status, request){
-                 providers = [];
-                 $.each(data.users, function(i, provider){
-                    var providerObject = new oDesk.Provider();
-                    providerObject.id = provider.id;
-                    providerObject.reference = provider.reference;
-                    providerObject.name = provider.first_name + " " + provider.last_name;
-                    providers.push(providerObject);
-                 });
-                 providers.sort();
-                 if($.isFunction(success)){
-                     success(providers);
-                 }
-             }
-         });
+    oDesk.Services.getProviders = function(report, success, failure){
+         oDeskUtil.ajax(report.getProvidersQuery(),
+                         function(data, status, request){
+                              providers = [];
+                              $.each(data.users, function(i, provider){
+                                 var providerObject = new oDesk.Provider();
+                                 providerObject.id = provider.id;
+                                 providerObject.reference = provider.reference;
+                                 providerObject.name = provider.first_name + " " + provider.last_name;
+                                 providers.push(providerObject);
+                              });
+                              providers.sort();
+                              if($.isFunction(success)){
+                                  success(providers);
+                              }
+                          },
+                          failure
+         );
     };
 
 
@@ -233,5 +265,13 @@
             };
         }, failure);
     };
+
+    oDesk.Services.getAgencyTimesheetDetails = function(report, success, failure){
+           oDeskUtil.ajax(report.getAgencyTimesheetDetailsQuery(), function(data, status){
+               if ($.isFunction(success)){
+                  success(new oDesk.DataSource.ResultSet(data), status);
+               };
+           }, failure);
+       };
 
 })(jQuery);

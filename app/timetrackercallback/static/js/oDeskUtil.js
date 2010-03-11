@@ -33,7 +33,7 @@
     };
 
     oDeskUtil.floatToTime = function(val){
-            var hours = parseInt(val);
+            var hours = parseInt(val, 10);
             var minutes = Math.round((parseFloat(val) - hours) * 60);
             val = hours + ":" + ("00" + minutes).slice(-2);
             return val;
@@ -78,8 +78,8 @@
     };
 
     oDeskUtil.ajax = function(query, success, failure){
-        if(!query && $.isFunction(failure)){
-            failure("Not Connected.", "Query is null");
+        if(!query){
+            if ($.isFunction(failure)) { failure("Not Connected.", "Query is null"); }
             return null;
         }
         $.ajax({

@@ -56,13 +56,13 @@
         <script type="text/javascript" src="js/oDesk.Services.js"></script>
         <script type="text/javascript" src="js/oDesk.AuthUser.js"></script>
         <script type="text/javascript" src="js/oDesk.Report.DataTable.js"></script>
-        <script type="text/javascript" src="js/oDesk.WeeklyCompanyTimesheetProvider.js"></script>
+        <script type="text/javascript" src="js/oDesk.ProviderCompanyTimesheetDetails.js"></script>
         <script type="text/javascript" src="js/jquery.ui.oDeskDataTable.js"></script>
+        <script type="text/javascript" src="js/jquery.ui.compactness.js"></script>
         <script type="text/javascript" src="js/jquery.ui.oDeskCompanySelector.js"></script>
         <script src="js/jquery.ui.oDeskSelectWidget.js" type="text/javascript" charset="utf-8"></script>
-        <script src="js/jquery.ui.weekSelector.js" type="text/javascript" charset="utf-8"></script>
         <script type="text/javascript" src="js/oDesk.ReportPage.js"></script>
-        <script type="text/javascript" src="js/oDesk.WeeklyCompanyTimesheetProviderUI.js"></script>
+        <script type="text/javascript" src="js/oDesk.ProviderCompanyTimesheetDetailsUI.js"></script>
         <link rel="stylesheet" href="css/timereports.css" type="text/css" />
         <link rel="stylesheet" href="css/datePicker.css" type="text/css" />
         <link rel="stylesheet" href="css/customselector.css" type="text/css" />
@@ -262,6 +262,10 @@
                 </div>
             </div>
             <div id="reports_header">
+                <div id="company_bar">
+                    <span class="label">Company:</span>
+                    <div id="top_selector"></div>
+                </div>
                 <div id="pageTitle">
                     <h1>Provider Company Timesheet Details</h1>
                 </div>
@@ -270,7 +274,7 @@
                 <div class="control_bar">
                     <div class="control" id="buyer_control">
                         <label class="block" for="buyer_selector">Buyer:</label>
-                        <div id="buyer_selector"></div>
+                        <span class="buyer-name"></span>
                     </div>
                     <div class="control" id="timereports_range_selector">
                         <label for="date_from">Range:</label>
@@ -303,7 +307,7 @@
                         <br class="clear"/>
                     </div>
                     <h2 class="table-caption">
-                        Timesheet Details for <span class="buyer-name">Buyer</span>
+                        Timesheet Details of <span class="provider-name">Provider</span> for <span class="buyer-name">Buyer</span>
                         <span class="table-sub-caption">
                         <span id="time-range"></span>
                         </span>

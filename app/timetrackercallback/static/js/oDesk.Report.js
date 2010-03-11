@@ -171,6 +171,28 @@
         return query.toString();
     };
 
+    oDesk.Report.prototype.getAgencyTimesheetDetailsQuery = function(){
+           if(!this.state.buyer.id
+                || !this.state.provider.id
+                || !this.state.company.id
+                || !this.state.timeline.startDate
+                || !this.state.timeline.endDate) return null;
+
+
+           var query = new oDesk.DataSource.Query(this.state.makeParams());
+           query.setUrlTemplate(oDesk.urls.getAgencyHours);
+           query.addSelectStatement(["worked_on",
+                                     "sum(hours)", "sum(earnings)",
+                                     "team_name", "team_id",
+                                     "memo"]);
+           query.addCondition("=", "company_id", "{buyerId}");
+           query.addCondition("=", "provider_id", "{providerId}");
+           query.addCondition(">=", "worked_on", "{timelineStartDate}");
+           query.addCondition("<=", "worked_on", "{timelineEndDate}");
+           query.addSortStatement(["worked_on", "team_name"]);
+           return query.toString();
+    };
+
 
     oDesk.Report.prototype.getTaskHoursQuery = function(){
         if(!this.state.company.id ||
@@ -207,7 +229,7 @@
     oDesk.Report.prototype.getAgencyQuery = function(){
         if(!this.state.company.id
                 || !this.state.timeline.startDate
-                || !this.state.timeline.endDate)   return null;
+                || !this.state.timeline.endDate) return null;
 
 
         var query = new oDesk.DataSource.Query(this.state.makeParams());
