@@ -249,6 +249,24 @@
         }, failure);
     };
 
+    oDesk.Services.getBuyersForProvider = function(report, success, failure){
+        oDeskUtil.ajax(report.getEngagementsQuery(), function(data, status, request){
+            var buyers = [];
+            if(data && data.engagements && data.engagements.engagement && data.engagements.engagement.length){
+                $.each(data.engagements.engagement, function(i, engagement){
+                     if(engagement == "") return false;
+                     var buyer = new oDesk.oDeskObject();
+                     buyer.name = engagement.buyer_team__name;
+                     buyer.reference = engagement.buyer_team__reference;
+                     buyer.id = engagement.buyer_team__id;
+                     buyers.push(buyer);
+                });
+            }
+            if($.isFunction(success)){
+                success(buyers);
+            }
+        }, failure);
+    };
 
     oDesk.Services.getTimesheetDetails = function(report, success, failure){
         oDeskUtil.ajax(report.getTimesheetDetailsQuery(), function(data, status){

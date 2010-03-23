@@ -193,6 +193,20 @@
            return query.toString();
     };
 
+    oDesk.Report.prototype.getEngagementsQuery = function(){
+         var url = "http://www.odesk.com/api/hr/v2/engagements.json";
+         var params = [];
+         params.push("page=1;1000");
+         if(this.state.provider.reference){
+             var ref = "provider__reference=" + this.state.provider.reference;
+             params.push(ref);
+         }
+         if(params.length){
+             var qs = params.join("&");
+             url += ("?" + qs);
+         }
+         return url;
+    };
 
     oDesk.Report.prototype.getTaskHoursQuery = function(){
         if(!this.state.company.id ||

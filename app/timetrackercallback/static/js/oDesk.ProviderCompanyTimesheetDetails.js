@@ -131,7 +131,7 @@
                                 weekLabel: function(record){return record.worked_on.weekLabel;}
                             }
                       }];
-        report.state.showTeamName = true;
+        report.state.showTeamName = false;
         if(report.state.showTeamName){
             columns.push({
                 name: "team",

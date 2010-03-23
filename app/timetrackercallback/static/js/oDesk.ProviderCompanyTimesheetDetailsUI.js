@@ -7,7 +7,8 @@
         this.parameters.buyerId = null;
         $.extend(this.elements, {
             buyer: {
-                name: ".buyer-name"
+                name: ".buyer-name",
+                selector: "#timereports_buyer_selector SELECT"
             }
         });
         $.extend(this.elements.report, {
@@ -29,7 +30,6 @@
         var ui = this;
         $(ui.elements.report.placeholder).hide();
         $(ui.elements.report.content).show();
-        ui.report.state.showTeamName = (ui.report.state.buyer.team.teams.length > 0);
         ui.setSelectedDateRange(
                 Date.fromString($(ui.elements.timerange.startDate).val()),
                 Date.fromString($(ui.elements.timerange.endDate).val())
@@ -84,12 +84,42 @@
         return false;
     };
 
+
+    providerCompanyTimesheetDetails.prototype.bindBuyerSelector = function(){
+         var ui = this;
+         if(ui.buyerSelectorBound) return;
+         var defaults = {
+             report: ui.report,
+             all_option_id: "all_buyers",
+             all_option_text: "All Buyers",
+             includeAllOption:false,
+             stateVariable: ui.report.state.buyer,
+             service: oDesk.Services.getBuyersForProvider,
+             useDisplayName: false
+         };
+         $(ui.elements.buyer.selector).oDeskSelectWidget(defaults);
+         ui.buyerSelectorBound = true;
+    };
+
     providerCompanyTimesheetDetails.prototype.setDefaults = function(){
         Date.format = "dd mmm yyyy";
         var d1 = Date.today();
         var d2 = d1.clone();
         d1.moveToDayOfWeek(1, -1);
         this.setSelectedDateRange(d1, d2);
+        this.report.state.buyer = new oDesk.oDeskObject();
+    };
+
+
+    providerCompanyTimesheetDetails.prototype.providerChanged = function(company){
+       this.bindBuyerSelector();
+       $(this.elements.buyer.selector).oDeskSelectWidget("populate");
+    };
+
+    providerCompanyTimesheetDetails.prototype.companyChanged = function(company){
+        oDesk.ReportPage.prototype.companyChanged.call(this, company);
+        this.bindProviderSelector();
+        $(this.elements.provider.selector).oDeskSelectWidget("populate");
     };
 
     providerCompanyTimesheetDetails.prototype.completeInitialization = function(){
@@ -117,10 +147,12 @@
             $(this).addClass("selected");
            $(ui.elements.report.memo).compactness("remove");
         });
+
     };
 
     providerCompanyTimesheetDetails.prototype.init = function(){
         var ui = this;
+        this.canBindProviderSelector = true;
         this.initialize({
             startDate:"startDate",
             endDate:"endDate",

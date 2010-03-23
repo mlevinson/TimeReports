@@ -29,21 +29,14 @@
         MAINTENANCE_ALERT_TTL = 86400;
         //]]>
         </script>
-        <script type="text/javascript" src="http://www.odesk.com/js/jquery/jquery.pack.js">
-</script>
-        <script type='text/javascript' src='http://www.odesk.com/js/static/REL201002040104/common.utils.js'>
-</script>
-
-        <script type='text/javascript' src='http://www.odesk.com/js/jquery/plugins/static/REL201002040104/jquery.plugins.js'>
-</script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript" src="http://www.odesk.com/js/jquery/jquery.pack.js"></script>
+        <script type='text/javascript' src='http://www.odesk.com/js/static/REL201002040104/common.utils.js'></script>
+        <script type='text/javascript' src='http://www.odesk.com/js/jquery/plugins/static/REL201002040104/jquery.plugins.js'></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
         <link rel='stylesheet' href='http://www.odesk.com/js/jquery/plugins/css/static/REL201002040104/jquery.plugins.css' type='text/css' />
-        <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/nav.js">
-</script>
-        <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/table.js">
-</script>
-        <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/odesk_console.js">
-</script>
+        <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/nav.js"></script>
+        <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/table.js"></script>
+        <script type="text/javascript" src="http://www.odesk.com/js/static/REL201002040104/odesk_console.js"></script>
         <script src="js/date.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/date1.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/jquery.formatCurrency.js" type="text/javascript" charset="utf-8"></script>
@@ -272,9 +265,14 @@
             </div>
             <div id="reports_main_content" class="content_main">
                 <div class="control_bar">
-                    <div class="control" id="buyer_control">
+                    <div class="control" id="timereports_provider_selector">
+                        <label for="provider-selector">Provider:</label>
+                        <select id="provider-selector" class="dispatchable ie-onchange-fix">
+                        </select>
+                    </div>
+                    <div class="control" id="timereports_buyer_selector">
                         <label class="block" for="buyer_selector">Buyer:</label>
-                        <span class="buyer-name"></span>
+                        <SELECT id="buyer_selector"></SELECT>
                     </div>
                     <div class="control" id="timereports_range_selector">
                         <label for="date_from">Range:</label>

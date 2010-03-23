@@ -140,6 +140,9 @@
             $(ui.elements.team.selector).oDeskSelectWidget("populate");
         }
     };
+
+    oDesk.ReportPage.prototype.providerChanged = function(team){};
+
     oDesk.ReportPage.prototype.teamChanged = function(team){
         var ui = this;
         if (ui.canBindProviderSelector){
@@ -187,9 +190,11 @@
             service: oDesk.Services.getProviders,
             useDisplayName: false
         };
-        $(ui.elements.provider.selector).oDeskSelectWidget(
-            $.extend({}, defaults, ui.providerSelectorOptions)
-        );
+        var opts = $.extend({}, defaults, ui.providerSelectorOptions);
+        $(ui.elements.provider.selector).oDeskSelectWidget(opts)
+        .unbind("selectionChanged").bind("selectionChanged", function(){
+            ui.providerChanged(ui.report.state.provider);
+        });
         ui.providerSelectorBound = true;
     };
 
