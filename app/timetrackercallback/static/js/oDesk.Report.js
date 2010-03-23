@@ -185,7 +185,7 @@
                                      "sum(hours)", "sum(earnings)",
                                      "team_name", "team_id",
                                      "memo"]);
-           query.addCondition("=", "company_id", "{buyerId}");
+           query.addCondition("=", "team_id", "{buyerId}");
            query.addCondition("=", "provider_id", "{providerId}");
            query.addCondition(">=", "worked_on", "{timelineStartDate}");
            query.addCondition("<=", "worked_on", "{timelineEndDate}");
