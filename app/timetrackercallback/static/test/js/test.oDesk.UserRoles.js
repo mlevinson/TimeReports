@@ -218,7 +218,7 @@
              equals(companies.length, 2);
              ok(!companies[0].hidden, "Company 1 is unfiltered.");
              ok(!companies[1].hidden, "Company 2 is unfiltered.");
-             var companies = authuser.getCompanies({
+             companies = authuser.getCompanies({
                  roles: ["manager"]
              });
              equals(companies.length, 2);
@@ -237,7 +237,7 @@
              equals(companies.length, 2);
              ok(!companies[0].hidden, "Company 1 is unfiltered.");
              ok(!companies[1].hidden, "Company 2 is unfiltered.");
-             var companies = authuser.getCompanies({
+             companies = authuser.getCompanies({
                  permissions: ["manage_employment"]
              });
              equals(companies.length, 2);
@@ -257,7 +257,7 @@
                ok(!companies[0].team.teams[0].hidden, "Team 2 is unfiltered.");
                ok(!companies[1].team.hidden, "Team 3 is unfiltered.");
                ok(!companies[1].team.teams[0].hidden, "Team 4 is unfiltered.");
-               var companies = authuser.getCompanies({
+               companies = authuser.getCompanies({
                    roles: ["manager"]
                });
                equals(companies[0].team.id, "teammichael:teammichael");
@@ -282,7 +282,7 @@
                  ok(!companies[0].team.teams[0].hidden, "Team 2 is unfiltered.");
                  ok(!companies[1].team.hidden, "Team 3 is unfiltered.");
                  ok(!companies[1].team.teams[0].hidden, "Team 4 is unfiltered.");
-                 var companies = authuser.getCompanies({
+                 companies = authuser.getCompanies({
                      permissions: ["manage_employment"]
                  });
                  equals(companies[0].team.id, "teammichael:teammichael");
@@ -307,7 +307,7 @@
                    ok(!companies[0].team.teams[0].hidden, "Team 2 is unfiltered.");
                    ok(!companies[1].team.hidden, "Team 3 is unfiltered.");
                    ok(!companies[1].team.teams[0].hidden, "Team 4 is unfiltered.");
-                   var companies = authuser.getCompanies({
+                   companies = authuser.getCompanies({
                        roles: ["manager"],
                        appliesTo: {
                            company: "self",
@@ -339,7 +339,7 @@
                   ok(!companies[0].team.teams[0].hidden, "Team 2 is unfiltered.");
                   ok(!companies[1].team.hidden, "Team 3 is unfiltered.");
                   ok(!companies[1].team.teams[0].hidden, "Team 4 is unfiltered.");
-                  var companies = authuser.getCompanies({
+                  companies = authuser.getCompanies({
                       engagementReference: "__exists__"
                   });
 
@@ -376,6 +376,49 @@
                         }
                   });
               });
+
+              module("Team Check");
+
+              function getAuthUserForTeamCheck(){
+                     var data = getoDeskUserRolesWithActiveEngagements();
+                     var authuser = new oDesk.AuthUser("mlevinson", "Michael", "Levinson");
+                     oDesk.Services.updateRoles(authuser, data);
+                     return authuser;
+              };
+
+              test("Can check a non existent team", function(){
+                  var authuser = getAuthUserForTeamCheck();
+                  ok(!authuser.teamHasFlavor("12345", {}));
+              });
+
+              test("Can check an existing team for engagement reference", function(){
+                    var authuser = getAuthUserForTeamCheck();
+                    ok(authuser.teamHasFlavor("1831", {
+                          engagementReference: "__exists__"
+                      }));
+                });
+
+                test("Can check an existing team for role", function(){
+                    var authuser = getAuthUserForTeamCheck();
+                    ok(authuser.teamHasFlavor("33265", {
+                        roles: ["admin"]
+                    }));
+                });
+
+                test("Can check an existing team for permission", function(){
+                    var authuser = getAuthUserForTeamCheck();
+                    ok(authuser.teamHasFlavor("33265", {
+                        permissions: ["manage_finance"]
+                    }));
+                });
+
+                test("Can check an existing team for company team engagement reference", function(){
+                      var authuser = getAuthUserForTeamCheck();
+                      ok(authuser.teamHasFlavor("1831", {
+                            engagementReference: "__exists__",
+                            team: "company"
+                        }));
+                  });
 
     };
 

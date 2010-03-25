@@ -111,6 +111,19 @@
         });
     };
 
+    oDesk.AuthUser.prototype.teamHasFlavor = function(teamReference, f){
+        var companies = this.getCompanies(f);
+        var result = false;
+        $.each(companies, function(i, company){
+            var team = company.team.findTeamByReference(teamReference);
+            if(team){
+                result = !team.hidden;
+                return false;
+            }
+        });
+        return result;
+    };
+
     oDesk.AuthUser.prototype.getCompanies = function(f){
         var authUser = this;
         var defaults = {
@@ -281,6 +294,7 @@
             }
             spec.treeComplete();
         }
+        return true;
     };
 
     oDesk.Team.prototype.walk = function(visitor){
@@ -369,7 +383,9 @@
             teamName = userrole.parent_team__name;
         }
         var company = new oDesk.Company(companyId, userrole.company__name, userrole.company__reference, teamName);
-        company.team.engagementReference = userrole.engagement__reference;
+        if(userrole.team__reference == company.team.reference){
+            company.team.engagementReference = userrole.engagement__reference;
+        }
         return company;
     };
 

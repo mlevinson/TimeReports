@@ -4,6 +4,7 @@
         var cols = [];
 
         function getWorkDiaryUrl(field, text){
+            if(!report.state.hasWorkDiaryAccess) return text;
             var url = "http://www.odesk.com/workdiary/{team}/{provider}/{date}";
             url = oDeskUtil.substitute(url, {
                     team: escape(field.team),
