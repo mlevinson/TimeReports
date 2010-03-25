@@ -25,6 +25,7 @@
 
         var memoColumn = {
              sTitle:"Memo",
+            sClass:"task_summary_details_memo",
              canGroup: report.state.showTeamName,
              groupValue: function(field){
                    return field.value;
@@ -33,6 +34,7 @@
         };
         var providerColumn = {
             sTitle:"User",
+            sClass:"task_summary_details_user",
             canGroup: report.providerSummary || report.state.showTeamName,
             groupValue: function(field){
               return field.value;

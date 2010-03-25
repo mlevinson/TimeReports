@@ -30,16 +30,8 @@
                 },
                 fnRender: function(data){
                      var field = data.aData[data.iDataColumn];
-                     var url = "timesheet_details.html";
-                     var params = {
-                        startDate: report.state.timeline.startDate.toString("yyyy-MM-dd"),
-                        endDate: report.state.timeline.endDate.toString("yyyy-MM-dd"),
-                        provider: field.providerId,
-                        company_ref: report.state.company.reference,
-                        team: field.teamId,
-                        go:"go"
-                     };
-                     return oDesk.Report.renderUrl(field.value, url, params);
+                     var url = "http://www.odesk.com/teamroom/" + field.teamId;
+                     return oDesk.Report.renderUrl(field.value, url, {});
                 }
             });
         }
