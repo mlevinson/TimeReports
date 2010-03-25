@@ -97,7 +97,10 @@
              service: oDesk.Services.getBuyersForProvider,
              useDisplayName: false
          };
-         $(ui.elements.buyer.selector).oDeskSelectWidget(defaults);
+         $(ui.elements.buyer.selector).oDeskSelectWidget(defaults)
+         .unbind("selectionChanged").bind("selectionChanged", function(){
+             ui.buyerChanged(ui.report.state.buyer);
+         });
          ui.buyerSelectorBound = true;
     };
 
@@ -110,6 +113,9 @@
         this.report.state.buyer = new oDesk.oDeskObject();
     };
 
+    providerCompanyTimesheetDetails.prototype.buyerChanged = function(buyer){
+        this.report.state.hasWorkDiaryAccess = this.report.state.authUser.teamHasFlavor(buyer.reference, {roles:["hiring"]});
+    };
 
     providerCompanyTimesheetDetails.prototype.providerChanged = function(company){
        this.bindBuyerSelector();
