@@ -16,6 +16,7 @@
         this.dateRangeSelectorBound = false;
         this.elements = {
             company : {
+                name: ".company-name",
                 selector:"#top_selector"
             },
             provider : {

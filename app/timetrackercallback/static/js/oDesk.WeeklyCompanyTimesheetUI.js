@@ -14,6 +14,7 @@
 
 
     weeklyCompanyTimesheet.prototype.refreshReport = function(){
+        $(this.elements.company.name).text(this.report.state.company.name);
         $(this.elements.team.name).text(this.report.state.team.name);
         $(this.elements.week.tableCaption).text(
             this.report.state.timeline.getDisplayNameWithAbbreviations());
@@ -60,10 +61,10 @@
                 ui.setSelectedDate(selectedDate);
             });
         $(ui.elements.report.container)
-                .oDeskDataTable({report: ui.report, groupRows:true, service: oDesk.Services.getHours})
-                .unbind("dataTablePopulated").bind("dataTablePopulated", function(){
-                    ui.bindTableHeaderHelp();
-                });
+            .oDeskDataTable({report: ui.report, groupRows:true, service: oDesk.Services.getHours})
+            .unbind("dataTablePopulated").bind("dataTablePopulated", function(){
+                ui.bindTableHeaderHelp();
+            });
     };
 
     weeklyCompanyTimesheet.prototype.init = function(){
